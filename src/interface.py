@@ -31,6 +31,10 @@ class UserInterface:
                 self.display_message(response)
             except Exception as e:
                 self.display_error(str(e))
+                
+    def __repr__(self) -> str:
+        """Return string representation for reflection test."""
+        return f"{self.__class__.__name__}()"
 
 class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""

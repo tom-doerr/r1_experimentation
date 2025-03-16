@@ -9,11 +9,23 @@ from .utils import normalize_model_name
 class Agent(ABC):
     """Abstract base class for agents."""
     
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("model must be a non-empty string")
+        if not isinstance(max_tokens, int) or max_tokens <= 0:
+            raise ValueError("max_tokens must be a positive integer")
+            
+        self.model = normalize_model_name(model)
+        self.max_tokens = max_tokens
+        self.net_worth = global_settings['initial_net_worth']
+        self.memory = ''
+        self.interface = interface or ConsoleInterface()
+
     @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
         pass
-        
+
     @abstractmethod
     def __repr__(self) -> str:
         """Return string representation of agent."""
