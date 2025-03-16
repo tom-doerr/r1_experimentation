@@ -5,10 +5,14 @@ import litellm
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
-        # Simplified parsing logic
+        # Parse element and merge child nodes
+        parsed = {}
         if len(element):  # Has children
-            return {element.tag: [parse_element(child) for child in element]}
-        return {element.tag: element.text.strip() if element.text else None}
+            for child in element:
+                parsed.update(parse_element(child))
+        else:
+            parsed[element.tag] = element.text.strip() if element.text else None
+        return parsed
 
     try:
         root = ET.fromstring(xml_string)
@@ -59,6 +63,21 @@ class Agent:
 
     def get_model(self) -> str:
         return self.model
+
+    def reply(self, prompt: str) -> str:
+        # Use the configured model to generate a response
+        return litellm_completion(prompt, model=self.model)
+
+    @property
+    def last_completion(self) -> str:
+        # Return last completion from litellm history
+        if litellm._thread_context.completions:
+            return litellm._thread_context.completions[-1].choices[0].message.content
+        return ""
+
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
+        # Expose XML parsing as protected method
+        return parse_xml(xml_string)
 
 def test_env_1(input_data: str) -> int:
     # Returns count of 'a's in input
