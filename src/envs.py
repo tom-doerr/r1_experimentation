@@ -14,6 +14,22 @@ class Env1:
         """Calculate score based on target character count and length penalty.
         
         Args:
+            input_string: String to evaluate (must be non-empty)
+            
+        Returns:
+            int: Score calculated as:
+                - target_char count minus length penalty if any targets found
+                - -1 if no targets and string length >= penalty start
+                - 0 if no targets and string length < penalty start
+                
+        Raises:
+            ValueError: If input_string is empty
+        """
+        if not input_string:
+            raise ValueError("input_string cannot be empty")
+        """Calculate score based on target character count and length penalty.
+        
+        Args:
             input_string: String to evaluate
             
         Returns:
