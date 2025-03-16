@@ -45,15 +45,17 @@ class ShellCodeExecutor:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command:            
+        if not command:
             raise ValueError("No command provided")
 
-        command_parts: List[str] = shlex.split(command)
-        if not command_parts or command_parts[0] not in self.whitelisted_commands: # type: ignore
-            raise ValueError(f"Command {command_parts[0]} is not whitelisted") # type: ignore
+        command_parts = shlex.split(command)
+        if not command_parts:
+            raise ValueError("No command parts found")
+        if command_parts[0] not in self.whitelisted_commands:
+            raise ValueError(f"Command {command_parts[0]} is not whitelisted")
 
         try:
-            result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
             return result.stdout
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Error executing command: {e.stderr}") from e
@@ -108,7 +110,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
 
 
