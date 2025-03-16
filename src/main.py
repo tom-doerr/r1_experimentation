@@ -10,7 +10,7 @@ DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
-    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth'}
+    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not required_keys.issubset(settings.keys()):
         raise ValueError(f"Global settings must contain {required_keys}")
     
@@ -22,6 +22,8 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
         raise ValueError("starting_cash cannot be less than min_net_worth")
     if settings['starting_cash'] > settings['max_net_worth']:
         raise ValueError("starting_cash cannot exceed max_net_worth")
+    if not 0 <= settings['cash_penalty'] <= 1:
+        raise ValueError("cash_penalty must be between 0 and 1")
 
 global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,  # Default starting cash value

@@ -49,6 +49,17 @@ class Agent:
     def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         return parse_xml(xml_string)
 
+    def _validate_net_worth(self) -> None:
+        """Validate net worth against global settings.
+        
+        Raises:
+            ValueError: If net worth exceeds limits
+        """
+        if self.net_worth < global_settings['min_net_worth']:
+            raise ValueError(f"Net worth cannot be below {global_settings['min_net_worth']}")
+        if self.net_worth > global_settings['max_net_worth']:
+            raise ValueError(f"Net worth cannot exceed {global_settings['max_net_worth']}")
+
     def __call__(self, prompt: str) -> str:
         """Make Agent callable for convenience.
         
