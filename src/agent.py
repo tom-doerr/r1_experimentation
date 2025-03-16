@@ -4,22 +4,19 @@ from .config import DEFAULT_MODEL
 from .interface import UserInterface, ConsoleInterface
 
 
-class Agent(ABC):
-    """Abstract base class for agents."""
+class Agent:
+    """Concrete agent implementation."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
-        if interface is not None and not isinstance(interface, UserInterface):
-            raise TypeError("interface must implement UserInterface protocol")
             
         self.model = model
         self.max_tokens = max_tokens
-        self.interface = interface or ConsoleInterface()
-        self.memory = ""
-        self.net_worth = global_settings['initial_net_worth']
+        self.net_worth = global_settings['starting_cash']
+        self.memory = ''
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
