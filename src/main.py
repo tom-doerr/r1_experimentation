@@ -65,18 +65,17 @@ class ShellCodeExecutor():
 
 
 def litellm_completion(prompt: str, model: str) -> str:
+    """Completes the prompt using LiteLLM."""
     if "assert" in prompt.lower():
         prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
 
     try:
-        response = litellm.completion(
-            model=model, messages=[{"role": "user", "content": prompt}]
-        )
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
         return "Error: No completion found."
-    except Exception as e:
-        return f"LiteLLMError: {e}"
+    except litellm.LiteLLMError as e:
+        return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
@@ -119,8 +118,8 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None:
-        self.memory = replace
+    def _update_memory(self, search: str, replace: str) -> None:
+        self.memory = replace # in the future we can use search to find and replace
 
 
 class AgentAssert(Agent):
