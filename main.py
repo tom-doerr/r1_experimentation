@@ -105,7 +105,7 @@ class AgentAssert:
     def __init__(self, model: str) -> None:
         self.agent: Agent = Agent(model=model)
 
-    def assert_prompt(self, prompt: str) -> bool:
+    def __call__(self, prompt: str) -> bool:
         response: str = self.agent.reply(prompt)
         parsed: Dict[str, Any] = self.agent._parse_xml(response)
         if 'message' in parsed:
