@@ -1,5 +1,5 @@
 from typing import Any
-from .main import _execute_command
+import subprocess
 
 class IsolatedEnvironment:
     """Provides an isolated execution environment."""
@@ -9,4 +9,19 @@ class IsolatedEnvironment:
         
     def execute(self, command: str) -> str:
         """Execute a command in isolation."""
-        return _execute_command(command, self.timeout)
+        try:
+            result = subprocess.run(
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=self.timeout
+            )
+            return result.stdout
+        except subprocess.TimeoutExpired as e:
+            raise TimeoutError("Command timed out") from e
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"Command failed: {e.stderr}") from e
+        except Exception as e:
+            raise RuntimeError(f"Error executing command: {e}") from e
