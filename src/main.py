@@ -32,17 +32,24 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | 
     return parsed_data
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
+    """Parse XML string into a dictionary with proper error handling."""
+    if not isinstance(xml_string, str) or not xml_string.strip():
+        raise ValueError("XML string must be a non-empty string")
+        
     try:
-        root: ET.Element = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str] | None] = {}
+        root = ET.fromstring(xml_string)
+        data = {}
         for element in root:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = _parse_xml_value(element)
+                if element.tag == 'bool':
+                    data[element.tag] = element.text.lower() == 'true' if element.text else False
+                else:
+                    data[element.tag] = element.text if element.text is not None else ""
         return data
     except ET.ParseError as e:
-        return {"error": str(e)}
+        raise ValueError(f"Invalid XML: {e}") from e
 
 
 def python_reflection_testing() -> str:
