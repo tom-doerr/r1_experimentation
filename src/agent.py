@@ -6,7 +6,7 @@ from .config import DEFAULT_MODEL, global_settings
 class Agent:
     """Concrete agent implementation."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
@@ -65,10 +65,6 @@ class AgentAssert(Agent):
             return "Assertion validated successfully"
         return "No assertions found to validate"
 
-
-class AgentAssert:
-    """Utility class for agent assertions."""
-    
     @staticmethod
     def has_net_worth(agent: Agent) -> bool:
         return hasattr(agent, 'net_worth')
