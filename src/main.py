@@ -72,21 +72,6 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 
-class Agent:
-    """Agent that interacts with users using LLM completions."""
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> None:
-        """Initialize agent with model and token settings."""
-        self.model = model
-        self.max_tokens = max_tokens
-        self.net_worth = global_settings['starting_cash']
-        self.memory = ""
-        self.last_completion = ""
-
-class AgentAssert(Agent):
-    """Agent that evaluates statements and returns boolean assertions."""
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> None:
-        """Initialize assertion agent with model and token settings."""
-        super().__init__(model=model, max_tokens=max_tokens)
 
 class Tool(Protocol):
     """Protocol defining interface for command execution tools."""
@@ -128,8 +113,8 @@ class ShellCodeExecutor(Tool):
     def is_available(self) -> bool:
         """Check if shell commands can be executed."""
         try:
-            import shutil
-            return shutil.which('sh') is not None
+            from shutil import which
+            return which('sh') is not None
         except ImportError:
             return False
 
