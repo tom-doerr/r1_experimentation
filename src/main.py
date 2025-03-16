@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 import xml.etree.ElementTree as ET
 from .reflection import python_reflection_test
-from .agent import Agent, AgentAssert
+from .agent import Agent, AgentAssert, ConcreteAgent
 from .config import DEFAULT_MODEL, global_settings
 from .envs import Env1, Env2
 from .interface import UserInterface, ConsoleInterface
