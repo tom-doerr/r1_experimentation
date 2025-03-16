@@ -3,7 +3,7 @@ from typing import Dict, List, Generator
 import subprocess  # nosec
 import litellm # type: ignore
 
-FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
+FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
 import xml.etree.ElementTree as ET
 
@@ -15,7 +15,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
             if child:
-                data[child.tag] = child.text or ""
+                data[child.tag] = child.text or "" # type: ignore
             else:
                 data[child.tag] = {
                     grandchild.tag: grandchild.text or ""
@@ -40,7 +40,6 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-    pass
 
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
@@ -78,7 +77,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             model=model, messages=[{"role": "user", "content": prompt}],
         )
         if response.choices and response.choices[0].message:
-            return response.choices[0].message.content or ""
+            return response.choices[0].message.content
         return "" # type: ignore
     except Exception as e:
         return f"LiteLLMError in litellm_completion: {e}"
@@ -118,7 +117,7 @@ class Agent(Tool):
             data: Dict[str, str | Dict[str, str]] = {}
             for child in root:
                 if not len(child):
-                    data[child.tag] = child.text or ""
+                    data[child.tag] = child.text or "" # type: ignore
                 else:
                     data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
             return data
@@ -138,7 +137,7 @@ class Agent(Tool):
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
