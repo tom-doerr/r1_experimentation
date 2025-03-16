@@ -89,7 +89,7 @@ assert two_plus_two_is_4 == False
 
 
 shell_code_executor = ShellCodeExecutor()
-assert type(shell_code_executor) == Tool
+assert isinstance(shell_code_executor, ShellCodeExecutor)
 
 
 # check if this is a subset of the blacklisted commands
