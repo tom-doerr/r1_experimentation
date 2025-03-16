@@ -43,8 +43,15 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
             
-        # Return 1 if string is non-empty and within length limit
-        return 1 if input_string else 0
+        # Count number of consecutive duplicate characters    
+        consecutive_count = 0
+        prev_char = None
+        for char in input_string:
+            if char == prev_char:
+                consecutive_count += 1
+            prev_char = char
+            
+        return consecutive_count
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
