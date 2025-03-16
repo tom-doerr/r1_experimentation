@@ -1,7 +1,7 @@
 import litellm
 from typing import Dict
 from .constants import DEFAULT_MODEL, global_settings
-from .constants import _normalize_model_name as normalize_model_name
+from .main import litellm_completion, normalize_model_name as _normalize_model_name
 
 def _escape_xml(text: str) -> str:
     """Escape XML special characters."""

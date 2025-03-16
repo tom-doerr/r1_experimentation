@@ -4,7 +4,7 @@ import shlex
 from abc import abstractmethod
 import xml.etree.ElementTree as ET
 import litellm
-from .config import DEFAULT_MODEL, global_settings
+from .constants import DEFAULT_MODEL, global_settings, normalize_model_name as _normalize_model_name
 from .isolation import IsolatedEnvironment, run_container
 
 
