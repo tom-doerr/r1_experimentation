@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-import xml.etree.ElementTree as ET
 from typing import Dict, Any, Optional
 import litellm
 
@@ -16,11 +15,12 @@ def parse_xml(xml_string: str):
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = {}
+        child_data: Any = None
         if child.text:
             child_data = child.text.strip()
         else:
             child_data = _parse_element(child)
+
         result[child.tag] = child_data
     return result
 
