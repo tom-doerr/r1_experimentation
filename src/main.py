@@ -42,7 +42,7 @@ class ShellCodeExecutor():
         return self.run(command)
 
     def __repr__(self):
-        return self.run(command)
+        return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
         if not command:
