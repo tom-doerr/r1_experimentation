@@ -34,7 +34,6 @@ def test_env_1(input_string: str) -> int:
 
 
 class ShellCodeExecutor(object):
-    """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
@@ -74,11 +73,9 @@ def litellm_completion(prompt: str, model: str) -> str:
 
     try:
         response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        if response and response.choices and response.choices[0].message and response.choices[0].message.content:
-            return response.choices[0].message.content
-        return "Error: No completion found."
+        return response.choices[0].message.content if response and response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
     except litellm.LiteLLMError as e:
-        return f"LiteLLMError: {type(e).__name__}: {e}"
+        return f"LiteLLMError: {type(e).__name__}: {e}" # type: ignore
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
