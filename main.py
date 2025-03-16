@@ -23,19 +23,21 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
+        child_data: Any = None  # Initialize child_data
+
         if len(child) > 0:
-            child_data: Any = _parse_element(child)
+            child_data = _parse_element(child)
         elif child.text is not None:
-            child_data: str = child.text.strip()
-        else:
-            child_data: None = None
+            child_data = child.text.strip()
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
                 result[child.tag] = [result[child.tag]]
-            result[child.tag].append(child_data)
+            if child_data is not None:
+                result[child.tag].append(child_data)
         else:
-            result[child.tag] = child_data
+            if child_data is not None:
+                result[child.tag] = child_data
     return result
 
 def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
