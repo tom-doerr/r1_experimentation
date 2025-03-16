@@ -264,6 +264,46 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
+def run_container(image: str, command: str, timeout: int = 10) -> str:
+    """Run a command in a container using Docker.
+    
+    Args:
+        image: Docker image to use
+        command: Command to run in container
+        timeout: Maximum execution time in seconds
+        
+    Returns:
+        Command output as string
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If container execution fails
+        TimeoutError: If command times out
+    """
+    if not isinstance(image, str) or not image.strip():
+        raise ValueError("Image must be a non-empty string")
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("Command must be a non-empty string")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError("Timeout must be a positive integer")
+        
+    try:
+        result = subprocess.run(
+            ["docker", "run", "--rm", image, "sh", "-c", command],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError(f"Container command timed out after {timeout} seconds") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Container command failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error running container: {e}") from e
+
+
 def _execute_command(command: str, timeout: int = 10) -> str:
     """Execute a command with timeout and validation."""
     if not isinstance(command, str) or not command.strip():
@@ -406,11 +446,15 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 
 def _execute_command(command: str, timeout: int = 10) -> str:
-    """Helper function to execute a command with error handling."""
+    """Execute a command with timeout and validation."""
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("Command must be a non-empty string")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError("Timeout must be a positive integer")
+        
     try:
         result = subprocess.run(
-            command,
-            shell=True,
+            shlex.split(command),
             capture_output=True,
             text=True,
             check=True,
@@ -418,7 +462,7 @@ def _execute_command(command: str, timeout: int = 10) -> str:
         )
         return result.stdout
     except subprocess.TimeoutExpired as e:
-        raise TimeoutError("Command timed out") from e
+        raise TimeoutError(f"Command timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Command failed: {e.stderr}") from e
     except Exception as e:
