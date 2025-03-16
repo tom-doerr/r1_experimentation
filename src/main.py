@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator
-import shlex
-import subprocess
+from typing import Dict, Any, Generator
 import xml.etree.ElementTree as ET
 import litellm
+import subprocess
+import shlex
+from abc import ABC, abstractmethod
 from .isolation import IsolatedEnvironment, run_container
 
 
@@ -341,5 +341,9 @@ def python_reflection_test() -> str:
     # Test class inspection
     classes = inspect.getmembers(current_module, inspect.isclass)
     results.append(f"Found {len(classes)} classes")
+    
+    # Add specific function/class names
+    results.append(f"Functions: {[f[0] for f in functions]}")
+    results.append(f"Classes: {[c[0] for c in classes]}")
     
     return "\n".join(results)
