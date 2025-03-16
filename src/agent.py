@@ -1,6 +1,5 @@
-from typing import Dict, Any
-import xml.etree.ElementTree as ET
-from .main import parse_xml, litellm_completion, DEFAULT_MODEL, Tool
+from typing import Dict
+from .main import parse_xml, litellm_completion, DEFAULT_MODEL
 
 class Agent:
     """An agent that interacts with the user and maintains memory."""
@@ -20,7 +19,7 @@ class Agent:
         self.last_completion = litellm_completion(prompt=full_prompt, model=self.model)
         return self.last_completion
 
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         return parse_xml(xml_string)
 
 
