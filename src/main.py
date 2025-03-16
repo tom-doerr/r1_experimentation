@@ -5,7 +5,8 @@ import subprocess
 import shlex
 import litellm
 from .config import DEFAULT_MODEL, global_settings
-from .utils import normalize_model_name
+from .utils import normalize_model_name as _normalize_model_name
+from .agent import Agent
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
