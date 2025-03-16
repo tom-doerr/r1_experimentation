@@ -6,13 +6,6 @@ import subprocess
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
-litellm.model = FLASH  # Set the default model directly. Ensure this is used as the default.
-litellm.model_list = [{
-    "model_name": "default",
-    "litellm_params": {
-        "model": FLASH,
-    }
-}]
 
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
@@ -74,7 +67,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     return response.choices[0].message.content
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     for chunk in response:
         if 'content' in chunk['choices'][0]['delta']:
