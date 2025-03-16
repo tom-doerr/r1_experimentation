@@ -458,6 +458,8 @@ def _normalize_model_name(model: str) -> str:
         
     return f"openrouter/{model}"
 
+def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
+
 
 
 
