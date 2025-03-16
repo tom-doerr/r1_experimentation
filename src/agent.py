@@ -25,8 +25,8 @@ class Agent:
         self.model = model
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
-        self.memory: str = ""
-        self.last_completion: str = ""
+        self.memory: str = ""  # Stores conversation history
+        self.last_completion: str = ""  # Stores last generated response
         self._validate_net_worth()
 
 
