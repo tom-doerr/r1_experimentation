@@ -7,15 +7,12 @@ import litellm
 from .agent import Agent, AgentAssert
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
-from .utils import normalize_model_name
+from .utils import normalize_model_name, _normalize_model_name
 from .llm_utils import _escape_xml
 from .llm_utils import litellm_completion
 from .reflection import python_reflection_test
 from .interface import UserInterface
 from .envs import Env1, Env2
-from .reflection import python_reflection_test
-from .llm_utils import litellm_completion
-from .reflection import python_reflection_test
 
 
 
