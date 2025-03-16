@@ -1,3 +1,4 @@
+import litellm
 from .main import DEFAULT_MODEL, global_settings, _normalize_model_name, litellm_completion
 
 class Agent:
