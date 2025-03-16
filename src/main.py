@@ -1,10 +1,10 @@
 import shlex
 from typing import Dict, Any, List, Generator
+import shlex
+from typing import Dict, Any, List, Generator
 import subprocess
 from xml.etree.ElementTree import ParseError, ElementTree
 from xml.etree import ElementTree as ET
-import litellm
-
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
@@ -15,16 +15,14 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
-
         for child in root:
             if not len(child):
                 data[child.tag] = child.text or ""
-                continue
-
-            data[child.tag] = {
-                grandchild.tag: grandchild.text or ""
-                for grandchild in child
-            }
+            else:
+                data[child.tag] = {
+                    grandchild.tag: grandchild.text or ""
+                    for grandchild in child
+                }
     except ParseError as e:  # type: ignore
         return {"error": f"XML ParseError: {str(e)}"}
 
@@ -85,9 +83,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         return f"LiteLLMError in litellm_completion: {e}"
 
 
-def litellm_streaming(
-    prompt: str, model: str = FLASH, max_tokens: int = 100
-) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
     try:
         response = litellm.completion(
             model=model,
@@ -95,7 +91,7 @@ def litellm_streaming(
             stream=True,
             max_tokens=max_tokens,
         )
-        for chunk in response: # type: ignore
+        for chunk in response:  # type: ignore
             if (
                 chunk
                 and chunk["choices"]
