@@ -32,26 +32,6 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         return {}
 
 
-def litellm_completion(prompt: str, model: str = FLASH) -> str:
-    """Calls the LiteLLM completion API and returns the result."""
-    try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        return response.choices[0].message.content
-    except Exception as e:
-        return _handle_litellm_error(e, "litellm_completion")
-
-
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 10) -> Generator[str, None, None]:
-    """Calls the LiteLLM streaming API and yields the results."""
-    try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-        for chunk in response:
-            if 'choices' in chunk and len(chunk['choices']) > 0 and 'content' in chunk['choices'][0]['delta']:
-                yield chunk['choices'][0]['delta']['content']
-    except Exception as e:
-        yield _handle_litellm_error(e, "litellm_streaming")
-
-
 def python_reflection_testing() -> str:
     """Returns a string for testing purposes."""
     return "test_output_var"
