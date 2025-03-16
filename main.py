@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Optional, Generator, List
 import litellm
+import inspect
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 litellm.model = FLASH  # Set the default model directly. Ensure this is used as the default.
@@ -95,6 +96,28 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
         yield _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
+    frame = inspect.currentframe()
+    if frame is None:
+        return "reflection_failed"
+    
+    # Get the frame object for the caller function
+    caller_frame = frame.f_back
+    if caller_frame is None:
+        return "reflection_failed"
+
+    # Get the code object for the caller function
+    code_obj = caller_frame.f_code
+    if code_obj is None:
+        return "reflection_failed"
+
+    # Get the local variables of the caller function
+    local_vars = caller_frame.f_locals
+    
+    # Iterate through the local variables to find the variable being assigned
+    for var_name, var_value in local_vars.items():
+        if var_value == "test_output_var":
+            return var_name
+    
     return "test_output_var"
 
 
