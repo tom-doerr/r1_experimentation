@@ -53,15 +53,15 @@ class ShellCodeExecutor():
             return "Error: No command provided."
 
         command_name = command_parts[0]
-        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands: return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
+        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
+            return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
+        # Execute the command
         try:
             result: subprocess.CompletedProcess = subprocess.run(
                 command_parts, capture_output=True, text=True, check=True, timeout=10
             )
             return result.stdout
-        except subprocess.CalledProcessError as e:
-            return f"Error: {e.stderr}"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
