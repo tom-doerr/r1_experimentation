@@ -3,6 +3,7 @@ from abc import abstractmethod
 from .llm_utils import litellm_completion
 from .config import DEFAULT_MODEL
 from .interface import UserInterface
+from .interface import UserInterface
 
 class Agent:
     """Main agent class that handles interactions and commands."""
