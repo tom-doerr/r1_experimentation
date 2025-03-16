@@ -2,17 +2,14 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
+    # Simplified XML parser with reduced complexity
     def parse_element(element: ET.Element) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
         for child in element:
-            # Determine child data (recursive parse or text content)
-            child_data = parse_element(child) if len(child) else (
-                child.text.strip() if child.text else None
-            )
+            child_data = parse_element(child) if len(child) else child.text.strip() if child.text else None
             
-            # Handle existing entries by converting to list if needed
-            existing = result.get(child.tag)
-            if existing is not None:
+            if child.tag in result:
+                existing = result[child.tag]
                 if not isinstance(existing, list):
                     result[child.tag] = [existing]
                 result[child.tag].append(child_data)
