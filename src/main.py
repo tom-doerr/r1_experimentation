@@ -72,21 +72,21 @@ def litellm_completion(prompt: str, model: str) -> str:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
-def _extract_content_from_chunks(response: any) -> Generator[str, None, None]: # type: ignore
-    for chunk in response:
-        if chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]:
-            yield chunk["choices"][0]["delta"]["content"]
+def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
+    """Extracts content from response chunks."""
+    try:
+        for chunk in response:
+            if chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]:
+                yield chunk["choices"][0]["delta"]["content"]
+    except litellm.APIError as e:
+        print(f"LiteLLMError in _extract_content_from_chunks: {e}")
+        yield f"LiteLLMError: {e}"
 
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
     """Streams completion from LiteLLM."""
-
-    try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-        yield from _extract_content_from_chunks(response)
-    except litellm.APIError as e:
-        print(f"LiteLLMError in litellm_streaming: {e}")
-        yield f"LiteLLMError: {e}"
+    response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
+    yield from _extract_content_from_chunks(response)
 
 
 class Agent():
@@ -108,7 +108,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, replace: str) -> None:
         self.memory = replace # the search argument is not used, but could be used to only replace parts of the memory
 
 
@@ -125,8 +125,7 @@ class AgentAssert(Agent):
         parsed_reply = self._parse_xml(reply)
         if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
             return False
-        bool_value = self._parse_bool(parsed_reply["bool"])
-        return bool_value
+        return self._parse_bool(parsed_reply["bool"])
 
     def _parse_bool(self, bool_string: str) -> bool:
         """Parses a boolean string from XML to a boolean value."""
