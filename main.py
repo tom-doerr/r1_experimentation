@@ -10,7 +10,6 @@ litellm.model_list = [{
         "model": FLASH,
     }
 }]
-litellm.model = FLASH
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
@@ -26,10 +25,10 @@ def _parse_element(element: ET.Element) -> Dict[str, Optional[Any]]:
     for child in element:
         if len(child) > 0:
             child_data: Optional[Any] = _parse_element(child)
-        elif child.text:
+        elif child.text is not None:
             child_data: Optional[str] = child.text.strip()
         else:
-            child_data: Optional[Any] = None
+            child_data: None = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
@@ -47,12 +46,8 @@ def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
         if response and response.choices and response.choices[0].message:
             return response.choices[0].message.content or ""
         return ""
-    except litellm.LiteLLMError as e:
-        print(f"LiteLLMError during litellm completion: {type(e).__name__} - {e}")
-        return ""
     except Exception as e:
-        print(f"General error during litellm completion: {type(e).__name__} - {e}")
-        return ""
+        return _handle_litellm_error(e, "litellm completion")
 
 
 def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
@@ -82,12 +77,8 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                 else:
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
-    except litellm.LiteLLMError as e:
-        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
-        yield ""
     except Exception as e:
-        print(f"General error during litellm streaming: {type(e).__name__} - {e}")
-        yield ""
+        yield _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
     return "test_output_var"
@@ -138,3 +129,9 @@ class AgentAssert:
             bool_value: str = parsed['bool']
             return bool_value.lower() == 'true'
         return False
+def _handle_litellm_error(e: Exception, function_name: str) -> str:
+    if isinstance(e, litellm.LiteLLMError):
+        print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
+    else:
+        print(f"General error during {function_name}: {type(e).__name__} - {e}")
+    return ""
