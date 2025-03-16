@@ -3,7 +3,6 @@ from abc import abstractmethod
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
-from .reflection import python_reflection_test
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
@@ -255,6 +254,13 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 
+
+def python_reflection_test(obj: object) -> str:
+    """Inspect an object and return its type information."""
+    if obj is None:
+        return "None"
+    
+    return f"{type(obj).__name__}: {dir(obj)}"
 
 def _escape_xml(text: str) -> str:
     """Escape XML special characters."""

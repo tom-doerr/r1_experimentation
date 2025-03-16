@@ -16,7 +16,6 @@ from .main import (
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 from .interface import UserInterface
-from .isolation import IsolatedEnvironment
 
 __all__ = [
     "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
