@@ -1,9 +1,18 @@
 import os
-import sys
+import os
 
-import src
-from src import *
-from src.main import *
+FLASH = 'openrouter/google/gemini-2.0-flash-001'  
+R1 = 'deepseek/deepseek-reasoner'
+OR1 = 'openrouter/deepseek/deepseek-r1'
+MODEL = FLASH
+
+xml_data = '<response><message>hello</message></response>'
+from src.main import parse_xml, litellm_completion, litellm_streaming, Agent, AgentAssert, ShellCodeExecutor
+
+parsed_data = parse_xml(xml_data)
+
+message = parsed_data['message']
+print("message:", message)
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
