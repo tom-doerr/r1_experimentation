@@ -1,7 +1,7 @@
 import shlex  # type: ignore
 from typing import Dict, List, Generator
 import subprocess
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElementTree
 import litellm
 from . import Tool
 
@@ -13,16 +13,16 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    try: # type: ignore
+    try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for element in root:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = element.text or "" # type: ignore
+                data[element.tag] = element.text or ""
         return data
-    except ET.ParseError as e:
+    except ElementTree.ParseError as e:
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
 
@@ -133,16 +133,17 @@ class Agent():
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""
-
     def __init__(self, model: str = DEFAULT_MODEL):
         super().__init__(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply: str = self.reply(statement)
-        parsed_reply = self._parse_xml(reply)
+        parsed_reply: Dict[str, str | Dict[str, str]] = self._parse_xml(reply)
         if not parsed_reply:
             return False
         bool_value: str = parsed_reply.get("bool", "false")
         if isinstance(bool_value, str):
             return bool_value.lower() == "true"
         return bool(bool_value)
+
+ET = ElementTree
