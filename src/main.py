@@ -4,7 +4,7 @@ from typing import Any, Dict, Generator, List, Optional
 import xml.etree.ElementTree as ET
 import litellm
 
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Default model for all operations
 from typing import Optional
 
 
@@ -168,7 +168,13 @@ import subprocess
 from typing import Generator, Optional
 import litellm
 
-def parse_xml(xml_string: str) -> Dict[str, Any]:
+def parse_xml(xml_string: str) -> dict:
+    """Parse XML string into a dictionary"""
+    try:
+        root = ET.fromstring(xml_string)
+        return _parse_xml_element(root)
+    except ET.ParseError as e:
+        return {"error": str(e)}
     """Parse XML string into a dictionary structure"""
     try:
         root = ET.fromstring(xml_string)
@@ -291,7 +297,9 @@ class AgentAssert:
     def __init__(self, model: str):
         self.agent = Agent(model)
 
-    def _parse_xml(self, xml_string: str) -> bool:
+    def _parse_xml(self, xml_string: str) -> dict:
+        """Parse XML response from model"""
+        return parse_xml(xml_string)
         root = ET.fromstring(xml_string)
         bool_element = root.find('bool')
         return bool_element.text.strip().lower() == 'true' if bool_element is not None else False
