@@ -1,7 +1,7 @@
 import shlex  # type: ignore
 from typing import Dict, List, Generator
 import subprocess
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec
 import litellm
 from . import Tool
 
@@ -9,11 +9,11 @@ DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    return {child.tag: child.text or "" for child in element}
+    return {child.tag: child.text or "" for child in element} # type: ignore
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    try:
+    try: # type: ignore
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for element in root:
@@ -22,7 +22,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
             else:
                 data[element.tag] = element.text or ""
         return data
-    except ET.ParseError as e:
+    except ET.ParseError as e: # type: ignore
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
 

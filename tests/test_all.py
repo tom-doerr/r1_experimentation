@@ -2,8 +2,7 @@ import os
 import sys
 
 import src
-from src import *
-from src.main import *
+from src.main import parse_xml, litellm_completion, litellm_streaming, python_reflection_testing, test_env_1, Agent, AgentAssert, ShellCodeExecutor
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
