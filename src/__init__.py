@@ -1,6 +1,7 @@
-from .agent import Agent, AgentAssert, ConcreteAgent
 from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
+from .interface import UserInterface, ConsoleInterface
+from .agent import Agent, AgentAssert, ConcreteAgent
 from .main import (
     parse_xml,
     litellm_completion,

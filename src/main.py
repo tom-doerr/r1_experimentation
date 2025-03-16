@@ -31,6 +31,8 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     """
     if not isinstance(xml_string, str) or not xml_string.strip():
         raise ValueError("Input must be a non-empty string")
+    if '<?xml' not in xml_string[:100].lower():
+        raise ValueError("Missing XML declaration")
     
     try:
         def parse_element(element):

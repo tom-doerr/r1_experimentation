@@ -39,7 +39,6 @@ class Tool(Protocol):
         Returns:
             str: The command output
         """
-        return self.run(command)
         
     @abstractmethod
     def __repr__(self) -> str:

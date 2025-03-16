@@ -6,6 +6,9 @@ if TYPE_CHECKING:
 class UserInterface:
     """Concrete implementation of user interface."""
     
+    def __init__(self):
+        self.running = False
+        
     def display_message(self, message: str) -> None:
         """Display a message to the user"""
         print(message)

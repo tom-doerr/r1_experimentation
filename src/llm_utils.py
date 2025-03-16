@@ -6,9 +6,6 @@ def _escape_xml(content: str) -> str:
     """Escape XML special characters."""
     return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-
-
-
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Stream completion response using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():

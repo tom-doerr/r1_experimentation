@@ -54,7 +54,7 @@ class ConcreteAgent(Agent):
 class AgentAssert(Agent):
     def __repr__(self) -> str:
         return "AgentAssert()"
-
+    
     def __call__(self, input_text: str) -> str:
         if not isinstance(input_text, str) or not input_text.strip():
             raise ValueError("Input must be a non-empty string")
