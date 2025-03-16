@@ -91,10 +91,7 @@ class Agent:
 
     def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory."""
-        if search and replace:
-            self.memory = self.memory.replace(search, replace)
-        else:
-            self.memory = replace
+        self.memory = replace
 
 
 class AgentAssert(Tool):
@@ -164,56 +161,9 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
         error_message = _handle_litellm_error(e, "litellm streaming")
         yield error_message
 
-def python_reflection_testing() -> str:
-    return 'test_output_var'
-
-
-def test_env_1(input_str: str) -> int:
-    if 'aaa' in input_str:
-        return 3
-    return 4
-
-
-class Agent:
-    def __init__(self, model: str = FLASH) -> None:
-        self.model: str = model
-        self.memory: str = ""
-        self.last_completion: str = ""
-
-    def reply(self, prompt: str) -> str:
-        self.last_completion: str = litellm_completion(prompt, model=self.model)
-        return self.last_completion
-
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        return parse_xml(xml_string)
-
-    def _update_memory(self, search: str, replace: str) -> None:
-        if search and replace:
-            self.memory = self.memory.replace(search, replace)
-
-
-class AgentAssert:
-    def __init__(self, model: str = FLASH) -> None:
-        self.agent: Agent = Agent(model=model)
-
-    def __call__(self, prompt: str) -> bool:
-        response: str = self.agent.reply(prompt)
-        parsed: Dict[str, Any] = self.agent._parse_xml(response)
-        if 'message' in parsed:
-            message: str = parsed['message']
-            return "match specifications" not in message
-        return True
 
 import shlex
-import shlex  # Standard library imports
 import subprocess
-
-class Tool(object):
-    pass
-
-class ShellCodeExecutor(Tool):
-    blacklisted_commands: List[str] = ['rm', 'cat', 'mv', 'cp']
-    whitelisted_commands: List[str] = ["ls", "date"]
 
     def execute(self, command: str) -> str:
         command_parts = shlex.split(command)
