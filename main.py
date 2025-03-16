@@ -4,7 +4,7 @@ import litellm
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
-def parse_xml(xml_string: str):
+def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
         root = ET.fromstring(xml_string)
         return _parse_element(root)
@@ -19,7 +19,7 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
         result[child.tag] = child_data
     return result
 
-def litellm_completion(prompt: str, model: str):
+def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
     messages = [{"role": "user", "content": prompt}]
     try:
@@ -35,7 +35,7 @@ def litellm_completion(prompt: str, model: str):
         return ""
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None):
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> str:
     messages = [{"role": "user", "content": prompt}]
     kwargs = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
@@ -60,10 +60,10 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         print(f"General error during litellm streaming: {type(e).__name__} - {e}")
         yield ""
 
-def python_reflection_testing():
+def python_reflection_testing() -> str:
     return "test_output_var"
 
-def test_env_1(input_str: str):
+def test_env_1(input_str: str) -> int:
     if 'aaa' in input_str:
         return 3
     return 4
@@ -81,14 +81,8 @@ class Agent:
     def _parse_xml(self, xml_string: str):
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str):
+    def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace if replace is not None else ""
-
-    def _parse_xml(self, xml_string: str):
-        parsed = parse_xml(xml_string)
-        if parsed and 'memory' in parsed:
-            return parsed
-        return parsed
 
 class AgentAssert:
     """Assertion agent for testing."""
