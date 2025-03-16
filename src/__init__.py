@@ -6,16 +6,29 @@ from .main import (
     litellm_completion,
     litellm_streaming,
     IsolatedEnvironment,
-    run_container,
-    UserInterface
+    run_container
 )
-from .interface import UserInterface, ConsoleInterface
+from .interface import ConsoleInterface
 from .tools import Tool, ShellCodeExecutor
 from .envs import Env1, Env2
+from .utils import normalize_model_name
 
 __all__ = [
-    "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
-    "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "UserInterface", "ConsoleInterface",
-    "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2", "normalize_model_name"
+    "parse_xml", 
+    "Tool", 
+    "ShellCodeExecutor", 
+    "python_reflection_test",
+    "litellm_completion", 
+    "litellm_streaming", 
+    "DEFAULT_MODEL", 
+    "global_settings",
+    "IsolatedEnvironment", 
+    "run_container", 
+    "ConsoleInterface",
+    "Agent", 
+    "AgentAssert", 
+    "ConcreteAgent", 
+    "Env1", 
+    "Env2", 
+    "normalize_model_name"
 ]
