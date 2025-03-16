@@ -1,4 +1,3 @@
-import subprocess
 
 class Env1:
     """Environment that counts target characters with penalty after threshold."""
