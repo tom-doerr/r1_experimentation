@@ -70,7 +70,7 @@ class ShellCodeExecutor(Tool):
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    try: # type: ignore
+    try:
         response = litellm.completion(
             model=model, messages=[{"role": "user", "content": prompt}],
         )
@@ -92,7 +92,7 @@ def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
     """Streams responses from LiteLLM."""
-    try:  # type: ignore
+    try:
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
@@ -143,7 +143,7 @@ class AgentAssert(Agent):
     """An agent that asserts statements."""
 
     def __init__(self, model: str = FLASH):
-        self.agent = Agent(model=model)
+        super().__init__(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
