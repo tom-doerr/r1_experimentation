@@ -243,7 +243,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     )
     return response.choices[0].message.content
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 20) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]: # streams the completion from LiteLLM
     """Stream LLM response"""
     response = litellm.completion(
         model=model,
