@@ -13,7 +13,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    """Parses an XML string and returns a dictionary."""
+    # Parses an XML string and returns a dictionary.
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {} # initialize data
@@ -26,7 +26,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
 
 
 def python_reflection_testing() -> str:
-    """Returns a test string."""
+    # Returns a test string.
     return "test_output_var"
 
 
@@ -51,7 +51,7 @@ class ShellCodeExecutor(Tool):
         if not command:
             return "No command provided."
         command_parts: List[str] = shlex.split(command)
-        if not command_parts: # check if command_parts is empty
+        if not command_parts:
             return "No command provided."
         command_name = command_parts[0]
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
@@ -107,8 +107,8 @@ class Agent(Tool):
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
-    
-    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+     
+    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         """Parses an XML string and returns a dictionary."""
         try:
             root = ET.fromstring(xml_string)
@@ -144,7 +144,7 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        parsed_reply = self._parse_xml(reply)
+        parsed_reply = self.parse_xml(reply)
         if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value

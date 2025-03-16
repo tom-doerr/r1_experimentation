@@ -58,7 +58,7 @@ print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-parsed_data = agent._parse_xml(xml_data)
+parsed_data = agent.parse_xml(xml_data)
 assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
@@ -75,7 +75,7 @@ assert agent.memory == 'The user wrote just hi.'
 agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
-bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+bool_val = agent_assert.parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
 assert bool_val == False
 
 
