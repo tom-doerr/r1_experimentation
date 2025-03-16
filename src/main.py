@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generator
+from typing import Generator, Any, Dict
 import inspect
 import shlex
 import subprocess
@@ -18,6 +18,40 @@ global_settings = {
 }
 
 
+
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - 'type': The object's type
+            - 'attributes': Dictionary of instance attributes
+            - 'methods': Dictionary of method signatures
+    """
+    if obj is None:
+        raise ValueError("Object cannot be None")
+        
+    result = {
+        "type": str(type(obj)),
+        "attributes": {},
+        "methods": {}
+    }
+    
+    # Get attributes
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(type(value))
+        
+    # Get methods
+    for name, method in inspect.getmembers(obj, inspect.ismethod):
+        result["methods"][name] = {
+            "parameters": str(inspect.signature(method)),
+            "docstring": method.__doc__ or ""
+        }
+        
+    return result
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
