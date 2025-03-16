@@ -39,19 +39,17 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 # Simplified LiteLLM implementations
 def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001') -> str:
     """LiteLLM completion implementation"""
-    import litellm
     response = litellm.completion(
         model=model,
-        messages=[{"content": prompt, "role": "user"}]
+        messages=[{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
 
 def litellm_streaming(prompt: str) -> Iterator[str]:
     """LiteLLM streaming implementation"""
-    import litellm
     response = litellm.completion(
         model='openrouter/google/gemini-2.0-flash-001',
-        messages=[{"content": prompt, "role": "user"}],
+        messages=[{"role": "user", "content": prompt}],
         stream=True
     )
     for chunk in response:
@@ -77,8 +75,8 @@ class Agent:
         return self.model
 
 def test_env_1(input_data: str) -> int:
-    # Simple test environment that returns count of 'a' characters
-    return input_data.count('a')  # 'aaa' has 3, 'aabbjadfa' has 4 a's
+    # Returns count of 'a's in input
+    return input_data.count('a')
 
 if __name__ == "__main__":
     # Test the XML parser
