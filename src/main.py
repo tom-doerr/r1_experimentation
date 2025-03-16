@@ -68,7 +68,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     try:
         response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
-    except litellm.LiteLLMError as e:
+    except Exception as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
@@ -87,7 +87,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
             max_tokens=max_tokens,
         )
         yield from _extract_content_from_chunks(response)  # type: ignore
-    except litellm.LiteLLMError as e:
+    except Exception as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
 
 
