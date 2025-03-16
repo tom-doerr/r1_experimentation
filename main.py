@@ -42,11 +42,8 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         if hasattr(response, 'choices'):
             for choice in response.choices:
                 if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
-                    content = choice.delta.content
-                    if content:
-                        yield content
-                    else:
-                        yield ""  # Handle None content
+                    content = choice.delta.content or ""  # Handle None content
+                    yield content
                 else:
                     print(f"Unexpected choice format: {choice}")
                     yield ""
