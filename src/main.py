@@ -101,7 +101,7 @@ def litellm_streaming(
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except Exception as e:
+    except litellm.LiteLLMError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
 
 
