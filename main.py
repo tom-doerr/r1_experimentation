@@ -3,7 +3,6 @@ from typing import Dict, Any, Generator, Optional
 import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """XML parser with nested structure support"""
     try:
         root = ET.fromstring(xml_string)
         return _parse_element(root)
@@ -38,12 +37,7 @@ from typing import Dict, Any, Generator, Optional
 import litellm
 
 
-from typing import Dict, Any, Generator, Optional
-import litellm
-
-
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
-    """Streams responses from a litellm model."""
     messages = [{"role": "user", "content": prompt}]
     arguments = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
@@ -51,9 +45,13 @@ def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None)
     try:
         response = litellm.completion(**arguments)
         for chunk in response:
-            for choice in chunk.choices:
-                if choice.delta and choice.delta.content:
-                    yield choice.delta.content
+            if hasattr(response, 'choices'):
+                for choice in response.choices:
+                    if choice.delta and choice.delta.content:
+                        yield choice.delta.content
+            else:
+                print("Unexpected response format: ", response)
+                yield ""
     except Exception as e:
         print(f"Error during litellm streaming: {type(e).__name__} - {e}")
         yield ""
