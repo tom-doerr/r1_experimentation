@@ -147,9 +147,10 @@ class ShellCodeExecutor(Tool):
         self._validate_command(command)
             
         try:
+            # Use shlex to properly handle quoted arguments
+            import shlex
             result = subprocess.run(
-                command,
-                shell=True,
+                shlex.split(command),  # Properly handle quoted arguments
                 capture_output=True,
                 text=True,
                 check=True,
