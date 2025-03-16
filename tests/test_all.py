@@ -1,7 +1,7 @@
 import os
 import sys
 
-from src.main import *
+from src.main import parse_xml, python_reflection_testing, test_env_1, Tool, ShellCodeExecutor, litellm_completion, litellm_streaming, Agent, AgentAssert
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -12,13 +12,10 @@ MODEL = FLASH
 xml_data = '<response><message>hello</message></response>'
 parsed_data = parse_xml(xml_data)
 
-message = parsed_data['message']
-print("message:", message)
+print("message:", parsed_data['message'])
 
-# set flash as the default model
-# don't mock
 completion = litellm_completion('hi', model=MODEL)
-print("completion:", completion)
+print("completion:", completion) # type: ignore
 
 reply_generator = litellm_streaming('hi')
 print("reply_generator:", reply_generator)

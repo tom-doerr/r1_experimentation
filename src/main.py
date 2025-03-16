@@ -1,7 +1,7 @@
-import shlex  # type: ignore
-from typing import Dict, List, Generator
+import shlex
 import subprocess
 import xml.etree.ElementTree as ET
+from typing import Dict, List, Generator
 import litellm
 
 DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
@@ -98,7 +98,7 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
     yield from _extract_content_from_chunks(response)
 
 
-class Agent():
+class Agent:
     """An agent that interacts with the user and maintains memory."""
 
     memory: str = ""
