@@ -48,9 +48,10 @@ class ShellCodeExecutor:
         if not command:
             return "Error: No command provided."
 
+
         command_parts = shlex.split(command)
-        if not command_parts or command_parts[0] not in self.whitelisted_commands or command_parts[0] in self.blacklisted_commands:
-            return "Error: No command provided."
+        if not command_parts or command_parts[0] not in self.whitelisted_commands:
+            return f"Error: Command {command_parts[0]} is not whitelisted."
 
         try:
             result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
@@ -111,7 +112,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None: # the search parameter is not used
         self.memory = replace # the search parameter is not used
 
 
@@ -122,10 +123,11 @@ class AgentAssert(Agent):
         super().__init__(model=model)
 
         self.agent = Agent(model=model)
+
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
-        if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
+        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str):
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False

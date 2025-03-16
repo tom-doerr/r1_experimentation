@@ -1,13 +1,12 @@
 import os
 import sys
+import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import src
-from src import *
-from src.main import *
 
-
-FLASH = 'openrouter/google/gemini-2.0-flash-001'  
+FLASH = 'openrouter/google/gemini-2.0-flash-001'
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH
@@ -80,7 +79,7 @@ assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
-print("return_val:", return_val)
+print("return_val:", return_val) # type: ignore
 assert type(return_val) == bool
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
