@@ -45,7 +45,7 @@ class Env1:
 
 
 class Env2:
-    """Environment that counts characters up to a maximum limit."""
+    """Environment that counts characters with length-based scoring."""
     
     def __init__(self, max_char_count: int = 5):
         if not isinstance(max_char_count, int) or max_char_count <= 0:
@@ -53,19 +53,26 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Count characters up to max limit.
+        """Calculate score based on string length.
         
         Args:
             input_string: String to evaluate
             
         Returns:
-            int: 0 if length <= max_char_count, else 0
+            int: Score calculated as:
+                - string length if <= max_char_count
+                - max_char_count minus (length - max_char_count) if longer
+                
+        Raises:
+            ValueError: If input_string is empty
         """
-        if not isinstance(input_string, str):
-            raise ValueError("input_string must be a string")
-        if not input_string:
-            return 0  # Return 0 for empty string
-        return min(len(input_string), self.max_char_count) if len(input_string) > self.max_char_count else 0
+        if not isinstance(input_string, str) or not input_string:
+            raise ValueError("input_string must be a non-empty string")
+            
+        length = len(input_string)
+        if length <= self.max_char_count:
+            return length
+        return self.max_char_count - (length - self.max_char_count)
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
