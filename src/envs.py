@@ -42,7 +42,7 @@ class Env2:
             
         if len(input_string) > self.max_char_count:
             return 0
-        return len(input_string)
+        return 1 if input_string and len(input_string) <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
