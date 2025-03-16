@@ -58,7 +58,6 @@ class ShellCodeExecutor(Tool):
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is not whitelisted or is blacklisted."
 
-    def _execute_command(self, command_parts: List[str]) -> str:
         try:
             result = subprocess.run(
                 command_parts, capture_output=True, text=True, check=True, timeout=10
@@ -146,9 +145,8 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        parsed_reply = self._parse_xml(reply)
+        parsed_reply = self.parse_xml(reply)
         if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
-        # Handle the case where 'bool' is not in the response or the response is not a dict
         return False
