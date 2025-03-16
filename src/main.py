@@ -101,7 +101,7 @@ class Tool(Protocol):
         Returns:
             str: The command output
         """
-        ...
+        raise NotImplementedError("Subclasses must implement __call__()")
         
     @abstractmethod
     def __repr__(self) -> str:
@@ -110,7 +110,7 @@ class Tool(Protocol):
         Returns:
             str: The string representation
         """
-        ...
+        raise NotImplementedError("Subclasses must implement __repr__()")
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
