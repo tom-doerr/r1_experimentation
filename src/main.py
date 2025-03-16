@@ -122,6 +122,10 @@ class Agent():
             return False
         return self._parse_bool(bool_value)
 
+# Create a Tool class if it doesn't exist in src.main
+class Tool:
+    pass
+
     def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
 
