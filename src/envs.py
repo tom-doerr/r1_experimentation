@@ -35,7 +35,7 @@ class Env1:
             
         # No targets found
         if len(input_string) >= self.char_count_penalty_start:
-            return -2  # Changed to match test expectation
+            return -2  # Changed back to -2 to match test expectation
         return 0
 
     def __repr__(self) -> str:
