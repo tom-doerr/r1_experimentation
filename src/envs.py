@@ -42,9 +42,14 @@ class Env2:
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
             
+        # Return 0 if string exceeds max length or has consecutive duplicates
         if len(input_string) > self.max_char_count:
             return 0
-        return 1 if input_string and len(input_string) <= self.max_char_count else 0
+        if len(input_string) >= 2 and any(input_string[i] == input_string[i+1] 
+               for i in range(len(input_string)-1)):
+            return 0
+            
+        return 1 if input_string else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
