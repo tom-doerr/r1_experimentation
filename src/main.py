@@ -209,6 +209,39 @@ class ShellCodeExecutor(Tool):
             raise RuntimeError(f"Error executing command: {e}") from e
 
 
+def _normalize_model_name(model: str) -> str:
+    """Normalize model name to include proper provider prefix.
+    
+    Args:
+        model: Raw model name string
+        
+    Returns:
+        Normalized model name with openrouter/ prefix
+    """
+    if model.startswith('openrouter/'):
+        return model
+    if '/' in model:
+        return f'openrouter/{model}'
+    return f'openrouter/{model}'
+
+def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
+    """Extracts content from response chunks."""
+    try:
+        for chunk in response:
+            if not chunk or not isinstance(chunk, dict):
+                continue
+            if "choices" not in chunk or not chunk["choices"]:
+                continue
+            if "delta" not in chunk["choices"][0]:
+                continue
+            if "content" not in chunk["choices"][0]["delta"]:
+                continue
+            content = chunk["choices"][0]["delta"]["content"]
+            if content:  # Only yield non-empty content
+                yield content
+    except Exception as e:
+        raise RuntimeError(f"Error extracting content: {e}") from e
+
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Generate completion using LiteLLM API with robust error handling."""
     if not isinstance(prompt, str) or not prompt.strip():
@@ -231,6 +264,35 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             raise RuntimeError("No response from API")
         
         return response.choices[0].message.content
+    except litellm.exceptions.BadRequestError as e:
+        if "not a valid model ID" in str(e):
+            raise ValueError(f"Invalid model: {model}") from e
+        raise RuntimeError(f"Bad request: {e}") from e
+    except litellm.APIError as e:
+        raise RuntimeError(f"API Error: {e}") from e
+    except Exception as e:
+        raise RuntimeError(f"Unexpected error: {e}") from e
+
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
+    """Streaming version of litellm_completion that yields chunks of text."""
+    if not isinstance(prompt, str) or not prompt.strip():
+        raise ValueError("Prompt must be a non-empty string")
+    if not isinstance(model, str) or not model.strip():
+        raise ValueError("Model must be a non-empty string")
+    if not isinstance(max_tokens, int) or max_tokens <= 0:
+        raise ValueError("max_tokens must be a positive integer")
+        
+    model = _normalize_model_name(model)
+        
+    try:
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+            max_tokens=max_tokens,
+            temperature=0.7
+        )
+        yield from _extract_content_from_chunks(response)
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
