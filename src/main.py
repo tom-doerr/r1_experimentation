@@ -329,6 +329,11 @@ def _execute_command(command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error executing command: {e}") from e
 
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities by inspecting the Agent class."""
+    from .agent import Agent
+    return str(inspect.getmembers(Agent))
+
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
     
