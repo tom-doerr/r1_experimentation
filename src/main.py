@@ -2,6 +2,8 @@ from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
 import xml.etree.ElementTree as ET
 import litellm
+import subprocess
+import shlex
 from .constants import DEFAULT_MODEL, global_settings, _normalize_model_name
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2

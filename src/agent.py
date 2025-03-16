@@ -12,7 +12,7 @@ class Agent:
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
-        self.model = _normalize_model_name(model)
+        self.model = normalize_model_name(model)
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory: str = ""
