@@ -15,21 +15,6 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not isinstance(settings, dict):
         raise TypeError("settings must be a dictionary")
-    if not all(key in settings for key in required_keys):
-        raise ValueError(f"settings must contain all required keys: {required_keys}")
-    if not all(isinstance(v, (int, float)) for v in settings.values()):
-        raise TypeError("All settings values must be numeric")
-
-global_settings: Dict[str, float] = {
-    'starting_cash': 1000.0,
-    'max_net_worth': 10000.0,
-    'min_net_worth': 0.0,
-    'cash_penalty': 0.1,
-    'initial_net_worth': 1000.0
-}
-
-# Validate settings immediately after definition
-_validate_global_settings(global_settings)
 
 def _parse_xml_value(element: ET.Element) -> str | bool:
     """Parse XML element value."""
@@ -397,37 +382,6 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
     except Exception as e:
         raise RuntimeError(f"Streaming failed: {e}") from e
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods.
-    
-    Args:
-        obj: Any Python object to inspect
-        
-    Returns:
-        Dictionary containing:
-            - 'type': The object's type
-            - 'attributes': Dictionary of instance attributes
-            - 'methods': List of method names
-    """
-    if obj is None:
-        raise ValueError("Object cannot be None")
-        
-    result = {
-        'type': str(type(obj)),
-        'attributes': {},
-        'methods': []
-    }
-    
-    # Get attributes
-    for name, value in vars(obj).items():
-        result['attributes'][name] = str(value)
-        
-    # Get methods
-    for name in dir(obj):
-        if callable(getattr(obj, name)) and not name.startswith('__'):
-            result['methods'].append(name)
-            
-    return result
 
 def _execute_command(command: str) -> str:
     """Execute a shell command safely with validation.
