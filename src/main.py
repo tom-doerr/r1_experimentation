@@ -229,38 +229,6 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
             - methods: List of method names
     """
     if obj is None:
-        raise ValueError("Cannot inspect None")
-        
-    result = {
-        'type': str(type(obj)),
-        'attributes': {},
-        'methods': []
-    }
-    
-    # Get instance attributes
-    for name, value in vars(obj).items():
-        result['attributes'][name] = str(value)
-        
-    # Get methods
-    for name in dir(obj):
-        if callable(getattr(obj, name)) and not name.startswith('_'):
-            result['methods'].append(name)
-            
-    return result
-
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods.
-    
-    Args:
-        obj: Any Python object to inspect
-        
-    Returns:
-        Dictionary containing:
-            - type: The object's type
-            - attributes: Dictionary of instance attributes
-            - methods: List of method names
-    """
-    if obj is None:
         raise ValueError("Cannot inspect None object")
         
     result = {
@@ -275,6 +243,10 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
         
     # Get methods
     for name, member in inspect.getmembers(obj):
+        if inspect.ismethod(member) or inspect.isfunction(member):
+            result["methods"].append(name)
+            
+    return result
         if inspect.ismethod(member) or inspect.isfunction(member):
             result["methods"].append(name)
             
