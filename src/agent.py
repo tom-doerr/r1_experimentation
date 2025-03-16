@@ -54,6 +54,25 @@ class Agent(ABC):
             raise AssertionError(f"Condition not true: {message}")
 
 
+class AgentAssert:
+    """Utility class for agent assertions and validation."""
+    
+    @staticmethod
+    def validate_interface(interface: Any) -> None:
+        """Validate that interface implements UserInterface protocol."""
+        if not hasattr(interface, 'display_message') or \
+           not hasattr(interface, 'display_error') or \
+           not hasattr(interface, 'get_input'):
+            raise TypeError("Interface must implement UserInterface protocol")
+
+    @staticmethod
+    def validate_model(model: str) -> None:
+        """Validate model name format."""
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("Model must be a non-empty string")
+        if "/" not in model:
+            raise ValueError("Model must be in provider/model format")
+
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
