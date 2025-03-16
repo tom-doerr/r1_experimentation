@@ -33,11 +33,13 @@ class Agent(ABC):
             raise AssertionError(f"Condition not true: {message}")
 
 
-class ConcreteAgent(Agent):
+class Agent(ABC):
     """Concrete agent implementation."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        super().__init__(interface, model, max_tokens)
+        self.interface = interface
+        self.model = model
+        self.max_tokens = max_tokens
         
     def __call__(self, input_text: str) -> str:
         """Handle input with simple pattern matching."""
@@ -52,5 +54,5 @@ class ConcreteAgent(Agent):
         return "I'm not sure how to respond to that."
 
     def __repr__(self) -> str:
-        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens})"
+        return f"Agent(model={self.model!r}, max_tokens={self.max_tokens})"
 
