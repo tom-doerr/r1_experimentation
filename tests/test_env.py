@@ -1,5 +1,5 @@
 import pytest
-from src.envs import *
+from src.main import Env1
 
 
 def test_env_1():
