@@ -135,7 +135,6 @@ class ShellCodeExecutor(Tool):
     def run(self, command: str) -> str:
         """Execute a shell command with strict validation."""
         self._validate_command(command)
-            
         try:
             result = subprocess.run(
                 shlex.split(command),
