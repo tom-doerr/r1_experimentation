@@ -1,7 +1,6 @@
-from typing import Any, Optional
-from abc import ABC, abstractmethod
+from typing import Any
+from abc import abstractmethod
 from .config import DEFAULT_MODEL, global_settings
-from .interface import UserInterface, ConsoleInterface
 
 
 class Agent:
