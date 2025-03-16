@@ -107,7 +107,7 @@ class Agent:
     def _update_memory(self, search: str, replace: str) -> None:
         if search and search in self.memory:
             self.memory = self.memory.replace(search, replace)
-        else:
+        elif replace:
             self.memory += f"\n{replace}"
 
 
