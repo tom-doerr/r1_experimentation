@@ -8,14 +8,19 @@ DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    """Parses a single XML element and returns a dictionary of its children."""
-    return {child.tag: child.text or "" for child in element if child.tag is not None} # type: ignore
+    return {child.tag: child.text or "" for child in element if child.tag is not None}
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     try:
         root = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root if element.tag is not None}
+        data: Dict[str, str | Dict[str, str]] = {}
+        for element in root:
+            if element.tag is not None:
+                if list(element):
+                    data[element.tag] = _parse_xml_element(element)
+                else:
+                    data[element.tag] = element.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
