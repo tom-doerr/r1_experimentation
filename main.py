@@ -76,6 +76,13 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                 ):
                     content: str = chunk['choices'][0]['delta']['content']
                     yield content
+                elif (
+                    chunk.get('choices')
+                    and len(chunk['choices']) > 0
+                    and chunk['choices'][0]['delta'].get('reasoning_content')
+                ):
+                    content: str = chunk['choices'][0]['delta']['reasoning_content']
+                    yield content
                 else:
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
