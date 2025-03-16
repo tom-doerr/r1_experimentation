@@ -201,6 +201,8 @@ def _normalize_model_name(model: str) -> str:
         return model
     if model == 'deepseek':
         return 'deepseek/deepseek-chat'
+    if model == 'flash':
+        return 'openrouter/google/gemini-2.0-flash-001'
     if '/' in model:
         return f'openrouter/{model}'
     return f'openrouter/{model}'
