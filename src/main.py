@@ -73,11 +73,11 @@ def litellm_completion(prompt: str, model: str) -> str:
 
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        if response.choices and response.choices[0].message and response.choices[0].message.content:
-            return response.choices[0].message.content
-        return "Error: No completion found."
     except litellm.LiteLLMError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
+    if response.choices and response.choices[0].message and response.choices[0].message.content:
+        return response.choices[0].message.content
+    return "Error: No completion found."
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
