@@ -102,11 +102,12 @@ class Agent(Tool):
         except Exception as e:
             return _handle_litellm_error(e, "Agent.reply")
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:  # type: ignore
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None:  # type: ignore
         self.memory = replace
+
 class AgentAssert(Tool):
     agent: "Agent"
 
