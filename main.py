@@ -59,8 +59,6 @@ def litellm_completion(prompt: str, model: str = FLASH) -> str:
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
-    """Uses the litellm library to stream a completion.
-    """
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
