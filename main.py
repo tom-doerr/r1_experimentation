@@ -27,7 +27,7 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
     if element.text and element.text.strip() and not result:
         result['message'] = element.text.strip()
 
-    return {element.tag: result} if result else element.text.strip() if element.text else {}
+    return {element.tag: result} if result else element.text.strip() if element.text else None
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
