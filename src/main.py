@@ -1,8 +1,7 @@
-from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
-import litellm
 import subprocess
+import litellm
 
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Single definition
