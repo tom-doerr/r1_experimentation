@@ -23,18 +23,20 @@ class Agent:
     def __repr__(self) -> str:
         return f"Agent(model={self.model})"
 
-class AgentAssert:
+class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
     
-    def __init__(self, model: str = DEFAULT_MODEL):
-        self.model = model
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+        super().__init__(interface, model)
         
-    def __call__(self, input: str) -> str:
+    def __call__(self, input_text: str) -> str:
         """Process input using LLM and return response."""
         try:
-            return litellm_completion(input, self.model)
+            response = litellm_completion(input_text, self.model)
+            return response
         except Exception as e:
-            return f"Error: {str(e)}"
+            self.interface.display_error(f"Error: {str(e)}")
+            return "Sorry, I encountered an error."
             
     def __repr__(self) -> str:
         return f"AgentAssert(model={self.model})"
