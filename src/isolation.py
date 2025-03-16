@@ -2,6 +2,20 @@ import subprocess
 
 def _run_subprocess(cmd, timeout: int, shell: bool = False) -> str:
     """Helper function to run subprocess commands with consistent error handling."""
+    """Helper function to run subprocess commands with consistent error handling.
+    
+    Args:
+        cmd: Command to execute as list of strings
+        timeout: Maximum execution time in seconds
+        shell: Whether to use shell execution
+        
+    Returns:
+        str: Command output
+        
+    Raises:
+        TimeoutError: If command times out
+        RuntimeError: If command fails or other error occurs
+    """
     try:
         result = subprocess.run(
             cmd,
@@ -15,9 +29,12 @@ def _run_subprocess(cmd, timeout: int, shell: bool = False) -> str:
     except subprocess.TimeoutExpired as e:
         raise TimeoutError(f"Command timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Command failed: {e.stderr}") from e
+        error_msg = e.stderr.strip() if e.stderr else "Unknown error"
+        raise RuntimeError(f"Command failed: {error_msg}") from e
+    except FileNotFoundError as e:
+        raise RuntimeError(f"Command not found: {cmd[0]}") from e
     except Exception as e:
-        raise RuntimeError(f"Error executing command: {e}") from e
+        raise RuntimeError(f"Error executing command: {str(e)}") from e
 
 def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     """Run a command in a container and return the output.

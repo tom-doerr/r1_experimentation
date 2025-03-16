@@ -33,6 +33,18 @@ class Agent:
 
 
     def reply(self, prompt: str) -> str:
+        """Generate a response to the given prompt.
+        
+        Args:
+            prompt: The input prompt string
+            
+        Returns:
+            str: The generated response
+            
+        Raises:
+            TypeError: If prompt is not a string
+            RuntimeError: If completion fails
+        """
         if not isinstance(prompt, str):
             raise TypeError("prompt must be a string")
             
@@ -44,8 +56,12 @@ class Agent:
                 max_tokens=self.max_tokens
             )
             return self.last_completion
+        except ValueError as e:
+            raise RuntimeError(f"Invalid prompt or model: {e}") from e
+        except litellm.APIError as e:
+            raise RuntimeError(f"API error: {e}") from e
         except Exception as e:
-            raise RuntimeError(f"Completion failed: {e}") from e
+            raise RuntimeError(f"Unexpected error: {e}") from e
 
     def __call__(self, prompt: str) -> str:
         if not isinstance(prompt, str):

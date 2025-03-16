@@ -13,7 +13,7 @@ class UserInterface(Protocol):
         
     @abstractmethod
     def display_error(self, error: str) -> None:
-        """Display a message to the user."""
+        """Display an error message to the user."""
         
     @abstractmethod
     def get_input(self, prompt: str) -> str:
