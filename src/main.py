@@ -378,7 +378,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 def run_container(image: str, command: str, timeout: int = 30) -> str:
-    """Run a command in a container using podman/docker."""
+    """Run a command in a container using Docker."""
     if not isinstance(image, str) or not image.strip():
         raise ValueError("Image must be a non-empty string")
     if not isinstance(command, str) or not command.strip():
@@ -388,7 +388,7 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         
     try:
         result = subprocess.run(
-            ['podman', 'run', '--rm', image] + shlex.split(command),
+            ["docker", "run", "--rm", image, "sh", "-c", command],
             capture_output=True,
             text=True,
             check=True,
@@ -399,8 +399,6 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         raise TimeoutError(f"Container timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Container failed: {e.stderr}") from e
-    except FileNotFoundError:
-        raise RuntimeError("podman/docker not found") from None
     except Exception as e:
         raise RuntimeError(f"Container error: {e}") from e
 

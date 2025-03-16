@@ -8,6 +8,8 @@ class Agent:
             raise TypeError("model must be a string")
         if model == 'deepseek':
             model = 'deepseek/deepseek-chat'
+        elif model == 'flash':
+            model = 'openrouter/google/gemini-2.0-flash-001'
         elif not model.startswith('openrouter/'):
             model = f'openrouter/{model}'
         if not isinstance(max_tokens, int) or max_tokens <= 0:
