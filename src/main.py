@@ -39,8 +39,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if count >= self.char_count_penalty_start:
             return count - self.char_count_penalty_start
-        else:
-            return count
+        return count
 
 
 
@@ -73,7 +72,7 @@ class ShellCodeExecutor(Tool):
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
         except subprocess.CalledProcessError:
-            return "Command failed" # or raise an exception
+            return "Command failed"
         except Exception as e:
             return f"An error occurred: {str(e)}"
 
