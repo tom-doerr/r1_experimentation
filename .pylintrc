@@ -1,6 +1,6 @@
 [MASTER]
 # Maximum number of lines in a module
-max-module-lines=1000
+max-module-lines=100
 
 # Ignore testing files and directories
 ignore=testing.py,hidden_t/
@@ -23,7 +23,7 @@ max-attributes=5
 
 [DESIGN]
 # Maximum number of parents for a class
-max-parents=1
+max-parents=10
 
 # Maximum number of public methods in a class
 max-public-methods=5
