@@ -213,23 +213,36 @@ def _normalize_model_name(model: str) -> str:
     if '/' in model:
         return f'openrouter/{model.split("/")[-1]}'
     return f'openrouter/{model}'
-def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]: # extracts content from response chunks.
+def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
     """Extracts content from response chunks."""
     try:
-        for chunk in response:  # iterate over chunks
+        for chunk in response:
+            if "choices" not in chunk or not chunk["choices"]:
+                raise ValueError("Invalid response format from LiteLLM")
             yield chunk["choices"][0]["delta"]["content"]
-    except (KeyError, litellm.APIError) as e:
-        print(f"LiteLLMError in _extract_content_from_chunks: {e}")
-        yield f"LiteLLMError: {e}"
+    except KeyError as e:
+        raise ValueError(f"Invalid response format: {e}") from e
+    except litellm.APIError as e:
+        raise RuntimeError(f"API Error: {e}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error: {e}") from e
 
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
     if not prompt or not isinstance(prompt, str):
         raise ValueError("Prompt must be a non-empty string")
     if not model or not isinstance(model, str):
         raise ValueError("Model must be a non-empty string")
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
+        
+    # Handle model prefix like litellm_completion
+    if model.startswith('openrouter/'):
+        pass
+    elif '/' in model:
+        model = f'openrouter/{model.split("/")[-1]}'
+    else:
+        model = f'openrouter/{model}'
         
     try:
         response: Any = litellm.completion(
@@ -240,9 +253,9 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
         )
         yield from _extract_content_from_chunks(response)
     except litellm.APIError as e:
-        yield f"API Error: {e}"
+        raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
-        yield f"Error: {e}"
+        raise RuntimeError(f"Error: {e}") from e
 
 
 
