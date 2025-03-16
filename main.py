@@ -27,6 +27,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
     return result
 
 def parse_xml(xml_string: str) -> Dict[str, str]:
+    """Parse XML string into a dictionary"""
     root = ET.fromstring(xml_string)
     return _parse_xml_element(root)
 
@@ -54,16 +55,35 @@ class AgentAssert(Agent):
         parsed = self._parse_xml(response)
         return parsed.get('message', '').lower() in ('true', '1', 'yes')
 
-class ShellCodeExecutor:
+class Tool:
+    """Base class for AI tools"""
+    def __init__(self):
+        pass
+
+class ShellCodeExecutor(Tool):
     """Execute whitelisted shell commands safely"""
     def __init__(self):
+        super().__init__()
         self.allowed_commands = ['ls', 'pwd', 'echo']
+    
+    def __repr__(self):
+        return f"ShellCodeExecutor(allowed_commands={self.allowed_commands})"
 
     def __call__(self, command: str) -> str:
         if command.split()[0] not in self.allowed_commands:
             raise ValueError(f"Command {command} not allowed")
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         return result.stdout
+
+def litellm_completion(prompt: str, model: str) -> str:
+    response = litellm.completion(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content
+
+def python_reflection_testing() -> str:
+    return "test_output_var"
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(
