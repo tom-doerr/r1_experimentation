@@ -23,7 +23,6 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
 
 
 def python_reflection_testing() -> str:
-    # Returns a test string.
     return "test_output_var"
 
 
@@ -41,10 +40,10 @@ class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
-    def __call__(self, command: str) -> str: # type: ignore
+    def __call__(self, command: str) -> str:
         return self.run(command)
 
-    def run(self, command: str) -> str: # type: ignore
+    def run(self, command: str) -> str:
         if not command:
             return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
@@ -109,7 +108,7 @@ class Agent(Tool):
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
-        return parse_xml(xml_string)
+        return parse_xml(xml_string) # type: ignore
 
     def _update_memory(self, replace: str) -> None:
         self.memory = replace
