@@ -99,29 +99,6 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 
-class BasicAgent(Agent):
-    """Concrete implementation of Agent using LLM completions."""
-    
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
-        if not isinstance(model, str) or not model.strip():
-            raise ValueError("Model must be a non-empty string")
-        self.interface = interface
-        self.model = model
-        
-    def __call__(self, input_text: str) -> str:
-        """Handle user input and return response."""
-        if not isinstance(input_text, str) or not input_text.strip():
-            raise ValueError("Input must be a non-empty string")
-            
-        try:
-            response = litellm_completion(input_text, self.model)
-            return response
-        except Exception as e:
-            self.interface.display_error(f"Error: {str(e)}")
-            return "Sorry, I encountered an error."
-            
-    def __repr__(self) -> str:
-        return f"BasicAgent(model={self.model!r})"
 
 class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
