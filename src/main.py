@@ -102,16 +102,16 @@ class Agent():
     def __repr__(self):
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
-    def reply(self, prompt: str) -> str:        
-        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
+    def reply(self, prompt: str) -> str:
+        full_prompt = f"{prompt}. Current memory: {self.memory}"
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None: # type: ignore
-        self.memory = replace
+    def _update_memory(self, search: str, replace: str) -> None:
+        self.memory = replace # the search argument is not used, but could be used to only replace parts of the memory
 
 
 class AgentAssert(Agent):
@@ -125,7 +125,11 @@ class AgentAssert(Agent):
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
-        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str) and parsed_reply["bool"].lower() in ["true", "false"]:
-            bool_value: bool = parsed_reply["bool"].lower() == "true"
+        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str) and parsed_reply["bool"].lower() in ["true", "false"]:
+            bool_value = self._parse_bool(parsed_reply["bool"])
             return bool_value
         return False
+
+    def _parse_bool(self, bool_string: str) -> bool:
+        """Parses a boolean string from XML to a boolean value."""
+        return bool_string.lower() == "true"
