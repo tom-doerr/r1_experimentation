@@ -54,6 +54,8 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
     kwargs: Dict[str, Any] = {"messages": messages, "stream": True}
     if model:
         kwargs["model"] = model
+    else:
+        kwargs["model"] = litellm.model  # Use the default model if none is provided
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
@@ -78,7 +80,7 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
     except Exception as e:
-        yield _handle_litellm_error(e, "litellm streaming")
+        yield from _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
     return "test_output_var"
@@ -136,8 +138,10 @@ class Tool:
 class ShellCodeExecutor(Tool):
     pass
 
-def _handle_litellm_error(e: Exception, function_name: str) -> str:
+def _handle_litellm_error(e: Exception, function_name: str) -> Generator[str, None, None]:
     if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
+        yield f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
     else:
-        print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)
+        print(f"General error during {function_name}: {type(e).__name__} - {e}")
+        yield f"General error during {function_name}: {type(e).__name__} - {e}"
