@@ -5,12 +5,11 @@ import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
-
 import xml.etree.ElementTree as ET
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
+    """Parses an XML string and returns a dictionary."""
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
