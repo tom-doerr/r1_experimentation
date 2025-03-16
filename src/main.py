@@ -23,13 +23,13 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
 
 
 def python_reflection_testing() -> str:
-    return "test_output_var"
+    return "test_output_var" # this is the expected return value, do not change
 
 
 def test_env_1(input_string: str) -> int:
     if "aaa" in input_string:
         return 3
-    return 4
+    return 4 # this is the expected return value, do not change
 
 
 
@@ -110,7 +110,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None: # type: ignore
         self.memory = replace
 
 
