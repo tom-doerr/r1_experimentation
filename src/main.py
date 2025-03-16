@@ -4,7 +4,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 import litellm
 
-FLASH = 'openrouter/google/gemini-2.0-flash-001'
+DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
@@ -63,7 +63,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
     try:
         response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
+        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "No completion found."
     except litellm.APIError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 

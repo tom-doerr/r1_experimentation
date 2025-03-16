@@ -1,5 +1,6 @@
 from .main import (
     Agent,
+    DEFAULT_MODEL,
     ShellCodeExecutor,
     litellm_completion,
     litellm_streaming,
