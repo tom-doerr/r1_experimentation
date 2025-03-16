@@ -26,10 +26,10 @@ class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""
     
     def __init__(self):
-        pass
+        self.running = False
         
     def display_message(self, message: str) -> None:
-        print(message)
+        print(f"Agent: {message}")
         
     def display_error(self, error: str) -> None:
         print(f"Error: {error}")
@@ -38,9 +38,14 @@ class ConsoleInterface(UserInterface):
         return input(prompt)
         
     def interact_with_agent(self, agent: 'Agent') -> None:
-        while True:
-            user_input = self.get_input("You: ")
-            if user_input.lower() in ('exit', 'quit'):
-                break
-            response = agent(user_input)
-            self.display_message(f"Agent: {response}")
+        self.running = True
+        while self.running:
+            try:
+                user_input = self.get_input("You: ")
+                if user_input.lower() in ('exit', 'quit'):
+                    self.running = False
+                    break
+                response = agent(user_input)
+                self.display_message(response)
+            except Exception as e:
+                self.display_error(str(e))
