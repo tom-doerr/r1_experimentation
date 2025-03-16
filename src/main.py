@@ -117,10 +117,7 @@ class Agent:
         return parsed_reply
 
     def _update_memory(self, replace: str) -> None:
-        if replace: # if replace is not empty
-            self.memory = replace
-        else: # if replace is empty
-            self.memory = ""
+        self.memory = replace if replace else ""
 
 
 class AgentAssert(Agent):
@@ -130,6 +127,9 @@ class AgentAssert(Agent):
         self.agent: Agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
+        return self._evaluate_statement(statement)
+
+    def _evaluate_statement(self, statement: str) -> bool:
         reply: str = self.reply(prompt=statement)
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self._parse_xml(reply)
         if not parsed_reply:
