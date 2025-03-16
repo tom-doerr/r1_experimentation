@@ -113,21 +113,24 @@ class Agent():
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _parse_xml(self, xml_string: str) -> bool:
+    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         parsed_reply = parse_xml(xml_string)
         if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply:
-            return False
+            return {}
         bool_value = parsed_reply.get("bool")
         if not isinstance(bool_value, str):
             return False
         return self._parse_bool(bool_value)
 
-# Create a Tool class if it doesn't exist in src.main
-class Tool:
-    pass
+    def _parse_bool(self, bool_string: str) -> bool:
+        return bool_string.lower() == "true"
 
     def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
+
+# Create a Tool class if it doesn't exist in src.main
+class Tool:
+    pass
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
@@ -139,16 +142,7 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        return self._parse_xml(reply)
-
-    def _parse_bool(self, bool_string: str) -> bool:
-        return bool_string.lower() == "true"
-
-    def _parse_xml(self, xml_string: str) -> bool:
-        parsed_reply = parse_xml(xml_string)
-        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply:
+        parsed_reply = self._parse_xml(reply)
+        if not parsed_reply:
             return False
-        bool_value = parsed_reply.get("bool")
-        if not isinstance(bool_value, str):
-            return False
-        return self._parse_bool(bool_value)
+        return self._parse_bool(parsed_reply.get("bool", "false"))
