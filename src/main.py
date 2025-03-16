@@ -108,8 +108,9 @@ class Agent(Tool):
         except Exception as e:
             return _handle_litellm_error(e, "Agent.reply")
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        return parse_xml(xml_string)
+    def _update_memory(self, replace: str) -> None:
+        """Updates the agent's memory."""
+        self.memory = replace
 
     def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
