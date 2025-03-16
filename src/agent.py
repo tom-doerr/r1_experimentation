@@ -1,4 +1,4 @@
-from .main import parse_xml, litellm_completion, DEFAULT_MODEL, global_settings
+from .main import parse_xml, litellm_completion, DEFAULT_MODEL, global_settings, _normalize_model_name
 
 class Agent:
     """Agent that interacts with users using LLM completions."""
