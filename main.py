@@ -3,7 +3,13 @@ from typing import Dict, Any, Optional, Generator
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
-# set flash as the default model
+# Set flash as the default model
+litellm.model_list = [{
+        "model_name": "default",
+        "litellm_params": {
+            "model": FLASH,
+        }
+    }]
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """Parses an XML string and returns a dictionary."""
