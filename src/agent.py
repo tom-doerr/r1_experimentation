@@ -9,7 +9,7 @@ class Agent(ABC):
     """Main agent class that handles interactions and commands."""
     
     @abstractmethod
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(interface, UserInterface):
             raise TypeError("interface must implement UserInterface protocol")
         if not isinstance(model, str) or not model.strip():
@@ -17,6 +17,7 @@ class Agent(ABC):
             
         self.interface = interface
         self.model = normalize_model_name(model)
+        self.max_tokens = max_tokens
         
     @abstractmethod
     def __call__(self, input_text: str) -> str:
