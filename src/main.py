@@ -8,15 +8,17 @@ DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    return {child.tag: child.text or "" for child in element} # type: ignore
+    return {child.tag: child.text or "" for child in element}  # type: ignore
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     try:
         root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
+
         for element in root:
             if list(element):
+                # If the element has children, parse them recursively
                 data[element.tag] = _parse_xml_element(element)
             else:
                 data[element.tag] = element.text or ""
@@ -39,6 +41,8 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
+    def __init__(self):
+        pass
 
 
 class ShellCodeExecutor(Tool):
@@ -60,10 +64,10 @@ class ShellCodeExecutor(Tool):
         if not command_parts:
             raise ValueError("No command parts found")
         if command_parts[0] not in self.whitelisted_commands:
-            raise ValueError(f"Command {command_parts[0]} is not whitelisted")
+            raise ValueError(f"Command '{command_parts[0]}' is not whitelisted")
 
         try:
-            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10) # run the command
+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Error executing command: {e.stderr}") from e
@@ -86,9 +90,9 @@ def litellm_completion(prompt: str, model: str) -> str:
 def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
-        for chunk in response: # iterate over chunks
+        for chunk in response:  # iterate over chunks
             yield chunk["choices"][0]["delta"]["content"]
-    except (litellm.APIError, KeyError) as e: # handle errors
+    except (litellm.APIError, KeyError) as e:  # handle errors
         print(f"LiteLLMError in _extract_content_from_chunks: {e}")
         yield f"LiteLLMError: {e}"
 
@@ -136,9 +140,7 @@ class AgentAssert(Agent): # type: ignore
         reply: str = self.reply(statement)
         parsed_reply: Dict[str, str | Dict[str, str]] = self._parse_xml(reply)
         if not parsed_reply:
-            return False
+            return False  # or None
         bool_value: str = parsed_reply.get("bool", "false")
-        if isinstance(bool_value, str):
-            return bool_value.lower() == "true"
-        return bool(bool_value)
+        return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
 
