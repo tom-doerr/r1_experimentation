@@ -10,6 +10,7 @@ class Env1:
             
         self.target_char = target_char
         self.char_count_penalty_start = char_count_penalty_start
+        self.max_char_count = 100  # Add max character count
         self.max_char_count = 100
 
     def __call__(self, input_string: str) -> int:
