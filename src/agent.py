@@ -19,11 +19,7 @@ class Agent:
             raise TypeError("model must be a string")
         if model == 'deepseek':
             model = 'deepseek/deepseek-chat'  # Normalize deepseek model name
-        if model == 'deepseek':
-            model = 'deepseek/deepseek-chat'
-        elif model.startswith('openrouter/'):
-            model = model
-        else:
+        if not (model.startswith('openrouter/') or model in {'deepseek', 'deepseek/deepseek-chat'}):
             raise ValueError("model must start with 'openrouter/' prefix or be an approved local model")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
