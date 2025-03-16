@@ -45,6 +45,7 @@ class ShellCodeExecutor(object):
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
+        """Runs a shell command."""
         if not command:
             return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
