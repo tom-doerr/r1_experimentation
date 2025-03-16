@@ -25,8 +25,12 @@ def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
         raise ValueError("timeout must be a positive integer")
         
     try:
+        docker_cmd = ["docker", "run", "--rm", image]
+        if command:
+            docker_cmd += ["sh", "-c", command]
+            
         result = subprocess.run(
-            ["docker", "run", "--rm", image, "sh", "-c", command],
+            docker_cmd,
             capture_output=True,
             text=True,
             check=True,

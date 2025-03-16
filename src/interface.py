@@ -6,15 +6,12 @@ class UserInterface(Protocol):
     
     def display_message(self, message: str) -> None:
         """Display a message to the user."""
-        pass
         
     def get_input(self, prompt: str) -> str:
         """Get input from the user."""
-        pass
         
     def interact_with_agent(self, agent: Agent) -> None:
         """Interact with an agent instance."""
-        pass
 
 class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""
