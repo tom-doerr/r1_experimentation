@@ -25,8 +25,8 @@ def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
         
     try:
         docker_cmd = ["docker", "run", "--rm", image]
-        if command:  # Use image's default command if none specified
-            docker_cmd += ["sh", "-c", command]
+        if command.strip():  # Only add command if not empty
+            docker_cmd += shlex.split(command)  # Split command into parts
             
         result = subprocess.run(
             docker_cmd,
