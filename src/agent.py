@@ -44,7 +44,7 @@ class Agent:
             self.net_worth = global_settings['min_net_worth']
             self.net_worth -= self.net_worth * global_settings['cash_penalty']
         elif self.net_worth > global_settings['max_net_worth']:
-            self.net_worth = global_settings['max_net_worth'] 
+            self.net_worth = global_settings['max_net_worth']
             self.net_worth -= self.net_worth * global_settings['cash_penalty']
 
 
