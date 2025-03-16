@@ -1,4 +1,5 @@
 from typing import Any, Dict, Generator, Protocol
+import xml.etree.ElementTree as ET
 from abc import abstractmethod
 import xml.etree.ElementTree as ET
 import subprocess
@@ -25,6 +26,24 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         
     Returns:
         Dict: Parsed XML data
+        
+    Raises:
+        ValueError: If XML is invalid
+    """
+    try:
+        root = ET.fromstring(xml_string)
+        return {elem.tag: elem.text for elem in root}
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
+
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into dictionary.
+    
+    Args:
+        xml_string: XML content to parse
+        
+    Returns:
+        Dict: Parsed XML content as dictionary
         
     Raises:
         ValueError: If XML is invalid
