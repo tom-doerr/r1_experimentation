@@ -4,6 +4,8 @@ import subprocess
 import shlex
 from shutil import which
 
+__all__ = ["Tool", "ShellCodeExecutor"]
+
 class Tool(Protocol):
     """Protocol defining interface for command execution tools."""
     
