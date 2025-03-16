@@ -1,8 +1,8 @@
+import litellm
 import shlex
 import subprocess
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Generator, Any, Optional
-import litellm
+from typing import Any, Dict, Generator, List, Optional
 
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
@@ -22,7 +22,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
                 data[element.tag] = element.text if element.text is not None else ""
         return data
     except ET.ParseError as e:
-        print(f"XML ParseError: {e}")
+        # print(f"XML ParseError: {e}")
         return {"error": str(e)}
 
 
@@ -51,7 +51,6 @@ class Tool:
 
 class ShellCodeExecutor(Tool):
     """Executes shell commands."""
-    blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
     def __call__(self, command: str) -> str:
