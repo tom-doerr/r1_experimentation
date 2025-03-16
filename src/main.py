@@ -121,7 +121,10 @@ class Agent():
         return bool_string.lower() == "true"
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace
+        if replace:
+            self.memory = replace
+        else:
+            self.memory = ""
 
 
 # Create a Tool class if it doesn't exist in src.main
@@ -139,4 +142,4 @@ class AgentAssert(Agent):
         parsed_reply = self._parse_xml(reply)
         if not parsed_reply:
             return False
-        return self._parse_bool(parsed_reply.get("bool", "false"))
+        return self._parse_bool(parsed_reply.get("bool", "false")) # type: ignore
