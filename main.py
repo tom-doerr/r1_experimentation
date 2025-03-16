@@ -16,7 +16,11 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = child.text.strip() if child.text is not None else _parse_element(child)
+        if len(child) == 0:
+            child_data: Any = child.text.strip() if child.text is not None else ""
+        else:
+            child_data: Any = _parse_element(child)
+
         if child.tag in result:
             if not isinstance(result[child.tag], list):
                 result[child.tag] = [result[child.tag]]
