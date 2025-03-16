@@ -46,7 +46,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         if hasattr(response, 'choices'):
             for choice in response.choices:
                 if choice.delta and choice.delta.content:
-                    yield choice.delta.content
+                    yield choice.delta.content or ""  # Handle None content
         else:
             print("Unexpected response format: ", response)
             yield ""
@@ -78,7 +78,10 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str):
-        self.memory: str = replace
+        if replace is not None:
+            self.memory: str = replace
+        else:
+            self.memory: str = ""
 
 class AgentAssert:
     """Assertion agent for testing."""
