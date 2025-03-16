@@ -6,7 +6,6 @@ import xml.etree.ElementTree as ET
 import litellm
 from .reflection import python_reflection_test
 
-
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
 global_settings = {
@@ -80,22 +79,44 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 class Tool(Protocol):
-    """Abstract base class for command execution tools."""
+    """Protocol defining interface for command execution tools."""
     
     @abstractmethod
     def run(self, command: str) -> str:
-        """Execute a command and return the result."""
-        raise NotImplementedError("Subclasses must implement run()")
+        """Execute a command and return the result.
+        
+        Args:
+            command: The command to execute
+            
+        Returns:
+            str: The command output
+            
+        Raises:
+            ValueError: If command is invalid
+            RuntimeError: If execution fails
+        """
+        ...
         
     @abstractmethod 
     def __call__(self, command: str) -> str:
-        """Make tool callable for convenience."""
-        raise NotImplementedError("Subclasses must implement __call__")
+        """Make tool callable for convenience.
+        
+        Args:
+            command: The command to execute
+            
+        Returns:
+            str: The command output
+        """
+        ...
         
     @abstractmethod
     def __repr__(self) -> str:
-        """Return string representation of tool."""
-        raise NotImplementedError("Subclasses must implement __repr__")
+        """Return string representation of tool.
+        
+        Returns:
+            str: The string representation
+        """
+        ...
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""

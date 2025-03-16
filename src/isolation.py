@@ -65,9 +65,23 @@ class IsolatedEnvironment:
     """Provides an isolated execution environment."""
     
     def __init__(self, timeout: int = 10):
+        if not isinstance(timeout, int) or timeout <= 0:
+            raise ValueError("timeout must be a positive integer")
         self.timeout = timeout
         
     def execute(self, command: str) -> str:
-        """Execute a command in isolation."""
-        try:
-            return _run_subprocess(command, self.timeout, shell=True)
+        """Execute a command in isolation.
+        
+        Args:
+            command: The command to execute
+            
+        Returns:
+            str: The command output
+            
+        Raises:
+            ValueError: If command is invalid
+            RuntimeError: If execution fails
+        """
+        if not isinstance(command, str) or not command.strip():
+            raise ValueError("command must be a non-empty string")
+        return _run_subprocess(command, self.timeout, shell=True)
