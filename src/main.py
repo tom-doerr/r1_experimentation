@@ -75,17 +75,19 @@ class Tool(Protocol):
     @abstractmethod
     def run(self, command: str) -> str:
         """Execute a command and return the result."""
-        ...
+        if not isinstance(command, str) or not command.strip():
+            raise ValueError("Command must be a non-empty string")
+        raise NotImplementedError("Subclasses must implement run()")
         
     @abstractmethod 
     def __call__(self, command: str) -> str:
         """Make tool callable for convenience."""
-        ...
+        return self.run(command)
         
     @abstractmethod
     def __repr__(self) -> str:
         """Return string representation of tool."""
-        ...
+        return f"{self.__class__.__name__}()"
         
     @property
     @abstractmethod
