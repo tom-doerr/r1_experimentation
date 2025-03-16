@@ -32,8 +32,8 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if count == 0:
-            # Return -2 when length >= penalty start and no targets
-            return -2 if len(input_string) >= self.char_count_penalty_start else 0
+            # Return -1 when length >= penalty start and no targets
+            return -1 if len(input_string) >= self.char_count_penalty_start else 0
             
         penalty = max(0, len(input_string) - self.char_count_penalty_start)
         return count - penalty
