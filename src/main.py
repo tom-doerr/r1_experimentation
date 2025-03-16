@@ -192,9 +192,6 @@ class ShellCodeExecutor(Tool):
 
 
 
-def _escape_xml(text: str) -> str:
-    """Escape XML special characters."""
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 
@@ -217,7 +214,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise ValueError("Prompt must be a non-empty string")
         
     try:
-        model = _normalize_model_name(model)
+        model = normalize_model_name(model)
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
