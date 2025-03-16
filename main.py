@@ -50,13 +50,13 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
                     yield choice.delta.content or ""  # Handle None content
                 else:
                     print("Unexpected response format: ", choice)
-                    yield None
+                    yield ""
         else:
             print("Unexpected response format: ", response)
-            yield None
+            yield ""
     except Exception as e:
         print(f"Error during litellm streaming: {type(e).__name__} - {e}")
-        yield None
+        yield ""
 
 def python_reflection_testing():
     return "test_output_var"
