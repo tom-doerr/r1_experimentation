@@ -49,7 +49,17 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, Any]:
     }
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
-    """Parse XML string into a dictionary with proper error handling."""
+    """Parse XML string into a dictionary with proper error handling.
+    
+    Args:
+        xml_string: The XML string to parse
+        
+    Returns:
+        Dictionary containing parsed XML data
+        
+    Raises:
+        ValueError: If XML string is invalid or empty
+    """
     if not isinstance(xml_string, str) or not xml_string.strip():
         raise ValueError("XML string must be a non-empty string")
         
@@ -224,7 +234,20 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
         raise RuntimeError(f"Error extracting content: {e}") from e
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Streaming version of litellm_completion that yields chunks of text."""
+    """Streaming version of litellm_completion that yields chunks of text.
+    
+    Args:
+        prompt: The input prompt string
+        model: The model name to use
+        max_tokens: Maximum number of tokens to generate
+        
+    Yields:
+        str: Chunks of generated text
+        
+    Raises:
+        ValueError: For invalid input parameters
+        RuntimeError: For API or execution errors
+    """
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
@@ -242,7 +265,6 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
             max_tokens=max_tokens,
             temperature=0.7
         )
-        
         yield from _extract_content_from_chunks(response)
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
