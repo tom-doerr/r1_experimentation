@@ -6,7 +6,9 @@ from .llm_utils import litellm_completion
 from .utils import normalize_model_name
 
 
-class Agent:
+class Agent(ABC):
+    """Concrete agent implementation."""
+    
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
@@ -15,13 +17,24 @@ class Agent:
             
         self.model = normalize_model_name(model)
         self.max_tokens = max_tokens
+        self.net_worth = global_settings['starting_cash']
+        self.memory = ''
         self.interface = interface or ConsoleInterface()
-        
+
+    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
         if not isinstance(input_text, str) or not input_text.strip():
             raise ValueError("Input must be a non-empty string")
-        return litellm_completion(input_text, self.model, self.max_tokens)
+            
+        try:
+            return litellm_completion(
+                prompt=input_text,
+                model=self.model,
+                max_tokens=self.max_tokens
+            )
+        except Exception as e:
+            return f"Error processing request: {str(e)}"
 
 
 
