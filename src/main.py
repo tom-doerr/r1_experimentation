@@ -21,6 +21,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                     grandchild.tag: grandchild.text or ""
                     for grandchild in child
                 }
+        return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
         return {"error": f"XML ParseError: {str(e)}"}
