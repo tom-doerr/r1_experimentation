@@ -20,7 +20,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
         for child in root:
-            if len(child):
+            if child:
                 data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
             else:
                 data[child.tag] = child.text or ""
@@ -43,6 +43,8 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
+    def __init__(self):
+        pass
 
 
 class ShellCodeExecutor(Tool):
@@ -62,13 +64,12 @@ class ShellCodeExecutor(Tool):
             return f"Command {command_name} is blacklisted."
         if command_name not in self.whitelisted_commands:
             return f"Command {command_name} is not whitelisted."
-
+ 
         try:
-            result = subprocess.run(command_parts, capture_output=True, text=True, check=True)
+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
             return result.stdout
         except subprocess.CalledProcessError as e:
-            return e.stderr
-
+            return f"Error executing command: {e.stderr}"
 
 def litellm_completion(prompt: str, model: str) -> str:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
@@ -102,7 +103,7 @@ class Agent(Tool):
             completion: str = litellm_completion(full_prompt, model=self.model)
             self.last_completion = completion
             return completion
-        except Exception as e:
+        except litellm.LiteLLMError as e:
             print(f"Exception in Agent.reply: {e}")
             return ""
 
@@ -110,7 +111,8 @@ class Agent(Tool):
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
-    parse_xml = parse_xml
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
+        return parse_xml(xml_string)
 
 
 
