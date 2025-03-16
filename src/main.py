@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Generator
 import shlex
 import subprocess
 import xml.etree.ElementTree as ET
@@ -214,52 +214,6 @@ def _normalize_model_name(model: str) -> str:
         return f"openrouter/{model}"
         
     return f"openrouter/{model}"
-
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Chunks of generated text
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-        
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
-        )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
-    except litellm.exceptions.BadRequestError as e:
-        if "not a valid model ID" in str(e):
-            raise ValueError(f"Invalid model: {model}") from e
-        raise RuntimeError(f"Bad request: {e}") from e
-    except litellm.APIError as e:
-        raise RuntimeError(f"API Error: {e}") from e
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error: {e}") from e
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.

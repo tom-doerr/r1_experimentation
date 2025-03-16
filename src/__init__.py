@@ -2,7 +2,6 @@ from .main import (
     DEFAULT_MODEL,
     global_settings,
     _normalize_model_name,
-    _execute_command,
     _parse_xml_element,
     _parse_xml_value,
     _validate_global_settings,
