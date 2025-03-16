@@ -83,8 +83,6 @@ class AgentAssert(Agent):
         try:
             parsed_reply = parse_xml(reply)
             bool_value = parsed_reply.get("bool", False)
-            if isinstance(bool_value, bool):
-                return bool_value
-            return str(bool_value).lower() == "true"
+            return bool(bool_value) if isinstance(bool_value, bool) else str(bool_value).lower() == "true"
         except ValueError:
             return False
