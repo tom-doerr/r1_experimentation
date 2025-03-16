@@ -22,3 +22,4 @@ norecursedirs = ["hidden_t", "__pycache__"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
+addopts = "--verbose"
