@@ -129,10 +129,13 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        parsed_reply = self._parse_xml(reply)
-        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
-            return False # indicate failure if bool is not in parsed_reply
-        return self._parse_bool(str(parsed_reply["bool"]))
+        return self._parse_xml(reply)
  
     def _parse_bool(self, bool_string: str) -> bool:
         return bool_string.lower() == "true"
+
+    def _parse_xml(self, xml_string: str) -> bool:
+        parsed_reply = parse_xml(xml_string)
+        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
+            return False # indicate failure if bool is not in parsed_reply
+        return self._parse_bool(str(parsed_reply["bool"]))
