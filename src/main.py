@@ -381,12 +381,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
         raise RuntimeError(f"Unexpected error: {e}") from e
-        str: The generated completion
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
+
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
