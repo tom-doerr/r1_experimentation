@@ -18,9 +18,8 @@ class Env1:
             
         count = input_string.count(self.target_char)
         over_limit = max(0, len(input_string) - self.char_count_penalty_start)
-        penalty = over_limit * 1  # Single penalty per excess character
-        score = count - penalty
-        return max(min(score, count), -2)  # Clamp score between -2 and original count
+        score = count - over_limit  # 1:1 penalty for excess characters
+        return max(min(score, count), -2) if count > 0 else max(score, -2)
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -41,12 +40,10 @@ class Env2:
             
         if len(input_string) > self.max_char_count:
             return 0
-            
-        # Return 0 if any consecutive duplicates, else length
-        for i in range(1, len(input_string)):
-            if input_string[i] == input_string[i-1]:
-                return 0
-        return len(input_string)
+                
+        # Check for consecutive duplicates using zip for cleaner iteration
+        has_duplicates = any(a == b for a, b in zip(input_string, input_string[1:]))
+        return 0 if has_duplicates else len(input_string)
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
