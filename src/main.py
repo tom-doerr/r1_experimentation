@@ -18,6 +18,28 @@ from .envs import Env1, Env2
 
 
 
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into dictionary.
+    
+    Args:
+        xml_string: XML content to parse
+        
+    Returns:
+        Dict[str, Any]: Parsed XML content as dictionary
+        
+    Raises:
+        ValueError: If input is invalid or XML is malformed
+    """
+    if not isinstance(xml_string, str) or not xml_string.strip():
+        raise ValueError("Input must be a non-empty string")
+    
+    try:
+        root = ET.fromstring(xml_string)
+        return {elem.tag: elem.text for elem in root}
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
+
+
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
