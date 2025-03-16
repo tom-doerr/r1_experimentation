@@ -185,7 +185,7 @@ def _normalize_model_name(model: str) -> str:
     Returns:
         Normalized model name with provider prefix
     """
-    if model.startswith(('openrouter/', 'deepseek/')):
+    if model.startswith('openrouter/') or model.startswith('deepseek/'):
         return model
     if '/' in model:
         return f'openrouter/{model}'
