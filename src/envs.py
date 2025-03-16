@@ -14,9 +14,9 @@ class Env1:
         if not isinstance(input_string, str):
             raise TypeError("input_string must be a string")
             
-        if self.target_char not in input_string:
+        count = input_string.count(self.target_char)
+        if count == 0:
             return 0
             
-        count = input_string.count(self.target_char)
-        penalty = max(0, count - self.char_count_penalty_start) * 2
+        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 2
         return count - penalty
