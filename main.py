@@ -24,10 +24,12 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        if len(child) == 0:
-            child_data: Any = child.text.strip() if child.text is not None else ""
+        if len(child) > 0:  # Has nested elements
+            child_data = _parse_element(child)
+        elif child.text:
+            child_data = child.text.strip()
         else:
-            child_data: Any = _parse_element(child)
+            child_data = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
@@ -110,7 +112,10 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace if replace else ""
+        if search in self.memory:
+            self.memory = self.memory.replace(search, replace)
+        else:
+            self.memory += f"\n{replace}"
 
 
 class AgentAssert:
