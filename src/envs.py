@@ -20,7 +20,7 @@ class Env1:
         if len(input_string) >= self.char_count_penalty_start:
             # Apply penalty of -1 per character over threshold
             penalty = len(input_string) - self.char_count_penalty_start
-            return max(0, count - penalty)
+            return count - penalty
         return count
 
     def __repr__(self) -> str:
@@ -36,15 +36,13 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on consecutive duplicate characters."""
+        """Calculate score based on string length."""
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
             
         if len(input_string) > self.max_char_count:
             return 0
-            
-        # Return 1 if string is non-empty and within length limit
-        return 1 if input_string and len(input_string) <= self.max_char_count else 0
+        return len(input_string)
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
