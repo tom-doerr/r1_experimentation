@@ -20,11 +20,8 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
         for child in root:
-            if len(child):  # If the child has children, it's a nested structure
-                nested_data: Dict[str, Any] = {}
-                for grandchild in child:
-                    nested_data[grandchild.tag] = grandchild.text or ""
-                data[child.tag] = nested_data
+            if len(child):
+                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
             else:
                 data[child.tag] = child.text or ""
         return data
@@ -45,8 +42,6 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-
-    pass
 
 
 class ShellCodeExecutor(Tool):
@@ -79,7 +74,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     return response.choices[0].message.content
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = litellm.model, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     for chunk in response:
         if 'content' in chunk['choices'][0]['delta']:
@@ -110,8 +105,8 @@ class Agent(Tool): # type: ignore
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, search: str, replace: str) -> None:
-        # Updates the agent's memory with the replace string.
+    def _update_memory(self, replace: str) -> None:
+        """Updates the agent's memory with the replace string."""
         self.memory = replace
 
 
