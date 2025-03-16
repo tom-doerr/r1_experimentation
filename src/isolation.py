@@ -84,4 +84,7 @@ class IsolatedEnvironment:
         """
         if not isinstance(command, str) or not command.strip():
             raise ValueError("command must be a non-empty string")
-        return _run_subprocess(command, self.timeout, shell=True)
+        try:
+            return _run_subprocess(command, self.timeout, shell=True)
+        except Exception as e:
+            raise RuntimeError(f"Command execution failed: {e}") from e
