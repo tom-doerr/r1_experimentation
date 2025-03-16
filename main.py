@@ -19,15 +19,19 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 
 # Simplified LiteLLM implementations
-def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001') -> str:
+def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> str:
     # LiteLLM completion implementation with model parameter
     response = litellm.completion(
         model=model,
-        messages=[{"content": prompt, "role": "user"}]
+        messages=[{"content": prompt, "role": "user"}],
+        max_tokens=max_tokens
     )
     return response.choices[0].message.content
 
 def litellm_streaming(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> Iterator[str]:
+    # Valid model check for OpenRouter compatibility
+    if 'deepseek-reasoner' in model:
+        model = 'deepseek-ai/deepseek-r1'  # Correct model ID
     # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
         model=model,
