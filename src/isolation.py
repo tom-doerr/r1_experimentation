@@ -34,7 +34,10 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
         ValueError: If inputs are invalid
         RuntimeError: If execution fails
     """
-    _validate_container_args(image, command, timeout)
+    try:
+        _validate_container_args(image, command, timeout)
+    except ValueError as e:
+        raise ValueError(f"Invalid container arguments: {e}") from e
         
     try:
         docker_cmd = ["docker", "run", "--rm", image]
@@ -42,6 +45,8 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
             docker_cmd += ["sh", "-c", command]  # Execute command via shell
             
         return _run_subprocess(docker_cmd, timeout)
+    except Exception as e:
+        raise RuntimeError(f"Container execution failed: {e}") from e
 
 def _validate_container_args(image: str, command: str, timeout: int) -> None:
     """Validate container execution arguments."""
