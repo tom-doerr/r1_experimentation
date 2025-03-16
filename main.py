@@ -2,6 +2,8 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator, Optional
 import litellm
 
+FLASH = 'openrouter/google/gemini-2.0-flash-001'
+
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
         root = ET.fromstring(xml_string)
@@ -37,7 +39,7 @@ from typing import Dict, Any, Generator, Optional
 import litellm
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     messages = [{"role": "user", "content": prompt}]
     arguments = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
