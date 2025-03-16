@@ -117,7 +117,7 @@ class Agent:
         return parsed_reply
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace # only replace the memory, don't search
+        self.memory = replace or "" # only replace the memory, don't search
 
 
 class AgentAssert(Agent):
