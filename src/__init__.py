@@ -8,8 +8,7 @@ from .main import (
     DEFAULT_MODEL,
     global_settings,
     run_container,
-    _normalize_model_name,
-    _execute_command
+    _normalize_model_name
 )
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
