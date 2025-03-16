@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+import inspect
 import subprocess
+import sys
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 
@@ -43,10 +45,9 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 def python_reflection_testing() -> str:
     """Return sorted list of function names in current module."""
-    current_module = __import__(__name__)
     return ", ".join(sorted(
-        name for name, obj in vars(current_module).items()
-        if callable(obj) and not name.startswith('_')
+        name for name, obj in inspect.getmembers(sys.modules[__name__])
+        if inspect.isfunction(obj)
     ))
 
 
@@ -85,8 +86,8 @@ class ShellCodeExecutor(Tool):
         whitelisted_commands: Set of allowed commands
         max_command_length: Maximum allowed command length
     """
-    blacklisted_commands = {'rm', 'cat', 'mv', 'cp', 'sudo', 'sh', 'bash'}
-    whitelisted_commands = {'ls', 'date', 'pwd', 'echo', 'whoami'}
+    blacklisted_commands = {'rm', 'cat', 'mv', 'cp', 'sudo', 'sh', 'bash', 'wget', 'curl', 'ssh'}
+    whitelisted_commands = {'ls', 'date', 'pwd', 'echo', 'whoami', 'uname', 'hostname'}
     max_command_length = 100
     
     def __call__(self, command: str) -> str:
@@ -115,6 +116,8 @@ class ShellCodeExecutor(Tool):
             raise ValueError("Command must be a non-empty string")
         if len(command) > self.max_command_length:
             raise ValueError(f"Command exceeds maximum length of {self.max_command_length}")
+        if any(char in command for char in ['\n', '\r', '\0']):
+            raise ValueError("Command contains invalid newline or null characters")
             
         # Split and validate command parts
         parts = command.strip().split()
