@@ -69,9 +69,11 @@ class AgentAssert(Agent):
 
     @staticmethod
     def has_net_worth(agent: Agent) -> bool:
+        """Check if agent has net_worth attribute."""
         return hasattr(agent, 'net_worth')
         
     @staticmethod 
     def has_memory(agent: Agent) -> bool:
+        """Check if agent has memory attribute."""
         return hasattr(agent, 'memory')
 
