@@ -1,8 +1,8 @@
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import subprocess
 import litellm
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
@@ -58,9 +58,7 @@ def python_reflection_testing() -> str:
 
 
 
-from abc import ABCMeta, abstractmethod
-
-class Tool(metaclass=ABCMeta):
+class Tool(ABC):
     """Base class for tools."""
     @abstractmethod
     def run(self, command: str) -> str:
