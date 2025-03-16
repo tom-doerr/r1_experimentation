@@ -89,10 +89,10 @@ def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
         yield f"LiteLLMError: {e}"
 
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]: # type: ignore
     """Streams completion from LiteLLM."""
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-    yield from _extract_content_from_chunks(response) # stream the response
+    yield from _extract_content_from_chunks(response)
 
 
 class Agent():
@@ -100,6 +100,7 @@ class Agent():
 
     memory: str = ""
     model: str = DEFAULT_MODEL
+    last_completion: str = ""
 
     def __init__(self, model: str = DEFAULT_MODEL):
         self.model = model
@@ -109,7 +110,8 @@ class Agent():
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        return litellm_completion(full_prompt, model=self.model)
+        self.last_completion = litellm_completion(full_prompt, model=self.model)
+        return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
