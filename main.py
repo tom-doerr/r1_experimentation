@@ -6,10 +6,10 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with nested structure support"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
         result = {}
+        result[element.tag] = {}  # Initialize the tag
+
         if element.text and element.text.strip():
-            result[element.tag] = element.text.strip()
-        else:  # Handle nested elements
-            result[element.tag] = {}  # Initialize the tag
+            result[element.tag]['value'] = element.text.strip()
 
         for child in element:
             child_data = parse_element(child)
