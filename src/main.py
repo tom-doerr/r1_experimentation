@@ -7,6 +7,7 @@ from shutil import which
 
 # Local imports
 from .llm_utils import litellm_completion, litellm_streaming
+from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name
 from .agent import Agent, AgentAssert
@@ -176,11 +177,6 @@ class ShellCodeExecutor(Tool):
 
 
 
-def python_reflection_test(obj: object) -> str:
-    """Inspect an object and return its type information."""
-    if obj is None:
-        return "None"
-    return f"{type(obj).__name__}: {dir(obj)}"
 
 
 
