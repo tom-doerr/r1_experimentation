@@ -27,7 +27,7 @@ class Agent:
 
 
     def __repr__(self) -> str:
-        return f"Agent(memory='{self.memory}', model='{self.model}')"
+        return f"Agent(model='{self.model}', max_tokens={self.max_tokens}, net_worth={self.net_worth})"
 
     def _validate_net_worth(self) -> None:
         """Validate net worth against global settings and apply penalty if needed."""
