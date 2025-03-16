@@ -131,13 +131,16 @@ class AgentAssert:
             return bool_value.lower() == 'true'
         return False
 
-import subprocess
-
 class Tool(object):
     pass
 
 class ShellCodeExecutor(Tool):
+    blacklisted_commands: List[str] = ['rm', 'cat', 'mv', 'cp']
+
     def execute(self, command: str) -> str:
+        command_parts = shlex.split(command)
+        if command_parts and command_parts[0] in self.blacklisted_commands:
+            return f"Command {command_parts[0]} is blacklisted."
         try:
             result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
             return result.stdout
