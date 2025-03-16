@@ -93,11 +93,7 @@ class Tool(Protocol):
     @property
     @abstractmethod
     def is_available(self) -> bool:
-        """Check if tool is available for use.
-        
-        Returns:
-            bool: True if tool is available, False otherwise
-        """
+        """Check if tool is available for use."""
         raise NotImplementedError("Subclasses must implement is_available property")
 
 class ShellCodeExecutor(Tool):
