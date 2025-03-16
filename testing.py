@@ -1,4 +1,4 @@
-from main import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -72,6 +72,27 @@ assert type(agent_assert.agent) == Agent
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
 assert bool_val == False
 
+
+return_val = agent_assert('twenty two has has the same meaning as 22')
+print("return_val:", return_val)
+assert type(return_val) == bool
+
+two_plus_two_is_4 = agent_assert('two plus two is 5')
+print("two_plus_two_is_4:", two_plus_two_is_4)
+assert two_plus_two_is_4 == False
+
+
+shell_code_executor = ShellCodeExecutor()
+assert type(shell_code_executor) == Tool
+
+
+# check if this is a subset of the blacklisted commands
+assert {'rm', 'cat', 'mv', 'cp'} & set(shell_code_executor.blacklisted_commands) == {'rm', 'cat', 'mv', 'cp'}
+assert {'ls', 'date'} & set(shell_code_executor.whitelisted_commands) == {'ls', 'date'}
+
+shell_code_executor_ls = shell_code_executor('ls')
+print("shell_code_executor_ls:", shell_code_executor_ls)
+assert 'plex.md' in shell_code_executor_ls
 
 
 
