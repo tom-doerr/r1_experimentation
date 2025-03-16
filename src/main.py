@@ -1,10 +1,10 @@
 from typing import Any, Dict, Generator, Protocol, Optional, Union
-from .reflection import python_reflection_test
 from abc import abstractmethod
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
+from .reflection import python_reflection_test
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
