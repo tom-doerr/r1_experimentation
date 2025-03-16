@@ -21,7 +21,8 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
                 data[child.tag] = {
                     grandchild.tag: grandchild.text or "" for grandchild in child
                 }
-            else: data[child.tag] = child.text or ""
+            else:
+                data[child.tag] = child.text or ""
         return data
     except ParseError as e:
         return {"error": f"XML ParseError: {str(e)}"}
@@ -42,6 +43,7 @@ class Tool:
     """Base class for tools."""
     pass
 
+
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
@@ -58,41 +60,57 @@ class ShellCodeExecutor(Tool):
         command_name: str = command_parts[0]
         if command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is blacklisted."
-        if command_name not in self.whitelisted_commands:
+        if command_name in self.whitelisted_commands:
             return self._execute_command(command_parts)
-+        return ""
-+
-+    def _execute_command(self, command_parts: List[str]) -> str:
-+        """Executes a command and returns the output."""
-+        try:
-+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
-+            return result.stdout
-+        except subprocess.CalledProcessError as e:
-+            return f"Error executing command: {e.stderr}"
+        return ""
+
+    def _execute_command(self, command_parts: List[str]) -> str:
+        try:
+            result = subprocess.run(
+                command_parts, capture_output=True, text=True, check=True, timeout=10
+            )
+            return result.stdout
+        except subprocess.CalledProcessError as e:
+            return f"Error executing command: {e.stderr}"
+
 
 def litellm_completion(prompt: str, model: str) -> str:
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        response = litellm.completion(
+            model=model, messages=[{"role": "user", "content": prompt}]
+        )
         if response.choices and response.choices[0].message:
             return response.choices[0].message.content or ""
         else:
             return ""
-+    except Exception as e:
-+        if isinstance(e, litellm.LiteLLMError):
-+            return _handle_litellm_error(e, "litellm_completion")
-+        raise e
+    except Exception as e:
+        if isinstance(e, litellm.LiteLLMError):
+            return _handle_litellm_error(e, "litellm_completion")
+        raise e
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(
+    prompt: str, model: str = FLASH, max_tokens: int = 100
+) -> Generator[str, None, None]:
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+            max_tokens=max_tokens,
+        )
         for chunk in response:
-            if chunk and chunk['choices'] and chunk['choices'][0]['delta'] and 'content' in chunk['choices'][0]['delta']:
-                yield chunk['choices'][0]['delta']['content']
-+    except Exception as e:
-+        if isinstance(e, litellm.LiteLLMError):
-+            yield _handle_litellm_error(e, "litellm_streaming")
-+        raise e
+            if (
+                chunk
+                and chunk["choices"]
+                and chunk["choices"][0]["delta"]
+                and "content" in chunk["choices"][0]["delta"]
+            ):
+                yield chunk["choices"][0]["delta"]["content"]
+    except Exception as e:
+        if isinstance(e, litellm.LiteLLMError):
+            yield _handle_litellm_error(e, "litellm_streaming")
+        raise e
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
@@ -101,6 +119,7 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
 
 class Agent(Tool):
     """An agent that interacts with the user and maintains memory."""
+
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
@@ -123,10 +142,9 @@ class Agent(Tool):
         self.memory = replace
 
 
-
-
 class AgentAssert(Tool):
     """An agent that asserts statements."""
+
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
