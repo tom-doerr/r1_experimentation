@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import subprocess
 import shlex
 import litellm
+from shutil import which  # Move this to top level import
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name as _normalize_model_name
 from .agent import Agent
@@ -29,35 +30,6 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
         raise TypeError("All settings values must be numeric")
 
 
-def _parse_xml_value(element: ET.Element) -> str | bool:
-    """Parse XML element value."""
-    if element.tag == 'bool':
-        text = element.text or ""
-        return text.lower() in ('true', '1', 'yes')
-    return element.text or ""
-
-def _parse_xml_element(element: ET.Element) -> Dict[str, Any]:
-    """Parse XML element and its children."""
-    result = {}
-    for child in element:
-        if len(child) > 0:
-            result[child.tag] = _parse_xml_element(child)
-        else:
-            result[child.tag] = _parse_xml_value(child)
-    return result
-
-def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
-    """Parse XML string into a dictionary with proper error handling."""
-    if not isinstance(xml_string, str) or not xml_string.strip():
-        raise ValueError("XML string must be a non-empty string")
-        
-    try:
-        root = ET.fromstring(xml_string)
-        if root is None:
-            return {}
-        return {element.tag: _parse_xml_element(element) for element in root}
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {e}") from e
 
 
 
@@ -132,11 +104,7 @@ class ShellCodeExecutor(Tool):
     @property
     def is_available(self) -> bool:
         """Check if shell commands can be executed."""
-        try:
-            from shutil import which
-            return which('sh') is not None
-        except ImportError:
-            return False
+        return which('sh') is not None  # Simplified since we moved import to top
 
     def _validate_command(self, command: str) -> None:
         """Validate command before execution."""
@@ -267,7 +235,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "UserInterface",
+    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface",
     "Env1", "Env2"
 ]
 
