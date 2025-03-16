@@ -108,8 +108,8 @@ class ShellCodeExecutor(Tool):
     def __repr__(self) -> str:
         return "<ShellCodeExecutor>"
 
-    def run(self, command: str) -> str:
-        """Execute a shell command with strict validation."""
+    def _validate_command(self, command: str) -> None:
+        """Validate command before execution."""
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
         if len(command) > self.max_command_length:
@@ -133,6 +133,10 @@ class ShellCodeExecutor(Tool):
                     raise ValueError(f"Invalid characters in argument: {arg}")
                 if '..' in arg:
                     raise ValueError("Path traversal detected in arguments")
+
+    def run(self, command: str) -> str:
+        """Execute a shell command with strict validation."""
+        self._validate_command(command)
             
         try:
             result = subprocess.run(
