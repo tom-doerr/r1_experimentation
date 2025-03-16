@@ -13,13 +13,14 @@ class Env1:
 
     def __call__(self, input_string: str) -> int:
         """Calculate score based on target character count and length penalty."""
-        if not isinstance(input_string, str):
-            raise ValueError("input_string must be a string")
+        if not isinstance(input_string, str) or not input_string:
+            raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            penalty = len(input_string) - self.char_count_penalty_start
-            return max(0, count - penalty)
+            # Apply penalty for each character over char_count_penalty_start
+            penalty = max(0, len(input_string) - self.char_count_penalty_start)
+            return count - penalty
         return count
 
     def __repr__(self) -> str:
