@@ -399,7 +399,21 @@ def _normalize_model_name(model: str) -> str:
         
     return f"openrouter/{model}"
 
-    """Generate completion using LiteLLM API with robust error handling."""
+def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
+    """Generate completion using LiteLLM API with robust error handling.
+    
+    Args:
+        prompt: The input prompt string
+        model: The model name to use
+        max_tokens: Maximum number of tokens to generate
+        
+    Returns:
+        str: The generated completion
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If completion fails
+    """
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
