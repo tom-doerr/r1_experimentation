@@ -7,12 +7,21 @@ from .utils import normalize_model_name
 
 
 class Agent:
-    """Abstract base class for agents."""
-    
-    @abstractmethod
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("model must be a non-empty string")
+        if not isinstance(max_tokens, int) or max_tokens <= 0:
+            raise ValueError("max_tokens must be a positive integer")
+            
+        self.model = normalize_model_name(model)
+        self.max_tokens = max_tokens
+        self.interface = interface or ConsoleInterface()
+        
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        pass
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+        return litellm_completion(input_text, self.model, self.max_tokens)
 
 
 
