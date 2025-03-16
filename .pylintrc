@@ -3,7 +3,7 @@
 max-module-lines=1000
 
 # Ignore testing files
-ignore=testing.py
+ignore=testing.py,hidden_t
 
 # Maximum number of lines in a function
 max-function-lines=10
