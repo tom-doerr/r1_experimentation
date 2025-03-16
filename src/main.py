@@ -5,6 +5,7 @@ from .interface import UserInterface, ConsoleInterface
 from .reflection import python_reflection_test 
 from .agent import Agent, ConcreteAgent, AgentAssert
 from .config import DEFAULT_MODEL, global_settings
+from .utils import normalize_model_name
 from .envs import Env1, Env2
 from .isolation import IsolatedEnvironment, run_container
 from .llm_utils import litellm_completion, litellm_streaming
