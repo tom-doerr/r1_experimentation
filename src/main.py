@@ -12,6 +12,7 @@ DEFAULT_MODEL = "openrouter/gpt-3.5-turbo"
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
+def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not required_keys.issubset(settings.keys()):
