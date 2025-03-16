@@ -21,10 +21,19 @@ class Agent(ABC):
         self.memory = ''
         self.interface = interface or ConsoleInterface()
 
-    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        raise NotImplementedError
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
+        try:
+            return litellm_completion(
+                prompt=input_text,
+                model=self.model,
+                max_tokens=self.max_tokens
+            )
+        except Exception as e:
+            return f"Error processing request: {str(e)}"
 
 
 
