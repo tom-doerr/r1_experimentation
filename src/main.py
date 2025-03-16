@@ -108,11 +108,8 @@ class Agent(Tool):
         except Exception as e:
             return _handle_litellm_error(e, "Agent.reply")
 
-    def _update_memory(self, replace: str) -> None:
-        """Updates the agent's memory."""
-        self.memory = replace
-
     def _update_memory(self, search: str, replace: str) -> None:
+        """Updates the agent's memory."""
         self.memory = replace
 
 
