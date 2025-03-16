@@ -25,14 +25,6 @@ class Agent:
         self.net_worth = global_settings['starting_cash']
         self._validate_net_worth()
 
-    def _validate_net_worth(self) -> None:
-        """Validate and adjust net worth against global settings with penalty."""
-        if self.net_worth < global_settings['min_net_worth']:
-            self.net_worth = global_settings['min_net_worth']
-            self.net_worth -= self.net_worth * global_settings['cash_penalty']
-        elif self.net_worth > global_settings['max_net_worth']:
-            self.net_worth = global_settings['max_net_worth']
-            self.net_worth -= self.net_worth * global_settings['cash_penalty']
 
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"
@@ -81,6 +73,17 @@ class AgentAssert(Agent):
         return self._evaluate_statement(statement)
 
     def _evaluate_statement(self, statement: str) -> bool:
-        reply: str = self.reply(prompt=statement)
-        parsed_reply = self.parse_xml(reply)
-        return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
+        """Evaluate if a statement is true based on agent's response.
+        
+        Args:
+            statement: The statement to evaluate
+            
+        Returns:
+            bool: True if parsed XML response indicates true, False otherwise
+        """
+        reply = self.reply(prompt=statement)
+        try:
+            parsed_reply = parse_xml(reply)
+            return parsed_reply.get("bool", "false").lower() == "true"
+        except ValueError:
+            return False
