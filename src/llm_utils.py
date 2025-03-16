@@ -1,5 +1,5 @@
 import litellm
-from .utils import normalize_model_name
+from .utils import normalize_model_name as _normalize_model_name
 
 def _escape_xml(content: str) -> str:
     """Escape XML special characters."""
