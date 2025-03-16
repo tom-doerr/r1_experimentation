@@ -74,7 +74,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     return response.choices[0].message.content
 
 
-def litellm_streaming(prompt: str, model: str = litellm.model, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     for chunk in response:
         if 'content' in chunk['choices'][0]['delta']:
@@ -86,7 +86,7 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
     return f"An error occurred during {method_name}: {type(e)} - {e}"
 
 
-class Agent(Tool): # type: ignore
+class Agent(Tool):
     """An agent that interacts with the user."""
     memory: str = ""
     last_completion: str = ""
@@ -100,12 +100,12 @@ class Agent(Tool): # type: ignore
         try:
             completion: str = litellm_completion(full_prompt, model=self.model)
             self.last_completion = completion
-            return completion # type: ignore
+            return completion
         except Exception as e:
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
