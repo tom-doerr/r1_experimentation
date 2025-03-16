@@ -4,25 +4,17 @@ import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
-    def parse_element(element: ET.Element) -> Dict[str, Any]:
-        # Parse element with nested children
-        parsed = {element.tag: element.text.strip() if element.text else None}
-        for child in element:
-            child_parsed = parse_element(child)
-            # Merge child tags into parent dict
-            parsed.update(child_parsed)
-        return parsed
-
     try:
         root = ET.fromstring(xml_string)
-        return parse_element(root)
+        # Simple flat dict parsing for <response><message> format
+        return {child.tag: child.text.strip() for child in root}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
 
 # Simplified LiteLLM implementations
-def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 100) -> str:
+def litellm_completion(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 100) -> str:
     # LiteLLM completion implementation with model parameter
     response = litellm.completion(
         model=model,
