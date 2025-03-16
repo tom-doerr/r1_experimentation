@@ -1,10 +1,10 @@
 import os
+import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-import src
-from src import *
-from src.main import *
+from src.main import Agent, DEFAULT_MODEL, ShellCodeExecutor, litellm_completion, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, AgentAssert
+import pytest
+import litellm
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  

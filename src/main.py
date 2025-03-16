@@ -116,7 +116,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None: self.memory = replace
+    def _update_memory(self, search: str, replace: str) -> None: self.memory = replace # the search term is not used
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
