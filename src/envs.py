@@ -40,8 +40,14 @@ class Env2:
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
             
-        # Return 1 if string is non-empty and within length limit
-        return 1 if input_string and len(input_string) <= self.max_char_count else 0
+        # Count number of consecutive duplicate character pairs
+        consecutive_pairs = 0
+        for i in range(1, len(input_string)):
+            if input_string[i] == input_string[i-1]:
+                consecutive_pairs += 1
+        
+        # Only count pairs beyond 2
+        return max(0, consecutive_pairs - 2) if len(input_string) <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
