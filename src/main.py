@@ -1,24 +1,23 @@
 import shlex # type: ignore
 from typing import Dict, List, Generator
 import subprocess  # nosec
-import litellm # type: ignore
 import xml.etree.ElementTree as ET
+import litellm # type: ignore
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary."""
+
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
-            if not len(child):
-                data[child.tag] = child.text or "" # type: ignore
+            if child:
+                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
             else:
-                data[child.tag] = {grandchild.tag: grandchild.text or ""
-                    for grandchild in child # type: ignore
-                }
+                data[child.tag] = child.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
@@ -48,14 +47,13 @@ class ShellCodeExecutor(Tool):
         return self.run(command)
 
     def run(self, command: str) -> str:
-        command_parts: List[str] = shlex.split(command)
-        if not command_parts:
+        if not command:
             return "No command provided."
-
-        command_name = command_parts[0]
-        if command_name in self.blacklisted_commands:
-            return f"Command '{command_parts[0]}' is blacklisted."
+        command_parts: List[str] = shlex.split(command)
+        command_name: str = command_parts[0]
         if command_name in self.whitelisted_commands:
+            if command_name in self.blacklisted_commands:
+                return f"Command '{command_parts[0]}' is blacklisted."
             return self._execute_command(command_parts)
         return f"Command '{command_name}' is not whitelisted."
 
@@ -97,7 +95,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except litellm.LiteLLMError as e: # type: ignore
+    except Exception as e:
         print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
 
