@@ -131,7 +131,7 @@ class Tool(Protocol):
     @abstractmethod
     def run(self, command: str) -> str:
         """Execute a command and return the result."""
-        raise NotImplementedError("Subclasses must implement run()")
+        raise NotImplementedError
         
     @abstractmethod 
     def __call__(self, command: str) -> str:
@@ -147,7 +147,7 @@ class Tool(Protocol):
     @abstractmethod
     def is_available(self) -> bool:
         """Check if tool is available for use."""
-        raise NotImplementedError("Subclasses must implement is_available property")
+        raise NotImplementedError
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
