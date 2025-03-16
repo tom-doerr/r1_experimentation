@@ -73,8 +73,10 @@ assert agent.memory == 'The user wrote just hi.'
 
 
 agent_assert = AgentAssert(model=MODEL)
+assert type(agent_assert.agent) == Agent
 
-return_val = agent_assert('twenty two has has the same meaning as 22')
+bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
