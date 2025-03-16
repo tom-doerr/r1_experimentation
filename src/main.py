@@ -6,6 +6,23 @@ from abc import abstractmethod
 from shutil import which
 from typing import Any, Dict, Generator, Protocol
 
+def parse_xml(xml_string: str) -> ET.Element:
+    """Parse XML string and return ElementTree element.
+    
+    Args:
+        xml_string: XML content to parse
+        
+    Returns:
+        ET.Element: Parsed XML element
+        
+    Raises:
+        ValueError: If XML is invalid
+    """
+    try:
+        return ET.fromstring(xml_string)
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {str(e)}") from e
+
 # Third party imports
 import litellm
 
