@@ -32,10 +32,8 @@ def test_env_1(input_string: str) -> int:
     return 4
 
 
-class Tool:
-    """Base class for tools."""
 
-class ShellCodeExecutor(Tool):
+class ShellCodeExecutor():
     """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -92,7 +90,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
         print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
 
-class Agent(Tool):
+class Agent():
     """An agent that interacts with the user and maintains memory."""
 
     memory: str = ""
