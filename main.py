@@ -3,7 +3,6 @@ from typing import Dict, Any, Optional, Generator, List
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
-# Set flash as the default model
 litellm.model = FLASH  # Set the default model directly
 litellm.model_list = [{
     "model_name": "default",
@@ -29,7 +28,7 @@ def _parse_element(element: ET.Element) -> Dict[str, Optional[Any]]:
         elif child.text is not None:
             child_data: Optional[str] = child.text.strip()
         else:
-            child_data: None = None
+            child_data = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
@@ -133,5 +132,5 @@ def _handle_litellm_error(e: Exception, function_name: str) -> str:
     if isinstance(e, litellm.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
     else:
-        print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)  # Include traceback
+        print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)
     raise e
