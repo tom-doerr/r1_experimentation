@@ -49,9 +49,31 @@ class Agent:
 
 
     def reply(self, prompt: str) -> str:
+        """Generate a response to the given prompt.
+        
+        Args:
+            prompt: The input prompt string to process
+            
+        Returns:
+            str: The generated response
+            
+        Raises:
+            TypeError: If prompt is not a string
+            RuntimeError: If completion fails
+        """
+        if not isinstance(prompt, str):
+            raise TypeError("prompt must be a string")
+            
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        self.last_completion = litellm_completion(prompt=full_prompt, model=self.model)
-        return self.last_completion
+        try:
+            self.last_completion = litellm_completion(
+                prompt=full_prompt, 
+                model=self.model,
+                max_tokens=self.max_tokens
+            )
+            return self.last_completion
+        except Exception as e:
+            raise RuntimeError(f"Completion failed: {e}") from e
 
     def __call__(self, prompt: str) -> str:
         """Make Agent callable for convenience.
