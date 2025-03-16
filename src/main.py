@@ -180,30 +180,6 @@ class ShellCodeExecutor(Tool):
 
 
 
-def run_container(image: str, command: str, timeout: int = 30) -> str:
-    """Run a command in a container using Docker."""
-    if not isinstance(image, str) or not image.strip():
-        raise ValueError("Image must be a non-empty string")
-    if not isinstance(command, str) or not command.strip():
-        raise ValueError("Command must be a non-empty string")
-    if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("Timeout must be a positive integer")
-        
-    try:
-        result = subprocess.run(
-            ["docker", "run", "--rm", image, "sh", "-c", command],
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=timeout
-        )
-        return result.stdout
-    except subprocess.TimeoutExpired as e:
-        raise TimeoutError(f"Container timed out after {timeout} seconds") from e
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Container failed: {e.stderr}") from e
-    except Exception as e:
-        raise RuntimeError(f"Container error: {e}") from e
 
 
 def python_reflection_test(obj: Any) -> Dict[str, Any]:
