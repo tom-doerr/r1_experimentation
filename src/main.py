@@ -124,7 +124,7 @@ class Agent(Tool):
         self.memory = replace
 
 
-class AgentAssert(Tool): # type: ignore
+class AgentAssert(Tool):
     """An agent that asserts statements."""
 
     agent: Agent
