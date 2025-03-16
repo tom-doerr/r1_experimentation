@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Generator, Optional
+import xml.etree.ElementTree as ET
+from typing import Dict, Any, Optional
 import litellm
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
@@ -49,10 +50,10 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
                     yield choice.delta.content or ""  # Handle None content
         else:
             print("Unexpected response format: ", response)
-            yield ""
+            yield None
     except Exception as e:
         print(f"Error during litellm streaming: {type(e).__name__} - {e}")
-        yield ""
+        yield None
 
 def python_reflection_testing():
     return "test_output_var"
@@ -77,7 +78,7 @@ class Agent:
     def _parse_xml(self, xml_string: str):
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str):
+    def _update_memory(self, replace: str):
         if replace is not None:
             self.memory: str = replace
         else:
@@ -88,7 +89,7 @@ class AgentAssert:
     def __init__(self, model: str):
         self.agent: Agent = Agent(model=model)
 
-    def _parse_xml(self, xml_string: str):
+    def _parse_xml(self, xml_string: str) -> bool:
         parsed = parse_xml(xml_string)
         if 'response' in parsed and 'bool' in parsed['response']:
             bool_value = parsed['response']['bool']
