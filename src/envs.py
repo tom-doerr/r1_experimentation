@@ -20,7 +20,7 @@ class Env1:
         if len(input_string) >= self.char_count_penalty_start:
             # Apply penalty of -1 per character over threshold
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty
+            return max(0, count - penalty)
         return count
 
     def __repr__(self) -> str:
