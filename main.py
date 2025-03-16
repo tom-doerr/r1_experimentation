@@ -138,60 +138,13 @@ class AgentAssert(Tool):
             return False
 
 
-def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm, 'utils') and isinstance(e, litellm.utils.LiteLLMError):
-        error_message: str = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
-        print(error_message)
-        return error_message
-    error_message: str = f"General error during {function_name}: {type(e).__name__} - {e}"
-    print(error_message)
-    return error_message
-
-def parse_xml(xml_string: str) -> Dict[str, Any]:
+def litellm_completion(prompt: str, model: str = FLASH) -> str:
+    """Calls the LiteLLM completion API and returns the result."""
     try:
-        root: ET.Element = ET.fromstring(xml_string)
-        return _parse_element(root)
-    except ET.ParseError as e:
-        print(f"Invalid XML: {e}")
-        return {}
-
-
-def _parse_element(element: ET.Element) -> Dict[str, Any]:
-    result: Dict[str, Any] = {}
-    for child in element:
-        child_data: Optional[Any] = None
-
-        if len(child) > 0:
-            child_data = _parse_element(child)
-        elif child.text is not None:
-            child_data = child.text.strip()
-
-        if child.tag in result:
-            if not isinstance(result[child.tag], list):
-                result[child.tag] = [result[child.tag]]
-            if child_data is not None:
-                result[child.tag].append(child_data)
-        else:
-            if child_data is not None:
-                result[child.tag] = child_data
-
-    if 'memory' in result and isinstance(result['memory'], dict):
-        memory: Dict[str, str] = result['memory']
-        if 'search' not in memory:
-            memory['search'] = ''
-        if 'replace' not in memory:
-            memory['replace'] = ''
-    return result
-
-def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
-    messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
-    try:
-        response = litellm.completion(model=model, messages=messages)
-        if response and response.choices and response.choices[0].message:
-            return response.choices[0].message.content or ""
-        return ""
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        return response.choices[0].message.content
     except Exception as e:
-        return _handle_litellm_error(e, "litellm completion")
+        return _handle_litellm_error(e, "litellm_completion")
 
 
 def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
@@ -256,8 +209,7 @@ class Agent:
 
     def _update_memory(self, search: str, replace: str) -> None:
         if search and replace:
-            if search in self.memory:
-                self.memory = self.memory.replace(search, replace)
+            self.memory = self.memory.replace(search, replace)
 
 
 class AgentAssert:
@@ -272,13 +224,6 @@ class AgentAssert:
             return "match specifications" not in message
         return True
 
-    def _parse_xml(self, xml_string: str) -> bool:
-        parsed: Dict[str, Any] = parse_xml(xml_string)
-        if 'bool' in parsed:
-            bool_value: str = parsed['bool']
-            return bool_value.lower() == 'true'
-        return False
-
 import shlex
 import shlex  # Standard library imports
 import subprocess
@@ -288,11 +233,14 @@ class Tool(object):
 
 class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ['rm', 'cat', 'mv', 'cp']
+    whitelisted_commands: List[str] = ["ls", "date"]
 
     def execute(self, command: str) -> str:
         command_parts = shlex.split(command)
         if command_parts and command_parts[0] in self.blacklisted_commands:
             return f"Command {command_parts[0]} is blacklisted."
+        if command_parts and command_parts[0] not in self.whitelisted_commands:
+            return f"Command {command_parts[0]} is not whitelisted."
         try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True)
             return result.stdout
