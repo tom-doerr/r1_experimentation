@@ -48,7 +48,6 @@ class ShellCodeExecutor:
         if not command:
             return "Error: No command provided."
 
-
         command_parts = shlex.split(command)
         if not command_parts or command_parts[0] not in self.whitelisted_commands:
             return f"Error: Command {command_parts[0]} is not whitelisted."
@@ -65,7 +64,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     try:
         response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
-    except litellm.LiteLLMError as e:
+    except litellm.APIError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
@@ -84,7 +83,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
             max_tokens=max_tokens,
         )
         yield from _extract_content_from_chunks(response)  # type: ignore
-    except litellm.LiteLLMError as e:
+    except litellm.APIError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
 
 
@@ -109,8 +108,8 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None: # the search parameter is not used
-        self.memory = replace # the search parameter is not used
+    def _update_memory(self, replace: str) -> None:
+        self.memory = replace
 
 
 class AgentAssert(Agent):
@@ -124,7 +123,7 @@ class AgentAssert(Agent):
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
-        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str):
-            bool_value = parsed_reply["bool"].lower() == "true" # type: ignore
+        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str) and parsed_reply["bool"].lower() in ["true", "false"]:
+            bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False
