@@ -89,7 +89,7 @@ class Agent:
         self.memory: str = ""
         self.last_completion: str = ""
 
-    def reply(self, prompt: str):
+    def reply(self, prompt: str) -> str:
         self.last_completion: str = litellm_completion(prompt, self.model)
         return self.last_completion
 
