@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Generator
 import litellm
 import shlex
 import subprocess
@@ -49,7 +49,7 @@ class Tool:
 
 class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
-    whitelisted_commands: List[str] = ["ls", "date"]
+    whitelisted_commands: List[str] = ["ls", "date", "pwd"]
 
     def __call__(self, command: str) -> str:
         return self.execute(command)
