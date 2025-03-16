@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-import inspect
 import subprocess
-import sys
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 
@@ -56,26 +54,16 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         
     try:
         root = ET.fromstring(xml_string)
-        data = {}
-        for element in root:
-            if list(element):
-                data[element.tag] = _parse_xml_element(element)
-            else:
-                if element.tag == 'bool':
-                    data[element.tag] = element.text.lower() == 'true' if element.text else False
-                else:
-                    data[element.tag] = element.text if element.text is not None else ""
-        return data
+        return {element.tag: _parse_xml_element(element) for element in root}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
 def python_reflection_testing() -> str:
-    """Return sorted list of function names in current module."""
-    current_module = sys.modules[__name__]
+    """Return sorted list of public function names in current module."""
     return ", ".join(sorted(
-        name for name, obj in inspect.getmembers(current_module)
-        if inspect.isfunction(obj) and obj.__module__ == __name__
+        name for name, obj in globals().items()
+        if callable(obj) and not name.startswith('_')
     ))
 
 
