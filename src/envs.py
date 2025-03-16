@@ -17,7 +17,8 @@ class Env1:
             return 0
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            penalty = max(0, len(input_string) - self.char_count_penalty_start)
+            # Apply penalty of -1 for each character over threshold
+            penalty = len(input_string) - self.char_count_penalty_start
             return count - penalty
         return count
 
