@@ -1,7 +1,7 @@
 import shlex
 import subprocess
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Generator, Any
+from typing import Dict, List, Generator, Any, Optional
 import litellm
 
 
@@ -10,14 +10,14 @@ DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
     return {child.tag: element.text for child in element}
-# the agent returns None sometimes, but the tests expect empty string
+
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str] | None] = {}
         for element in root:
             if list(element):
-                data[element.tag] = _parse_xml_element(element)  # type: ignore
+                data[element.tag] = _parse_xml_element(element)
             else:  # if the element is a leaf node
                 data[element.tag] = element.text if element.text is not None else ""
         return data
@@ -73,7 +73,9 @@ class ShellCodeExecutor(Tool):
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
         except subprocess.CalledProcessError:
-            return "Command failed"
+            return "Command failed" # or raise an exception
+        except Exception as e:
+            return f"An error occurred: {str(e)}"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
