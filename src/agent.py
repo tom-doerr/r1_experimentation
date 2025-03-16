@@ -30,6 +30,27 @@ class Agent(ABC):
     def __repr__(self) -> str:
         return f"Agent(model={self.model!r}, max_tokens={self.max_tokens})"
 
+class AgentAssert(Agent):
+    """Concrete implementation of Agent for assertion testing."""
+    
+    def __init__(self, interface: UserInterface = None, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        super().__init__(interface, model, max_tokens)
+        
+    def __call__(self, input_text: str) -> str:
+        """Handle user input and return response."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
+        try:
+            response = litellm_completion(input_text, self.model, self.max_tokens)
+            return response
+        except Exception as e:
+            self.interface.display_error(f"Error: {str(e)}")
+            return "Sorry, I encountered an error."
+            
+    def __repr__(self) -> str:
+        return f"AgentAssert(model={self.model!r}, max_tokens={self.max_tokens})"
+
 
 class AgentAssert:
     """Utility class for agent assertions and validation."""
