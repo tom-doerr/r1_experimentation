@@ -13,22 +13,22 @@ DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 def python_reflection_test(obj: Any) -> Dict[str, Any]:
     """Inspect a Python object and return its attributes and methods."""
     if obj is None:
-        raise ValueError("Cannot inspect None")
+        raise ValueError("Cannot inspect None object")
         
     result = {
         "type": str(type(obj)),
-        "methods": [],
-        "attributes": {}
+        "attributes": {},
+        "methods": []
     }
     
-    # Get methods
-    for name, value in inspect.getmembers(obj, inspect.ismethod):
-        result["methods"].append(name)
-        
     # Get attributes
-    for name, value in inspect.getmembers(obj):
-        if not name.startswith('_') and not inspect.ismethod(value):
-            result["attributes"][name] = str(value)
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(value)
+        
+    # Get methods
+    for name, member in inspect.getmembers(obj):
+        if inspect.ismethod(member) or inspect.isfunction(member):
+            result["methods"].append(name)
             
     return result
 
