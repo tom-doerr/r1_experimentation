@@ -2,9 +2,9 @@ from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import subprocess
 import litellm
+from abc import ABCMeta, abstractmethod
 
-
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
@@ -109,6 +109,10 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         raise ValueError("Model must be a non-empty string")
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
+        
+    # Add provider prefix if not already present
+    if not model.startswith('openrouter/'):
+        model = f'openrouter/{model}'
         
     try:
         response = litellm.completion(

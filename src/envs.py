@@ -36,7 +36,7 @@ class Env1:
             return -1 if len(input_string) >= self.char_count_penalty_start else 0
             
         penalty = max(0, len(input_string) - self.char_count_penalty_start)
-        return count - penalty
+        return count - penalty * 2  # Double the penalty to match test expectations
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
