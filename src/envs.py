@@ -36,7 +36,7 @@ class Env1:
             
         # No targets found
         if len(input_string) >= self.char_count_penalty_start:
-            return -1
+            return -(len(input_string) - self.char_count_penalty_start)
         return 0
 
     def __repr__(self) -> str:
@@ -58,11 +58,11 @@ class Env2:
             input_string: String to evaluate
             
         Returns:
-            int: Returns 1 if any duplicate characters, 0 otherwise
+            int: Returns 1 if character count exceeds max, 0 otherwise
         """
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
-        return 1 if len(set(input_string)) < len(input_string) else 0
+        return 1 if len(set(input_string)) > self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"

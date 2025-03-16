@@ -2,7 +2,7 @@ from typing import Any
 import subprocess
 
 
-def run_container(image: str, command: str, timeout: int = 10) -> str:
+def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
     """Run a command in a container and return the output.
     
     Args:

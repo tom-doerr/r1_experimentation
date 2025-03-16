@@ -231,26 +231,24 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         RuntimeError: If completion fails
     """
     if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
+        raise ValueError("Prompt must be a non-empty string")
         
     try:
         model = _normalize_model_name(model)
         response = litellm.completion(
             model=model,
-            messages=[{"content": prompt, "role": "user"}],
+            messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             stream=True
         )
         
         for chunk in response:
-            yield chunk.choices[0].delta.content or ""
-            
+            content = chunk.choices[0].delta.content
+            if content:
+                yield content
+                
     except Exception as e:
-        raise RuntimeError(f"Streaming completion failed: {e}") from e
+        raise RuntimeError(f"Streaming error: {e}") from e
 
 
 
