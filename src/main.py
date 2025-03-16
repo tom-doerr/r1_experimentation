@@ -1,9 +1,7 @@
-import xml.etree.ElementTree as ET
 import shlex
 from typing import Dict, Any, List, Generator
 import subprocess
-from xml.etree.ElementTree import ParseError
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import ParseError, ElementTree
 
 import litellm
 
@@ -13,17 +11,17 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     try:
-        root = ET.fromstring(xml_string)
+        root = ElementTree.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
             if len(child):
                 data[child.tag] = {
-                    grandchild.tag: grandchild.text or "" for grandchild in child
+                    grandchild.tag: grandchild.text if grandchild.text is not None else "" for grandchild in child
                 }
             else:
-                data[child.tag] = child.text or ""
+                data[child.tag] = child.text if child.text is not None else ""
         return data
-    except ParseError as e: # type: ignore
+    except ParseError as e:  # type: ignore
         return {"error": f"XML ParseError: {str(e)}"}
 
 
@@ -40,7 +38,6 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-    pass # Placeholder for potential future functionality
 
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
@@ -54,13 +51,14 @@ class ShellCodeExecutor(Tool):
         command_parts: List[str] = shlex.split(command)
         if not command_parts:
             return "No command provided."
- 
-        if command_parts[0] in self.blacklisted_commands:
+
+        command_name = command_parts[0]
+        if command_name in self.blacklisted_commands:
             return f"Command '{command_parts[0]}' is blacklisted."
-        if command_parts[0] in self.whitelisted_commands:
+        if command_name in self.whitelisted_commands:
             return self._execute_command(command_parts)
-        return f"Command '{command_parts[0]}' is not whitelisted."
-    
+        return f"Command '{command_name}' is not whitelisted."
+
     def _execute_command(self, command_parts: List[str]) -> str:
         try:
             result = subprocess.run(
@@ -80,7 +78,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content or ""
         return ""
     except litellm.LiteLLMError as e:
-        print(f"LiteLLMError in litellm_completion: {e}")
+        return f"LiteLLMError in litellm_completion: {e}"
 
 
 def litellm_streaming(
@@ -102,7 +100,7 @@ def litellm_streaming(
             ):
                 yield chunk["choices"][0]["delta"]["content"]
     except litellm.LiteLLMError as e:
-        print(f"LiteLLMError in litellm_streaming: {e}")
+        print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
 
 class Agent(Tool):
@@ -117,12 +115,9 @@ class Agent(Tool):
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        try:
-            self.last_completion = litellm_completion(full_prompt, model=self.model)
-            return self.last_completion
-        except litellm.LiteLLMError as e:
-            print(f"Exception in Agent.reply: {e}")
-            return ""
+        self.last_completion = litellm_completion(full_prompt, model=self.model)  # type: ignore
+        print(f"Exception in Agent.reply: {e}")
+        return ""
 
     def update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
@@ -138,10 +133,7 @@ class AgentAssert(Tool):
         self.agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
-        try:
-            reply = self.agent.reply(statement)
-            data: Dict[str, Any] = parse_xml(reply)
-            return "False" not in reply
-        except litellm.LiteLLMError as e:
-            print(f"Exception in AgentAssert: {e}")
+        reply = self.agent.reply(statement)
+        if "False" in reply:
             return False
+        return True
