@@ -1,4 +1,5 @@
 from .agent import Agent, AgentAssert, ConcreteAgent
+from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
 from .main import (
     parse_xml,
@@ -10,7 +11,6 @@ from .main import (
 )
 from .tools import Tool, ShellCodeExecutor
 from .envs import Env1, Env2
-from .reflection import python_reflection_test
 
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "litellm_completion", 
