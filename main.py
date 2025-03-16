@@ -151,3 +151,4 @@ def _handle_litellm_error(e: Exception, function_name: str) -> Generator[str, No
         yield f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
     else:
         print(f"General error during {function_name}: {type(e).__name__} - {e}")
+        yield f"General error during {function_name}: {type(e).__name__} - {e}"
