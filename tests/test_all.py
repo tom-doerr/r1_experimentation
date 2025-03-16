@@ -15,10 +15,10 @@ parsed_data = parse_xml(xml_data)
 message = parsed_data['message']
 print("message:", message)
 
-# set flash as the default model
-# don't mock
+# set flash as the default model, don't mock
 completion = litellm_completion('hi', model=MODEL)
 print("completion:", completion)
++
 
 reply_generator = litellm_streaming('hi')
 print("reply_generator:", reply_generator)
