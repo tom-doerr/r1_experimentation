@@ -34,19 +34,20 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 # Simplified LiteLLM implementations
 def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001') -> str:
-    """LiteLLM completion implementation"""
+    # LiteLLM completion implementation with model parameter
     response = litellm.completion(
         model=model,
         messages=[{"content": prompt, "role": "user"}]
     )
     return response.choices[0].message.content
 
-def litellm_streaming(prompt: str) -> Iterator[str]:
-    """LiteLLM streaming implementation"""
+def litellm_streaming(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> Iterator[str]:
+    # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
-        model='openrouter/google/gemini-2.0-flash-001',
+        model=model,
         messages=[{"content": prompt, "role": "user"}],
-        stream=True
+        stream=True,
+        max_tokens=max_tokens
     )
     for chunk in response:
         if chunk.choices[0].delta.content:
