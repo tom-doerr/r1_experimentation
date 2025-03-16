@@ -45,11 +45,11 @@ class Env2:
             input_string: String to evaluate
             
         Returns:
-            int: Always returns 0 to match test expectations
+            int: Returns 1 if input contains 'a', 0 otherwise
         """
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
-        return 0
+        return 1 if 'a' in input_string else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
