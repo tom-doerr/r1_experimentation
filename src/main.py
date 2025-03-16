@@ -1,8 +1,10 @@
 import shlex
 import subprocess
-from typing import Any, Dict, Generator, List
+from typing import Any, Dict, Generator, List, Optional
 import xml.etree.ElementTree as ET
 import litellm
+
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 from typing import Optional
 
 
