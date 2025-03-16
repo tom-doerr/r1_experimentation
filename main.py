@@ -3,21 +3,18 @@ from typing import Dict, Any, Generator
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     root = ET.fromstring(xml_string)
+    
+    # Extract direct children of root element
     result = {}
-
-    def parse_element(element: ET.Element) -> Any:
-        # Return text content if no children
-        if len(element) == 0:
-            return element.text.strip() if element.text else None
+    for child in root:
+        # Get text content if no nested elements
+        if len(child) == 0:
+            result[child.tag] = child.text.strip() if child.text else None
+        else:
+            # Handle nested elements recursively
+            result[child.tag] = parse_xml(ET.tostring(child).decode())
             
-        # Parse children into dict
-        child_data = {}
-        for child in element:
-            child_data[child.tag] = parse_element(child)
-        return child_data
-
-    # Flatten root structure
-    return parse_element(root)
+    return result
 
 def litellm_completion(prompt: str) -> str:
     # Simple mock implementation for testing
