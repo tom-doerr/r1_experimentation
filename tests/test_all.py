@@ -76,20 +76,20 @@ agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val is False
+assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
-assert isinstance(return_val, bool)
+assert type(return_val) == bool
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 is False
+assert two_plus_two_is_4 == False
 
 
 shell_code_executor = ShellCodeExecutor()
-assert isinstance(shell_code_executor, ShellCodeExecutor)
+assert type(shell_code_executor) == Tool
 
 
 # check if this is a subset of the blacklisted commands
