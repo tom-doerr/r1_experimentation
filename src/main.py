@@ -67,6 +67,11 @@ class Tool(Protocol):
     def is_available(self) -> bool:
         """Check if tool is available for use."""
         raise NotImplementedError
+        
+    @abstractmethod
+    def stream(self, command: str) -> Generator[str, None, None]:
+        """Stream command output."""
+        raise NotImplementedError
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
