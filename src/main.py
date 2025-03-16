@@ -26,15 +26,22 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         
     Raises:
         ValueError: If input is invalid or XML is malformed
+        TypeError: If XML structure is invalid
     """
     if not isinstance(xml_string, str) or not xml_string.strip():
         raise ValueError("Input must be a non-empty string")
     
     try:
         root = ET.fromstring(xml_string)
+        if not root:
+            raise ValueError("Empty XML document")
         return {elem.tag: elem.text for elem in root}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
+    except AttributeError as e:
+        raise TypeError(f"Invalid XML structure: {e}") from e
+    except Exception as e:
+        raise ValueError(f"Error parsing XML: {e}") from e
 
 
 
@@ -115,7 +122,7 @@ __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
     "IsolatedEnvironment", "run_container", "UserInterface", "ConsoleInterface",
-    "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2"
+    "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2", "normalize_model_name"
 ]
 
 
