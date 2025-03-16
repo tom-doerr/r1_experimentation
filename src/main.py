@@ -60,18 +60,12 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
 
 
 
-class AgentAssert(Agent):
-    """Concrete implementation of Agent for assertion testing."""
-    
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
-        super().__init__(interface, model)  # Call parent constructor
-        
-    def __call__(self, input_text: str) -> str:
-        """Handle user input and return response."""
-        return super().__call__(input_text)  # Use parent class implementation
-        
-    def __repr__(self) -> str:
-        return f"AgentAssert(model={self.model!r})"
+def parse_xml(xml_string: str) -> ET.Element:
+    """Parse XML string and return ElementTree element."""
+    try:
+        return ET.fromstring(xml_string)
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {str(e)}") from e
 
 class Tool(Protocol):
     """Protocol defining interface for command execution tools."""
