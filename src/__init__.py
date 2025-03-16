@@ -1,4 +1,4 @@
-from .agent import Agent, ConcreteAgent
+from .agent import Agent, AgentAssert, ConcreteAgent
 from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
 from .main import (

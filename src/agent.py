@@ -54,7 +54,8 @@ class AgentAssert(Agent):
     """Agent that validates assertions in responses."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
-        super().__init__(model, max_tokens, interface)
+        super().__init__(model, max_tokens)
+        self.interface = interface
         
     def __call__(self, input_text: str) -> str:
         """Validate assertions in input text."""
