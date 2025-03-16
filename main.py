@@ -34,7 +34,7 @@ def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-f
 def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 20, temperature: float = 0.7) -> Iterator[str]:
     # Valid model check for OpenRouter compatibility
     if 'deepseek-reasoner' in model:
-        model = 'deepseek-ai/DeepSeek-R1'  # Official OpenRouter model ID
+        model = 'deepseek-ai/deepseek-r1'  # Official OpenRouter model ID (lowercase)
     # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
         model=model,
@@ -55,7 +55,7 @@ class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self, model: str = "default-model") -> None:
         self.model = model
-        self.last_completion = ""
+        self._memory = {}
 
     def set_model(self, model_name: str) -> None:
         """Set the model to use for processing"""
@@ -71,7 +71,6 @@ class Agent:
     def reply(self, prompt: str) -> str:
         """Generate a response to the input prompt"""
         response = litellm_completion(prompt, model=self.model)
-        self.last_completion = response
         return response
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
@@ -81,20 +80,17 @@ class Agent:
         except ValueError:
             return {'error': 'Invalid XML format'}
 
-    def reply(self, prompt: str) -> str:
-        # Use the configured model to generate a response
-        return litellm_completion(prompt, model=self.model)
-
     @property
     def last_completion(self) -> str:
-        # Return last completion from litellm history
+        """Get last completion from litellm history"""
         if litellm.completion_cache:
             return litellm.completion_cache[-1].choices[0].message.content
         return ""
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        # Expose XML parsing as protected method
-        return parse_xml(xml_string)
+    def _update_memory(self, memory_data: dict) -> None:
+        """Update agent memory with new data"""
+        if 'memory' in memory_data:
+            self._memory.update(memory_data['memory'])
 
 def test_env_1(input_data: str) -> int:
     # Returns count of 'a's in input
