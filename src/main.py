@@ -156,10 +156,9 @@ class ShellCodeExecutor(Tool):
         self._validate_command(command)
             
         try:
-            # Use shlex to properly handle quoted arguments
             import shlex
             result = subprocess.run(
-                shlex.split(command),  # Properly handle quoted arguments
+                shlex.split(command),
                 capture_output=True,
                 text=True,
                 check=True,
@@ -186,8 +185,11 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     model = _normalize_model_name(model)
         
     try:
-        # Format response as XML that the tests expect
-        return f"<response><bool>true</bool><message>Success</message></response>"
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=0.7
         )
         if not response or not response.choices:
             raise RuntimeError("No response from API")
