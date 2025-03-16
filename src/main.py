@@ -110,10 +110,10 @@ class ShellCodeExecutor(Tool):
         """Validate command before execution."""
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
-        if len(command) > self.max_command_length:
-            raise ValueError(f"Command exceeds maximum length of {self.max_command_length} characters")
         if any(char in command for char in ['\n', '\r', '\0']):
             raise ValueError("Command contains invalid control characters (newline or null)")
+        if len(command) > self.max_command_length:
+            raise ValueError(f"Command exceeds maximum length of {self.max_command_length} characters")
             
         parts = command.strip().split()
         if not parts:
