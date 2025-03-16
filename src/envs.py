@@ -27,17 +27,6 @@ class Env1:
         """
         if not input_string:
             raise ValueError("input_string cannot be empty")
-        """Calculate score based on target character count and length penalty.
-        
-        Args:
-            input_string: String to evaluate
-            
-        Returns:
-            int: Score calculated as:
-                - target_char count minus length penalty if any targets found
-                - -2 if no targets and string length >= penalty start
-                - 0 if no targets and string length < penalty start
-        """
         if not isinstance(input_string, str):
             raise TypeError("input_string must be a string")
             

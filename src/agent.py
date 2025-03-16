@@ -33,7 +33,19 @@ class Agent:
         return parse_xml(xml_string)
 
     def __call__(self, prompt: str) -> str:
-        """Make Agent callable for convenience."""
+        """Make Agent callable for convenience.
+        
+        Args:
+            prompt: The input prompt string to process
+            
+        Returns:
+            str: The generated response
+            
+        Raises:
+            TypeError: If prompt is not a string
+        """
+        if not isinstance(prompt, str):
+            raise TypeError("prompt must be a string")
         return self.reply(prompt)
 
 
