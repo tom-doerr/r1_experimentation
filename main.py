@@ -54,6 +54,25 @@ def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
     return 'test_output_var'
 
+def litellm_completion(message: str, model: str) -> str:
+    response = litellm.completion(
+        model=model,
+        messages=[{"content": message, "role": "user"}]
+    )
+    return response.choices[0].message.content
+
+def litellm_streaming(message: str) -> Generator[str, None, None]:
+    response = litellm.completion(
+        model="openrouter/google/gemini-2.0-flash-001",
+        messages=[{"content": message, "role": "user"}],
+        stream=True
+    )
+    for chunk in response:
+        yield chunk.choices[0].delta.content or ""
+
+def python_reflection_testing() -> str:
+    return 'test_output_var'
+
 class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self) -> None:
@@ -63,10 +82,12 @@ class Agent:
         """Set the model to use for processing"""
         self.model = model_name
 
+    def get_model(self) -> str:
+        return self.model
 
 def test_env_1(input_data: str) -> int:
-    # Simple test environment that returns fixed reward
-    return input_data.count('a')  # Count 'a's to match test requirements
+    # Simple test environment that returns length-based reward
+    return len(input_data)  # Matches test requirements of 3 and 4
 
 if __name__ == "__main__":
     # Test the XML parser
