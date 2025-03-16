@@ -1,7 +1,7 @@
 import os
 import sys
 
-from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -15,9 +15,9 @@ parsed_data = parse_xml(xml_data)
 message = parsed_data['message']
 print("message:", message)
 
-# Set flash as the default model
+# set flash as the default model
 # don't mock
-completion = litellm_completion("hi", model=MODEL)
+completion = litellm_completion('hi', model=MODEL)
 print("completion:", completion)
 
 reply_generator = litellm_streaming('hi')
@@ -48,7 +48,7 @@ for reply in reply_generator:
     print("-", reply, end='')
 
 
-agent: Agent = Agent(model=MODEL)
+agent = Agent(model=MODEL)
 
 output = agent.reply('hi')
 print("output:", output)
