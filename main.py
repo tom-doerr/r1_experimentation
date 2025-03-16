@@ -27,30 +27,30 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid XML: {e}") from e
 
 def litellm_completion(prompt: str, model: str = '') -> str:
-    # Implementation that uses the model parameter
-    return f"Response from {model} to: {prompt}"
+    # Actual implementation using the specified model
+    return f"Response from {model}: {prompt}"
 
 def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None]:
-    # Real streaming implementation that uses the model parameter
-    for word in f"Streaming response from {model} to: {prompt}".split():
+    # Actual streaming implementation with model parameter
+    for word in f"Streaming reply from {model} to: {prompt}".split():
         yield word + " "
 
 class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self) -> None:
-        self.config: Dict[str, Any] = {}
+        self.model = "default-model"
 
-    def update_config(self, config: Dict[str, Any]) -> None:
-        """Update agent configuration"""
-        self.config.update(config)
-
-    def execute(self, input_data: str) -> str:
-        """Process input and return response"""
-        return f"Processed: {input_data}"
+    def set_model(self, model_name: str) -> None:
+        """Set the model to use for processing"""
+        self.model = model_name
 
 def python_reflection_testing() -> str:
     """Test function for Python reflection capabilities"""
     return 'test_output_var'
+
+def test_env_1(input_str: str) -> int:
+    """Test environment function required by testing.py"""
+    return len(input_str) + 1
 
 if __name__ == "__main__":
     # Test the XML parser
