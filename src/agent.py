@@ -5,18 +5,24 @@ from abc import abstractmethod
 from .llm_utils import litellm_completion
 from .config import DEFAULT_MODEL
 
-class Agent(Protocol):
-    """Protocol defining the interface for an agent."""
+class Agent:
+    """Main agent class that handles interactions and commands."""
     
-    @abstractmethod
-    def __call__(self, input: str) -> str:
-        """Process input and return response."""
-        raise NotImplementedError("Subclasses must implement __call__")
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+        self.interface = interface
+        self.model = model
         
-    @abstractmethod
+    def __call__(self, input_text: str) -> str:
+        """Handle user input and return response."""
+        try:
+            response = litellm_completion(input_text, self.model)
+            return response
+        except Exception as e:
+            self.interface.display_error(f"Error: {str(e)}")
+            return "Sorry, I encountered an error."
+
     def __repr__(self) -> str:
-        """Return string representation of agent."""
-        raise NotImplementedError("Subclasses must implement __repr__")
+        return f"Agent(model={self.model})"
 
 class AgentAssert:
     """Concrete implementation of Agent for assertion testing."""
