@@ -10,7 +10,7 @@ litellm.model_list = [{
         "model": FLASH,
     }
 }]
-litellm.model = "default"
+litellm.model = FLASH
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
@@ -24,21 +24,17 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any
         if len(child) > 0:  # Has nested elements
-            child_data = _parse_element(child)
+            child_data: Any = _parse_element(child)
         elif child.text:
-            child_data = child.text.strip()
+            child_data: str = child.text.strip()
         else:
             child_data = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
                 result[child.tag] = [result[child.tag]]
-            if isinstance(result[child.tag], list):
-                 result[child.tag].append(child_data)
-            else:
-                result[child.tag] = [result[child.tag], child_data]
+            result[child.tag].append(child_data)
         else:
             result[child.tag] = child_data
     return result
