@@ -42,10 +42,14 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
 
     # Ensure 'memory' key exists and contains 'search' and 'replace' keys
     if 'memory' in result:
-        if 'search' not in result['memory']:
-            result['memory']['search'] = ''
-        if 'replace' not in result['memory']:
-            result['memory']['replace'] = ''
+        memory = result['memory']
+        if not isinstance(memory, dict):
+            result['memory'] = {'search': '', 'replace': ''}
+        else:
+            if 'search' not in memory:
+                memory['search'] = ''
+            if 'replace' not in memory:
+                memory['replace'] = ''
     return result
 
 def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
