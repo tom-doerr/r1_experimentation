@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
+import inspect
+import shlex
 import subprocess
+import sys
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 
@@ -217,9 +220,9 @@ def _normalize_model_name(model: str) -> str:
         model: Raw model name string
         
     Returns:
-        Normalized model name with openrouter/ prefix
+        Normalized model name with provider prefix
     """
-    if model.startswith('openrouter/'):
+    if model.startswith(('openrouter/', 'deepseek/')):
         return model
     if '/' in model:
         return f'openrouter/{model}'
