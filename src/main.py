@@ -17,7 +17,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         raise ValueError("Prompt must be a non-empty string")
         
     try:
-        model = normalize_model_name(model)
+        model = _normalize_model_name(model)
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
@@ -282,7 +282,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise ValueError("Prompt must be a non-empty string")
         
     try:
-        model = normalize_model_name(model)
+        model = _normalize_model_name(model)
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
