@@ -266,9 +266,8 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             max_tokens=max_tokens,
             temperature=0.7
         )
-        # Wrap response in XML format for AgentAssert
-        content = response.choices[0].message.content
-        return f"<response><bool>{str(content).lower()}</bool></response>"
+        # Return raw response content without XML wrapping
+        return response.choices[0].message.content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
