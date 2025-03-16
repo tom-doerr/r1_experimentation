@@ -2,15 +2,10 @@ from typing import Dict
 from .main import parse_xml, litellm_completion, DEFAULT_MODEL, global_settings
 
 class Agent:
-    """An agent that interacts with the user and maintains memory."""
-
-    memory: str = ""
-    model: str = DEFAULT_MODEL
-    last_completion: str = ""
-    max_tokens: int = 100  # Default max tokens for completions
-    net_worth: float = 0.0  # Add net_worth property
-
+    """Agent that interacts with users using LLM completions."""
+    
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        """Initialize agent with model and token limits."""
         """Initialize the agent with model and max_tokens configuration.
         
         Args:

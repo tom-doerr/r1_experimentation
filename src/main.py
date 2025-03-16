@@ -34,20 +34,19 @@ global_settings: Dict[str, float] = {
 
 _validate_global_settings(global_settings)
 
-def _parse_xml_value(element: ET.Element) -> str | bool | None:
-    """Helper to parse XML element values."""
+def _parse_xml_value(element: ET.Element) -> str | bool:
+    """Parse XML element value."""
     if element.tag == 'bool':
-        return element.text.lower() == 'true' if element.text else False
-    return element.text if element.text is not None else ""
+        return element.text and element.text.lower() == 'true'
+    return element.text or ""
 
-def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
-    parsed_data = {}
-    for child in element:
-        if len(child) > 0:
-            parsed_data[child.tag] = _parse_xml_element(child)
-        else:
-            parsed_data[child.tag] = _parse_xml_value(child)
-    return parsed_data
+def _parse_xml_element(element: ET.Element) -> Dict[str, Any]:
+    """Parse XML element and its children."""
+    return {
+        child.tag: _parse_xml_element(child) if len(child) > 0 
+        else _parse_xml_value(child)
+        for child in element
+    }
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     """Parse XML string into a dictionary with proper error handling."""
