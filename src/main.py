@@ -5,6 +5,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 import litellm
 from .isolation import IsolatedEnvironment, run_container
+from .isolation import IsolatedEnvironment, run_container
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
@@ -274,6 +275,22 @@ def python_reflection_test(obj: object) -> str:
         return "None"
     
     return f"{type(obj).__name__}: {dir(obj)}"
+
+__all__ = [
+    "DEFAULT_MODEL",
+    "global_settings",
+    "_normalize_model_name",
+    "_parse_xml_element",
+    "_parse_xml_value",
+    "_validate_global_settings",
+    "parse_xml",
+    "Tool",
+    "ShellCodeExecutor",
+    "litellm_completion",
+    "litellm_streaming",
+    "IsolatedEnvironment",
+    "run_container"
+]
 
 def _escape_xml(text: str) -> str:
     """Escape XML special characters."""
