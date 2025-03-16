@@ -12,30 +12,6 @@ DEFAULT_MODEL = "openrouter/gpt-3.5-turbo"
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods."""
-    if obj is None:
-        raise ValueError("Cannot inspect None object")
-        
-    result = {
-        "type": str(type(obj)),
-        "attributes": {},
-        "methods": []
-    }
-    
-    # Get attributes
-    for name, value in vars(obj).items():
-        result["attributes"][name] = str(value)
-        
-    # Get methods
-    for name, member in inspect.getmembers(obj):
-        if inspect.ismethod(member) or inspect.isfunction(member):
-            result["methods"].append(name)
-            
-    return result
-
-
-def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not required_keys.issubset(settings.keys()):
