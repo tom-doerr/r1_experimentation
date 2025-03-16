@@ -1,6 +1,5 @@
+from .constants import DEFAULT_MODEL, global_settings
 from .main import (
-    DEFAULT_MODEL,
-    global_settings,
     parse_xml,
     Tool,
     ShellCodeExecutor,

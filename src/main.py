@@ -176,7 +176,7 @@ class ShellCodeExecutor(Tool):
 
 
 
-from .utils import normalize_model_name as _normalize_model_name
+from .constants import normalize_model_name as _normalize_model_name
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.

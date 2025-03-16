@@ -1,6 +1,8 @@
+from typing import Dict
+
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
-global_settings = {
+global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,
     'max_net_worth': 10000.0,
     'min_net_worth': 0.0,
@@ -8,7 +10,7 @@ global_settings = {
     'initial_net_worth': 1000.0
 }
 
-def _normalize_model_name(model: str) -> str:
+def normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix."""
     if not isinstance(model, str) or not model.strip():
         raise ValueError("Model must be a non-empty string")
