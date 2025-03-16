@@ -43,6 +43,24 @@ class AgentAssert:
             raise TypeError("Agent must be callable")
         if not hasattr(agent, 'interface'):
             raise AttributeError("Agent must have interface attribute")
+
+    @staticmethod
+    def assert_equal(actual: Any, expected: Any, message: str = "") -> None:
+        """Assert that two values are equal."""
+        if actual != expected:
+            raise AssertionError(f"{message}\nExpected: {expected}\nActual: {actual}")
+
+    @staticmethod
+    def assert_true(condition: bool, message: str = "") -> None:
+        """Assert that a condition is true."""
+        if not condition:
+            raise AssertionError(f"Condition not true: {message}")
+
+    @staticmethod
+    def assert_false(condition: bool, message: str = "") -> None:
+        """Assert that a condition is false."""
+        if condition:
+            raise AssertionError(f"Condition not false: {message}")
     """Main agent class that handles interactions and commands."""
     
     def __init__(self, interface: UserInterface = None, model: str = DEFAULT_MODEL, max_tokens: int = 100):

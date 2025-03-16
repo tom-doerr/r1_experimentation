@@ -34,7 +34,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     
     try:
         root = ET.fromstring(xml_string)
-        return {root.tag: root.text}
+        return {elem.tag: elem.text for elem in root}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
