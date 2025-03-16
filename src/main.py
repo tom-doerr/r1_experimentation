@@ -3,7 +3,7 @@ from typing import Dict, List, Generator
 import subprocess
 import xml.etree.ElementTree as ET
 import litellm
-from . import Tool
+from typing import Optional
 
 DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
@@ -39,7 +39,7 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
-    """Base class for tools."""
+    pass
 
 
 class ShellCodeExecutor(Tool):
@@ -121,7 +121,7 @@ class Agent():
         parsed_reply = parse_xml(xml_string)
         return parsed_reply
 
-    def _parse_bool(self, bool_string: str) -> bool:
+    def _parse_bool(self, bool_string: str) -> bool: # type: ignore
         return bool_string.lower() == "true"
 
     def _update_memory(self, search: str, replace: str) -> None:
