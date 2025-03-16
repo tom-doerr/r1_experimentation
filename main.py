@@ -44,6 +44,8 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
     if 'memory' in result:
         if 'search' not in result['memory']:
             result['memory']['search'] = ''
+        if 'replace' not in result['memory']:
+            result['memory']['replace'] = ''
     return result
 
 def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
@@ -83,16 +85,19 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                     and chunk['choices'][0]['delta'].get('content')
                 ):
                     content: str = chunk['choices'][0]['delta']['content']
-                    yield content
+                    if content:
+                        yield content
                 elif (
                     chunk.get('choices')
                     and len(chunk['choices']) > 0
                     and chunk['choices'][0]['delta'].get('reasoning_content')
                 ):
-                    content: str = chunk['choices'][0]['delta']['reasoning_content']
-                    yield content
+                    reasoning_content: str = chunk['choices'][0]['delta']['reasoning_content']
+                    if reasoning_content:
+                        yield reasoning_content
                 else:
                     print(f"Unexpected chunk format: {chunk}")
+                    # Consider yielding an empty string or a specific error message
                     yield ""
         else:
             print(f"Unexpected response type: {type(response)}")
