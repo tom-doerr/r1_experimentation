@@ -2,6 +2,7 @@ from typing import Any
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
 from .interface import UserInterface
+from .interface import UserInterface
 
 class Agent(ABC):
     """Abstract base class for agents."""
