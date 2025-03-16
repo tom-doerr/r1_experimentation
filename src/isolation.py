@@ -39,12 +39,11 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     except ValueError as e:
         raise ValueError(f"Invalid container arguments: {e}") from e
         
-    try:
-        docker_cmd = ["docker", "run", "--rm", image]
-        if command.strip():  # Only add command if not empty
-            docker_cmd += ["sh", "-c", command]  # Execute command via shell
-            
-        return _run_subprocess(docker_cmd, timeout)
+    docker_cmd = ["docker", "run", "--rm", image]
+    if command.strip():  # Only add command if not empty
+        docker_cmd += ["sh", "-c", command]
+        
+    return _run_subprocess(docker_cmd, timeout)
     except Exception as e:
         raise RuntimeError(f"Container execution failed: {e}") from e
 
@@ -84,7 +83,6 @@ class IsolatedEnvironment:
         """
         if not isinstance(command, str) or not command.strip():
             raise ValueError("command must be a non-empty string")
-        try:
-            return _run_subprocess(command, self.timeout, shell=True)
+        return _run_subprocess(command, self.timeout, shell=True)
         except Exception as e:
             raise RuntimeError(f"Command execution failed: {e}") from e

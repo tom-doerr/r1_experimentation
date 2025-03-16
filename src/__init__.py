@@ -1,4 +1,4 @@
-from .isolation import run_container
+from .isolation import run_container, IsolatedEnvironment
 from .main import (
     DEFAULT_MODEL,
     global_settings,
