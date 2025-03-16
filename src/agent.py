@@ -1,4 +1,3 @@
-from typing import Optional
 from .main import DEFAULT_MODEL, global_settings, _normalize_model_name, litellm_completion, parse_xml
 
 class Agent:

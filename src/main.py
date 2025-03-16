@@ -329,19 +329,7 @@ def python_reflection_test() -> str:
     results = []
     
     # Test module inspection
-    current_module = sys.modules['src']
-    results.append(f"Module name: {current_module.__name__}")
-    
-    # Test function inspection
-    functions = inspect.getmembers(current_module, inspect.isfunction)
-    results.append(f"Found {len(functions)} functions")
-    
-    # Test class inspection
-    classes = inspect.getmembers(current_module, inspect.isclass)
-    results.append(f"Found {len(classes)} classes")
-    
-    # Add specific function/class names
-    results.append(f"Functions: {[f[0] for f in functions]}")
-    results.append(f"Classes: {[c[0] for c in classes]}")
-    
-    return "\n".join(results)
+    current_module = sys.modules[__name__]
+    functions = [f[0] for f in inspect.getmembers(current_module, inspect.isfunction)]
+    classes = [c[0] for c in inspect.getmembers(current_module, inspect.isclass)]
+    return f"Functions: {functions}\nClasses: {classes}"

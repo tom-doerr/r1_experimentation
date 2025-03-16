@@ -19,7 +19,7 @@ class Env1:
         count = input_string.count(self.target_char)
         penalty = max(0, len(input_string) - self.char_count_penalty_start)
         score = count - penalty
-        return max(score, -2)  # Ensure minimum score is -2
+        return max(score, -2)
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -40,7 +40,7 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
         # Return 1 if all characters are unique, 0 otherwise
-        return 1 if len(set(input_string)) == len(input_string) else 0
+        return 0 if len(set(input_string)) < len(input_string) else 1
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
