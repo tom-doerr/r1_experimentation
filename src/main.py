@@ -124,6 +124,7 @@ class Agent():
         self.memory = replace
 
 # Create a Tool class if it doesn't exist in src.main
+
 class Tool:
 
 class AgentAssert(Agent):
