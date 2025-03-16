@@ -32,8 +32,12 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
     messages = [{"role": "user", "content": prompt}]
-    response = litellm.completion(model=model, messages=messages)
-    return response.choices[0].message.content
+    try:
+        response = litellm.completion(model=model, messages=messages)
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error during litellm completion: {e}")
+        return ""  # Or handle the error as appropriate
 
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     """Uses the litellm library to stream a completion."""
