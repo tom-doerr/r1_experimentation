@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Iterator
+from typing import Dict, Any, Iterator, Optional
 import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
@@ -35,19 +35,22 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 # Simplified LiteLLM implementations
 def litellm_completion(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 100) -> str:
-    # LiteLLM completion implementation with model parameter
+    """LiteLLM completion implementation with model parameter"""
     response = litellm.completion(
         model=model,
         messages=[{"content": prompt, "role": "user"}],
         max_tokens=max_tokens
     )
-    return response.choices[0].message.content
+    if response and response.choices and response.choices[0] and response.choices[0].message and response.choices[0].message.content:
+        return response.choices[0].message.content
+    else:
+        return ""
 
 def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 20, temperature: float = 0.7) -> Iterator[str]:
+    """LiteLLM streaming implementation with configurable model and tokens"""
     # Normalize model names for OpenRouter compatibility
     if model == 'deepseek/deepseek-reasoner':
         model = 'openrouter/deepseek-ai/deepseek-r1'
-    # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
         model=model,
         messages=[{"content": prompt, "role": "user"}],
@@ -55,7 +58,7 @@ def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek
         max_tokens=max_tokens
     )
     for chunk in response:
-        if chunk.choices[0].delta.content:
+        if chunk and chunk.choices and chunk.choices[0] and chunk.choices[0].delta and chunk.choices[0].delta.content:
             yield chunk.choices[0].delta.content
 
 class AgentAssert:
@@ -71,13 +74,12 @@ def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
     return 'test_output_var'
 
-
 class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self, model: str = "openrouter/google/gemini-2.0-flash-001") -> None:
         self.model = model
-        self._memory = {}
-        self._last_response = None
+        self._memory: Dict[str, str] = {}
+        self._last_response: Optional[Any] = None
 
     def set_model(self, model_name: str) -> None:
         """Set the model to use for processing"""
@@ -105,7 +107,7 @@ class Agent:
     @property
     def last_completion(self) -> str:
         """Get last completion from litellm history"""
-        if self._last_response:
+        if self._last_response and self._last_response.choices and self._last_response.choices[0] and self._last_response.choices[0].message:
             return self._last_response.choices[0].message.content
         return ""
 
@@ -119,7 +121,7 @@ class Agent:
         return str(self._memory)
 
 def test_env_1(input_data: str) -> int:
-    # Returns count of 'a's in input
+    """Returns count of 'a's in input"""
     return input_data.count('a')
 
 if __name__ == "__main__":
