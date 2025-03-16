@@ -11,22 +11,6 @@ from .utils import normalize_model_name as _normalize_model_name
 
 
 
-def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
-    """Get single completion using LiteLLM API."""
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-        
-    try:
-        model = _normalize_model_name(model)
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        raise RuntimeError(f"Completion error: {e}") from e
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
