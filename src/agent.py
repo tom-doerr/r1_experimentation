@@ -31,14 +31,20 @@ class Agent:
         return f"Agent(model='{self.model}', max_tokens={self.max_tokens}, net_worth={self.net_worth})"
 
     def _validate_net_worth(self) -> None:
-        """Validate net worth against global settings and apply penalty if needed."""
+        """Validate net worth against global settings and apply penalty if needed.
+        
+        Raises:
+            TypeError: If net_worth is not numeric
+            ValueError: If net_worth exceeds limits
+        """
         if not isinstance(self.net_worth, (int, float)):
             raise TypeError("net_worth must be numeric")
+            
         if self.net_worth < global_settings['min_net_worth']:
             self.net_worth = global_settings['min_net_worth']
             self.net_worth -= self.net_worth * global_settings['cash_penalty']
         elif self.net_worth > global_settings['max_net_worth']:
-            self.net_worth = global_settings['max_net_worth']
+            self.net_worth = global_settings['max_net_worth'] 
             self.net_worth -= self.net_worth * global_settings['cash_penalty']
 
 
