@@ -9,6 +9,13 @@ from typing import Protocol
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
+global_settings = {
+    'starting_cash': 1000,
+    'max_net_worth': 10000,
+    'min_net_worth': 100,
+    'cash_penalty': 0.1
+}
+
 
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
@@ -275,6 +282,27 @@ def python_reflection_test(obj: Any) -> Dict[str, Union[str, Dict[str, str], Lis
         elif not name.startswith('_'):
             result['attributes'].append(name)
             
+    return result
+
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods."""
+    if obj is None:
+        raise ValueError("Object cannot be None")
+        
+    result = {
+        'type': type(obj).__name__,
+        'attributes': {},
+        'methods': {}
+    }
+    
+    # Get attributes
+    for name, value in vars(obj).items():
+        result['attributes'][name] = str(value)
+        
+    # Get methods
+    for name, method in inspect.getmembers(obj, inspect.ismethod):
+        result['methods'][name] = str(method)
+        
     return result
 
 def _execute_command(command: str, timeout: int = 10) -> str:
