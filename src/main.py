@@ -4,11 +4,11 @@ import xml.etree.ElementTree as ET
 from typing import Dict, List, Generator
 import litellm
 
-DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    return {child.tag: child.text or "" for child in element}  # type: ignore
+    return {child.tag: child.text or "" for child in element}
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
@@ -22,7 +22,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                 data[element.tag] = _parse_xml_element(element)
             else:
                 data[element.tag] = element.text or ""
-        return data 
+        return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
@@ -64,7 +64,7 @@ class ShellCodeExecutor(Tool):
         if not command_parts:
             raise ValueError("No command parts found")
         if command_parts[0] not in self.whitelisted_commands:
-            raise ValueError(f"Command '{command_parts[0]}' is not whitelisted")
+            raise ValueError(f"Command '{command_parts[0]} is not whitelisted")
 
         try: 
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
@@ -76,7 +76,6 @@ class ShellCodeExecutor(Tool):
 def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
 
-    try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         if not hasattr(response, 'choices') or not response.choices:
             raise ValueError(f"Unexpected response type: {type(response)}")
@@ -84,7 +83,6 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content
         return "No completion found."
     except litellm.APIError as e:
-        return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
@@ -97,7 +95,7 @@ def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
         yield f"LiteLLMError: {e}"
 
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]: # type: ignore
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     yield from _extract_content_from_chunks(response)
 
@@ -115,12 +113,12 @@ class Agent:
     def __repr__(self):
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
-    def reply(self, prompt: str) -> str: # type: ignore
+    def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         self.last_completion: str = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]: # type: ignore
+    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
@@ -131,17 +129,17 @@ class Agent:
             self.memory = ""
 
 
-class AgentAssert(Agent): # type: ignore
+class AgentAssert(Agent):
     """Agent that asserts a statement."""
     def __init__(self, model: str = DEFAULT_MODEL):
         super().__init__(model=model)
-        self.agent = Agent(model=model)
+        self.agent: Agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply: str = self.reply(statement)
         parsed_reply: Dict[str, str | Dict[str, str]] = self._parse_xml(reply)
         if not parsed_reply:
-            return False  # or None
+            return False
         bool_value: str = parsed_reply.get("bool", "false")
         return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
 
