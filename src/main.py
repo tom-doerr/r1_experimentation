@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Any, List, Generator
 import shlex
 import subprocess
+from xml.etree.ElementTree import ParseError
 
 import litellm
 
@@ -9,19 +10,21 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """Parses an XML string and returns a dictionary."""
+    """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
-        for child in root:# type: ET.Element
+        for child in root:  # type: ET.Element
+            if not isinstance(child.tag, str):
+                continue
             if len(child):
                 data[child.tag] = {
                     grandchild.tag: grandchild.text or "" for grandchild in child
                 }
             else: data[child.tag] = child.text or ""
         return data
-    except ET.ParseError as e:
-        return {"error": f"XML ParseError: {e}"}
+    except ParseError as e:
+        return {"error": f"XML ParseError: {str(e)}"}
 
 
 def python_reflection_testing() -> str:
@@ -56,11 +59,16 @@ class ShellCodeExecutor(Tool):
         if command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is blacklisted."
         if command_name not in self.whitelisted_commands:
-            try:
-                result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
-                return result.stdout
-            except subprocess.CalledProcessError as e:
-                return f"Error executing command: {e.stderr}"
+            return self._execute_command(command_parts)
++        return ""
+ 
++    def _execute_command(self, command_parts: List[str]) -> str:
++        """Executes a command and returns the output."""
++        try:
++            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
++            return result.stdout
++        except subprocess.CalledProcessError as e:
++            return f"Error executing command: {e.stderr}"
 
 def litellm_completion(prompt: str, model: str) -> str:
     try:
@@ -69,8 +77,10 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content or ""
         else:
             return ""
-    except Exception as e:
-        return _handle_litellm_error(e, "litellm_completion")
++    except Exception as e:
++        if isinstance(e, litellm.LiteLLMError):
++            return _handle_litellm_error(e, "litellm_completion")
++        raise e
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
