@@ -76,7 +76,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content
         return "Error: No completion found."
     except Exception as e:
-        return f"LiteLLMError: {e}" #  if isinstance(e, litellm.LiteLLMError) else f"An error occurred: {e}"
+        return f"LiteLLMError: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
@@ -128,7 +128,7 @@ class AgentAssert(Agent):
 
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
- 
+
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
