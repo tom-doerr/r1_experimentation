@@ -16,7 +16,12 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
         child_data: Any = child.text.strip() if child.text is not None else _parse_element(child)
-        result[child.tag] = child_data
+        if child.tag in result:
+            if not isinstance(result[child.tag], list):
+                result[child.tag] = [result[child.tag]]
+            result[child.tag].append(child_data)
+        else:
+            result[child.tag] = child_data
     return result
 
 def litellm_completion(prompt: str, model: str) -> str:
