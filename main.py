@@ -130,6 +130,12 @@ class AgentAssert:
             return bool_value.lower() == 'true'
         return False
 
+class Tool:
+    pass
+
+class ShellCodeExecutor(Tool):
+    pass
+
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
     if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
