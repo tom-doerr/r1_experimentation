@@ -56,6 +56,7 @@ class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self, model: str = "default-model") -> None:
         self.model = model
+        self.last_completion = ""
 
     def set_model(self, model_name: str) -> None:
         """Set the model to use for processing"""
@@ -63,6 +64,19 @@ class Agent:
 
     def get_model(self) -> str:
         return self.model
+
+    def reply(self, prompt: str) -> str:
+        """Generate a response to the input prompt"""
+        response = litellm_completion(prompt, model=self.model)
+        self.last_completion = response
+        return response
+
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
+        """Wrapper for XML parsing that handles empty results"""
+        try:
+            return parse_xml(xml_string)
+        except ValueError:
+            return {'error': 'Invalid XML format'}
 
     def reply(self, prompt: str) -> str:
         # Use the configured model to generate a response
