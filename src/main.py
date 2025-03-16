@@ -2,6 +2,8 @@ import shlex
 from typing import Dict, Any, List, Generator
 import subprocess
 from xml.etree.ElementTree import ParseError, ElementTree
+from xml.etree import ElementTree as ET
+import litellm
 
 import litellm
 
@@ -11,16 +13,18 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     try:
-        root = ElementTree.fromstring(xml_string)
+        root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
+
         for child in root:
-            if len(child):
-                data[child.tag] = {
-                    grandchild.tag: grandchild.text if grandchild.text is not None else "" for grandchild in child
-                }
-            else:
-                data[child.tag] = child.text if child.text is not None else ""
-        return data
+            if not len(child):
+                data[child.tag] = child.text or ""
+                continue
+
+            data[child.tag] = {
+                grandchild.tag: grandchild.text or ""
+                for grandchild in child
+            }
     except ParseError as e:  # type: ignore
         return {"error": f"XML ParseError: {str(e)}"}
 
@@ -91,7 +95,7 @@ def litellm_streaming(
             stream=True,
             max_tokens=max_tokens,
         )
-        for chunk in response:
+        for chunk in response: # type: ignore
             if (
                 chunk
                 and chunk["choices"]
@@ -137,6 +141,6 @@ class AgentAssert(Tool):
 
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
-        if "False" in reply:
+        if "false" in reply.lower():
             return False
         return True
