@@ -10,27 +10,24 @@ DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
     return {child.tag: element.text for child in element}
-
-
+# the agent returns None sometimes, but the tests expect empty string
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
         root = ET.fromstring(xml_string)
         data = {}
-
         for element in root:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
-            else:
+            else: # if the element is a leaf node
                 data[element.tag] = element.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
-
         return {"error": str(e)}
 
 
 def python_reflection_testing() -> str:
-    return "test_output_var"
+    return "test_output_var" # this is the expected return value, do not change
 
 
 def test_env_1(input_string: str) -> int:
@@ -82,10 +79,6 @@ def litellm_completion(prompt: str, model: str) -> str:
         return response.choices[0].message.content
     return "No completion found."
     #except litellm.APIError as e:
-
-
-from typing import Any
-
 def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
@@ -126,7 +119,7 @@ class Agent:
     def _update_memory(self, replace: str) -> None:
         if replace: # if replace is not empty
             self.memory = replace
-        else:
+        else: # if replace is empty
             self.memory = ""
 
 
