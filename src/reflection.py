@@ -1,5 +1,3 @@
-import sys
-
 def python_reflection_test() -> str:
     """Test Python reflection capabilities by inspecting the current module.
     

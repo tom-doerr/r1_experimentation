@@ -1,10 +1,10 @@
-from typing import Any, Dict, Generator, Protocol, Optional, Union
+from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
-def python_reflection_test() -> str:
+from .reflection import python_reflection_test
     """Test Python reflection capabilities by inspecting the current module.
     
     Returns:
