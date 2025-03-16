@@ -1,5 +1,5 @@
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import sys
 
 from src.main import *
 
@@ -7,11 +7,6 @@ from src.main import *
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
-MODEL = FLASH
-
-xml_data = '<response><message>hello</message></response>'
-parsed_data = parse_xml(xml_data)
-
 MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
@@ -33,31 +28,24 @@ for reply in reply_generator:
 
 
 
-TEST_OUTPUT_VAR = python_reflection_testing()
-
+test_output_var = python_reflection_testing()
 print("test_output_var:", test_output_var)
 assert test_output_var == 'test_output_var'
 
 
 
-REWARD = test_env_1('aaa')
+reward = test_env_1('aaa')
 assert reward == 3
 
-REWARD = test_env_1('aabbjadfa')
+reward = test_env_1('aabbjadfa')
 assert reward == 4
 
 
 
-# set flash as the default model
-# don't mock
-completion = litellm_completion('hi', model=MODEL)
-print("completion:", completion)
-
-reply_generator = litellm_streaming('hi')
+reply_generator = litellm_streaming('hi', model=OR1, max_tokens=40)
 print("reply_generator:", reply_generator)
-
 for reply in reply_generator:
-    print("reply:", reply, end='')
+    print("-", reply, end='')
 
 
 agent = Agent(model=MODEL)
@@ -82,23 +70,23 @@ assert agent.memory == 'The user wrote just hi.'
 
 
 agent_assert = AgentAssert(model=MODEL)
-assert isinstance(agent_assert.agent, Agent)
+assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val is False
+assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
-assert isinstance(return_val, bool)
+assert type(return_val) == bool
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 is False
+assert two_plus_two_is_4 == False
 
 
 shell_code_executor = ShellCodeExecutor()
-assert isinstance(shell_code_executor, Tool)
+assert type(shell_code_executor) == Tool
 
 
 # check if this is a subset of the blacklisted commands
