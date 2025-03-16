@@ -117,10 +117,11 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        if search and search in self.memory:
-            self.memory = self.memory.replace(search, replace)
-        elif replace:
-            self.memory += f"\n{replace}"
+        if search and replace:
+            if search and search in self.memory:
+                self.memory = self.memory.replace(search, replace)
+            else:
+                self.memory += f"\n{replace}"
 
 
 class AgentAssert:
