@@ -51,7 +51,9 @@ def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
 
 def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
-    kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
+    kwargs: Dict[str, Any] = {"messages": messages, "stream": True}
+    if model:
+        kwargs["model"] = model
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
@@ -129,7 +131,7 @@ class AgentAssert:
         return False
 
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
+    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
     else:
         print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)
