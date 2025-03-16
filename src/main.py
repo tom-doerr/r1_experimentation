@@ -135,6 +135,7 @@ class AgentAssert(Agent): # type: ignore
     """Agent that asserts a statement."""
     def __init__(self, model: str = DEFAULT_MODEL):
         super().__init__(model=model)
+        self.agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply: str = self.reply(statement)
