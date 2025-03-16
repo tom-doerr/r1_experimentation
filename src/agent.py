@@ -1,5 +1,5 @@
 from typing import Dict
-from .main import parse_xml, litellm_completion, DEFAULT_MODEL
+from .main import parse_xml, litellm_completion, DEFAULT_MODEL, global_settings
 
 class Agent:
     """An agent that interacts with the user and maintains memory."""
