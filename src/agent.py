@@ -18,16 +18,18 @@ class Agent:
             max_tokens: Maximum number of tokens to generate (must be positive)
             
         Raises:
-            ValueError: If max_tokens is invalid or starting_cash is not configured
+            ValueError: If max_tokens is invalid or global settings are invalid
+            TypeError: If model is not a string
         """
+        if not isinstance(model, str):
+            raise TypeError("model must be a string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
-        if 'starting_cash' not in global_settings:
-            raise ValueError("starting_cash must be configured in global_settings")
             
         self.model = model
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
+        self._validate_net_worth()
 
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"

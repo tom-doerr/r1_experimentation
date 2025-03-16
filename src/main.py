@@ -10,11 +10,29 @@ import litellm
 DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
-global_settings = {
+def _validate_global_settings(settings: Dict[str, float]) -> None:
+    """Validate global settings values."""
+    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth'}
+    if not required_keys.issubset(settings.keys()):
+        raise ValueError(f"Global settings must contain {required_keys}")
+    
+    if settings['min_net_worth'] < 0:
+        raise ValueError("min_net_worth cannot be negative")
+    if settings['max_net_worth'] <= settings['min_net_worth']:
+        raise ValueError("max_net_worth must be greater than min_net_worth")
+    if settings['starting_cash'] < settings['min_net_worth']:
+        raise ValueError("starting_cash cannot be less than min_net_worth")
+    if settings['starting_cash'] > settings['max_net_worth']:
+        raise ValueError("starting_cash cannot exceed max_net_worth")
+
+global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,  # Default starting cash value
     'max_net_worth': 10000.0,  # Maximum allowed net worth
-    'min_net_worth': 0.0  # Minimum allowed net worth
+    'min_net_worth': 0.0,  # Minimum allowed net worth
+    'cash_penalty': 0.1  # Percentage penalty for invalid operations
 }
+
+_validate_global_settings(global_settings)
 
 def _parse_xml_value(element: ET.Element) -> str | bool | None:
     """Helper to parse XML element values."""
