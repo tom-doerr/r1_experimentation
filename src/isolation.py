@@ -43,7 +43,8 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     if command.strip():  # Only add command if not empty
         docker_cmd += ["sh", "-c", command]
         
-    return _run_subprocess(docker_cmd, timeout)
+    try:
+        return _run_subprocess(docker_cmd, timeout)
     except Exception as e:
         raise RuntimeError(f"Container execution failed: {e}") from e
 
