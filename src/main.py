@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, List, Generator
-import litellm
 import shlex
 import subprocess
+
+import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 litellm.model = FLASH  # Set the default model directly. Ensure this is used as the default.
@@ -52,10 +53,10 @@ class ShellCodeExecutor(Tool):
     whitelisted_commands: List[str] = ["ls", "date", "pwd"]
 
     def __call__(self, command: str) -> str:
-        return self.execute(command)
+        return self.run(command)
 
-    def execute(self, command: str) -> str:
-        command_parts: List[str] = shlex.split(command)
+    def run(self, command: str) -> str:
+        command_parts: List[str] = shlex.split(command)  # type: ignore
         if command_parts and command_parts[0] in self.blacklisted_commands:
             return f"Command {command_parts[0]} is blacklisted."
         if command_parts and command_parts[0] not in self.whitelisted_commands:
