@@ -34,8 +34,8 @@ class AgentAssert:
         if "/" not in model:
             raise ValueError("Model must be in provider/model format")
 
-class Agent:
-    """Base class for agents."""
+class Agent(ABC):
+    """Abstract base class for agents."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(model, str) or not model.strip():
