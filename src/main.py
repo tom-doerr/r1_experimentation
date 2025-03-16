@@ -74,7 +74,7 @@ def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
             yield chunk["choices"][0]["delta"]["content"]
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
     """Streams completion from LiteLLM."""
     try:
         response = litellm.completion(
