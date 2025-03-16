@@ -20,15 +20,15 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         return {}
 
 
-def _parse_element(element: ET.Element) -> Dict[str, Optional[Any]]:
-    result: Dict[str, Optional[Any]] = {}
+def _parse_element(element: ET.Element) -> Dict[str, Any]:
+    result: Dict[str, Any] = {}
     for child in element:
         if len(child) > 0:
-            child_data: Optional[Any] = _parse_element(child)
+            child_data: Any = _parse_element(child)
         elif child.text is not None:
-            child_data: Optional[str] = child.text.strip()
+            child_data: str = child.text.strip()
         else:
-            child_data = None
+            child_data: None = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
@@ -133,4 +133,3 @@ def _handle_litellm_error(e: Exception, function_name: str) -> str:
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
     else:
         print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)
-    raise e
