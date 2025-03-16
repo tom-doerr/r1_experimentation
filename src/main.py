@@ -63,11 +63,11 @@ class ShellCodeExecutor(Tool):
         if command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is blacklisted."
         if command_name not in self.whitelisted_commands:
-        try:
-            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
-            return result.stdout
-        except subprocess.CalledProcessError as e:
-            return f"Error executing command: {e.stderr}"
+            try:
+                result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
+                return result.stdout
+            except subprocess.CalledProcessError as e:
+                return f"Error executing command: {e.stderr}"
 
 def litellm_completion(prompt: str, model: str) -> str:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
