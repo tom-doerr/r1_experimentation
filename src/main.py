@@ -3,10 +3,11 @@ import xml.etree.ElementTree as ET
 from .llm_utils import litellm_completion, litellm_streaming
 from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
-from .agent import Agent
-from .interface import UserInterface
+from .agent import Agent, AgentAssert, ConcreteAgent
+from .interface import UserInterface, ConsoleInterface
 from .isolation import IsolatedEnvironment, run_container
 from .envs import Env1, Env2
+from .tools import Tool, ShellCodeExecutor
 from .tools import Tool, ShellCodeExecutor
 
 
