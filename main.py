@@ -93,78 +93,6 @@ class Agent:
         """Updates the agent's memory."""
         self.memory = replace
 
-
-class AgentAssert(Tool):
-    def __init__(self, model: str = FLASH):
-        self.model: str = model
-        self.agent: Agent = Agent(model=model)
-
-    def __call__(self, statement: str) -> bool:
-        """Asserts a statement using the agent and returns a boolean."""
-        try:
-            response: str = self.agent.reply(statement)
-            # Basic check for "True" or "False" in the response.  Improve this logic as needed.
-            if "True" in response:
-                return True
-            elif "False" in response:
-                return False
-            else:
-                return False  # Default to False if the response is unclear
-        except Exception as e:
-            print(f"Error in AgentAssert: {e}")
-            return False
-
-
-def litellm_completion(prompt: str, model: str = FLASH) -> str:
-    """Calls the LiteLLM completion API and returns the result."""
-    try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        return response.choices[0].message.content
-    except Exception as e:
-        return _handle_litellm_error(e, "litellm_completion")
-
-
-def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
-    messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
-    kwargs: Dict[str, Any] = {"messages": messages, "stream": True}
-    kwargs["model"] = model if model else litellm.model
-    if max_tokens is not None:
-        kwargs["max_tokens"] = max_tokens
-    try:
-        response: Any = litellm.completion(**kwargs)
-        if isinstance(response, dict):  # Handle non-streaming response
-            if 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0]:
-                yield response['choices'][0]['message']['content'] or ""
-            else:
-                print(f"Unexpected non-streaming response format: {response}")
-                yield ""
-        elif hasattr(response, '__iter__'):  # Handle streaming response
-            for chunk in response:
-                if (
-                    chunk.get('choices')
-                    and len(chunk['choices']) > 0
-                    and chunk['choices'][0].get('delta')
-                    and chunk['choices'][0]['delta'].get('content')
-                ):
-                    content: str = chunk['choices'][0]['delta']['content']
-                    if content:
-                        yield content
-                else:
-                    error_message = f"Unexpected chunk format: {chunk}"
-                    print(error_message)
-                    yield error_message
-        else:
-            error_message = f"Unexpected response type: {type(response)}"
-            print(error_message)
-            yield error_message
-    except Exception as e:
-        error_message = _handle_litellm_error(e, "litellm streaming")
-        yield error_message
-
-
-import shlex
-import subprocess
-
     def execute(self, command: str) -> str:
         command_parts = shlex.split(command)
         if command_parts and command_parts[0] in self.blacklisted_commands:
@@ -176,12 +104,3 @@ import subprocess
             return result.stdout
         except subprocess.CalledProcessError as e:
             return e.stderr
-
-def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm, 'utils') and isinstance(e, litellm.utils.LiteLLMError):
-        error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
-        print(error_message)
-        return error_message
-    error_message = f"General error during {function_name}: {type(e).__name__} - {e}"
-    print(error_message)
-    return error_message
