@@ -296,6 +296,13 @@ def _escape_xml(text: str) -> str:
     """Escape XML special characters."""
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
+__all__ = [
+    "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
+    "litellm_completion", "litellm_streaming", "Agent", "AgentAssert",
+    "DEFAULT_MODEL", "Env1", "Env2", "global_settings", "UserInterface",
+    "IsolatedEnvironment", "run_container"
+]
+
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():
