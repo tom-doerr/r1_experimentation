@@ -19,3 +19,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 norecursedirs = ["hidden_t", "__pycache__"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
