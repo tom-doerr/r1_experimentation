@@ -42,3 +42,6 @@ class Env2:
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
 
+    def __repr__(self) -> str:
+        return f"Env2(max_char_count={self.max_char_count})"
+
