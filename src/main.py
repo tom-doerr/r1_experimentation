@@ -57,7 +57,7 @@ class ShellCodeExecutor(Tool):
         command_name: str = command_parts[0]
         if command_name in self.whitelisted_commands and command_name not in self.blacklisted_commands:
             return self._execute_command(command_parts)
-        return f"Command '{command_name}' is not whitelisted."
+        return f"Command '{command_name}' is not whitelisted or is blacklisted."
 
     def _execute_command(self, command_parts: List[str]) -> str:
         try:
@@ -74,7 +74,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         response = litellm.completion(
             model=model, messages=[{"role": "user", "content": prompt}],
         )
-        if response.choices and response.choices[0].message:
+        if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
         return ""  # type: ignore
     except Exception as e:
