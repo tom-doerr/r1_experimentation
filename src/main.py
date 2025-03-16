@@ -9,6 +9,7 @@ import litellm
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
+def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not required_keys.issubset(settings.keys()):
@@ -303,6 +304,44 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
+
+def run_container(image: str, command: str, timeout: int = 10) -> str:
+    """Run a command in a container using Docker.
+    
+    Args:
+        image: Docker image to use
+        command: Command to run in container
+        timeout: Maximum execution time in seconds
+        
+    Returns:
+        str: Command output
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If container execution fails
+    """
+    if not isinstance(image, str) or not image.strip():
+        raise ValueError("image must be a non-empty string")
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("command must be a non-empty string")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError("timeout must be a positive integer")
+        
+    try:
+        result = subprocess.run(
+            ["docker", "run", "--rm", image, "sh", "-c", command],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError(f"Container timed out after {timeout} seconds") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Container failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error running container: {e}") from e
 
 def _execute_command(command: str, timeout: int = 10) -> str:
     """Execute a command with timeout and validation."""
