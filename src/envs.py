@@ -46,7 +46,8 @@ class Env2:
                 consecutive_pairs += 1
         
         # Only count pairs beyond 2
-        return max(0, consecutive_pairs - 2) if len(input_string) <= self.max_char_count else 0
+        input_len = len(input_string)
+        return max(0, input_len - (self.max_char_count - 3)) if input_len <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
