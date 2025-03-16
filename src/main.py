@@ -91,9 +91,9 @@ class Agent():
 
     memory: str = ""
     last_completion: str = ""
-    model: str = FLASH
+    model: str = DEFAULT_MODEL
 
-    def __init__(self, model: str = FLASH):
+    def __init__(self, model: str = DEFAULT_MODEL):
         self.model = model
 
     def __repr__(self):
@@ -114,7 +114,7 @@ class Agent():
 class AgentAssert(Agent):
     """An agent that asserts statements."""
 
-    def __init__(self, model: str = FLASH):
+    def __init__(self, model: str = DEFAULT_MODEL):
         super().__init__(model=model)
 
         self.agent = Agent(model=model)
