@@ -265,16 +265,30 @@ def _normalize_model_name(model: str) -> str:
         
     Returns:
         Normalized model name with proper prefix
+        
+    Raises:
+        ValueError: If model name is invalid
     """
-    if model.startswith('openrouter/') or model.startswith('deepseek/'):
+    if not isinstance(model, str) or not model.strip():
+        raise ValueError("Model must be a non-empty string")
+        
+    model = model.strip().lower()
+    
+    # Handle deepseek models
+    if model == "deepseek":
+        return "deepseek/deepseek-chat"
+    if model.startswith("deepseek/"):
         return model
-    if model == 'deepseek':
-        return 'deepseek/deepseek-chat'
-    if model == 'flash':
-        return 'openrouter/google/gemini-2.0-flash-001'
-    if '/' in model:
-        return f'openrouter/{model}'
-    return f'openrouter/{model}'
+        
+    # Handle openrouter models
+    if model.startswith("openrouter/"):
+        return model
+        
+    # Handle other models
+    if "/" in model:
+        return f"openrouter/{model}"
+        
+    return f"openrouter/{model}"
 
 
 
