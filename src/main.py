@@ -257,6 +257,59 @@ def python_reflection_test() -> str:
     current = frame.f_code.co_name
     return f"Reflection test: called by {caller}, current function {current}"
 
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - type: The object's type
+            - attributes: Dictionary of instance attributes
+            - methods: List of method names
+    """
+    if obj is None:
+        raise ValueError("Cannot inspect None object")
+        
+    result = {
+        "type": str(type(obj)),
+        "attributes": {},
+        "methods": []
+    }
+    
+    # Get attributes
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(value)
+        
+    # Get methods
+    for name, member in inspect.getmembers(obj):
+        if inspect.ismethod(member) or inspect.isfunction(member):
+            result["methods"].append(name)
+            
+    return result
+
+
+def _execute_command(command: str, timeout: int = 10) -> str:
+    """Helper function to execute a command with error handling."""
+    try:
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError("Command timed out") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Command failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error executing command: {e}") from e
+
+
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
     
