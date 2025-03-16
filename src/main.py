@@ -17,42 +17,6 @@ from .envs import Env1, Env2
 from .llm_utils import litellm_completion
 
 
-def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """Parse XML string into a dictionary.
-    
-    Args:
-        xml_string: XML string to parse
-        
-    Returns:
-        Dict: Parsed XML data
-        
-    Raises:
-        ValueError: If XML is invalid
-    """
-    try:
-        root = ET.fromstring(xml_string)
-        return {elem.tag: elem.text for elem in root}
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {e}") from e
-
-def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """Parse XML string into dictionary.
-    
-    Args:
-        xml_string: XML content to parse
-        
-    Returns:
-        Dict: Parsed XML content as dictionary
-        
-    Raises:
-        ValueError: If XML is invalid
-    """
-    try:
-        root = ET.fromstring(xml_string)
-        return {elem.tag: elem.text for elem in root}
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {e}") from e
-
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
@@ -78,12 +42,6 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
 
 
 
-def parse_xml(xml_string: str) -> ET.Element:
-    """Parse XML string and return ElementTree element."""
-    try:
-        return ET.fromstring(xml_string)
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {str(e)}") from e
 
 class Tool(Protocol):
     """Protocol defining interface for command execution tools."""
