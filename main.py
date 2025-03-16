@@ -24,7 +24,10 @@ def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None
     yield f"Streaming response to: {prompt}"
 
 class Agent:
-    pass
+    """Main agent for for handling AI interactions"""
+    def __init__(self) -> None:
+        # Initialize with default configuration
+        pass
 
 if __name__ == "__main__":
     # Test the XML parser
