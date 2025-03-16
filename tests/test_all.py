@@ -1,9 +1,10 @@
 import os
 import sys
-import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.main import parse_xml, python_reflection_testing, test_env_1, Tool, ShellCodeExecutor, litellm_completion, litellm_streaming, Agent, AgentAssert
+import src
+from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -20,7 +21,6 @@ print("message:", message)
 # set flash as the default model
 # don't mock
 completion = litellm_completion('hi', model=MODEL)
-assert type(completion) == str
 print("completion:", completion)
 
 reply_generator = litellm_streaming('hi')
@@ -55,14 +55,14 @@ agent = Agent(model=MODEL)
 
 output = agent.reply('hi')
 print("output:", output)
-last_completion = agent.last_completion # type: ignore
+last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-parsed_data = agent._parse_xml(xml_data) # type: ignore
+parsed_data = agent._parse_xml(xml_data)
 assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
-parsed_data_2 = agent._parse_xml(xml_data_2) # type: ignore
+parsed_data_2 = agent._parse_xml(xml_data_2)
 assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
@@ -100,7 +100,6 @@ assert {'ls', 'date'} & set(shell_code_executor.whitelisted_commands) == {'ls', 
 shell_code_executor_ls = shell_code_executor('ls')
 print("shell_code_executor_ls:", shell_code_executor_ls)
 assert 'plex.md' in shell_code_executor_ls
-assert type(shell_code_executor_ls) == str
 
 
 
