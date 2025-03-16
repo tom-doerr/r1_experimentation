@@ -9,7 +9,7 @@ FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
     """Parses a single XML element and returns a dictionary of its children."""
-    return {child.tag: child.text or "" for child in element}
+    return {child.tag: child.text or "" for child in element if child.tag is not None}
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
@@ -17,7 +17,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root}
         return data
-    except ET.ParseError as e:
+    except ET.ParseError as e: # type: ignore
         print(f"XML ParseError: {str(e)}")
         return {"error": f"XML ParseError: {str(e)}"}
 
@@ -108,7 +108,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str = "", replace: str = "") -> None:
         self.memory = replace
 
 
