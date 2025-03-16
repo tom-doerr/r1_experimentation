@@ -1,10 +1,7 @@
 import shlex
 from typing import Dict, Any, List, Generator
-import shlex
-from typing import Dict, Any, List, Generator
 import subprocess
 from xml.etree.ElementTree import ParseError, ElementTree
-from xml.etree import ElementTree as ET
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
@@ -12,10 +9,11 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
+    from xml.etree import ElementTree as ET
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
-        for child in root:
+        for child in root: # type: ignore
             if not len(child):
                 data[child.tag] = child.text or ""
             else:
@@ -46,7 +44,7 @@ class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
-    def __call__(self, command: str) -> str:
+    def __call__(self, command: str) -> str: # type: ignore
         return self.run(command)
 
     def run(self, command: str) -> str:
@@ -127,7 +125,7 @@ class Agent(Tool):
         self.memory = replace
 
 
-class AgentAssert(Tool):
+class AgentAssert(Tool): # type: ignore
     """An agent that asserts statements."""
 
     agent: Agent
@@ -137,6 +135,9 @@ class AgentAssert(Tool):
 
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
-        if "false" in reply.lower():
+        return self._parse_xml(reply)
+
+    def _parse_xml(self, reply: str) -> bool:
+        if "false" in reply.lower(): # type: ignore
             return False
-        return True
+        return True # type: ignore

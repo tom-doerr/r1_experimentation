@@ -1,6 +1,6 @@
-import src
-from src import *
-from src.main import *
+from src.main import (Agent, AgentAssert, ShellCodeExecutor, litellm_completion,
+                       litellm_streaming, parse_xml, python_reflection_testing,
+                       test_env_1, Tool)
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -10,10 +10,10 @@ MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
 parsed_data = parse_xml(xml_data)
-
+#test parse_xml
 message = parsed_data['message']
 print("message:", message)
-
+#test litellm_completion
 # set flash as the default model
 # don't mock
 completion = litellm_completion('hi', model=MODEL)
@@ -23,11 +23,10 @@ reply_generator = litellm_streaming('hi')
 print("reply_generator:", reply_generator)
 
 for reply in reply_generator:
-    print("reply:", reply, end='')
+    print("reply:", reply, end='') #test litellm_streaming
 
 
-
-test_output_var = python_reflection_testing()
+test_output_var = python_reflection_testing() #test python_reflection_testing
 print("test_output_var:", test_output_var)
 assert test_output_var == 'test_output_var'
 
@@ -37,7 +36,7 @@ reward = test_env_1('aaa')
 assert reward == 3
 
 reward = test_env_1('aabbjadfa')
-assert reward == 4
+assert reward == 4 #test test_env_1
 
 
 
@@ -48,7 +47,7 @@ for reply in reply_generator:
 
 
 agent = Agent(model=MODEL)
-
+#test Agent
 output = agent.reply('hi')
 print("output:", output)
 last_completion = agent.last_completion
@@ -71,7 +70,7 @@ assert agent.memory == 'The user wrote just hi.'
 agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
-bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>') #test AgentAssert
 assert bool_val == False
 
 
