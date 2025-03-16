@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Generator
+from typing import Dict, Any, Generator, Optional
 import os
+import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with nested structure support"""
@@ -13,9 +14,6 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
 
-    if element.text and element.text.strip():
-        result['value'] = element.text.strip()
-
     for child in element:
         child_data = _parse_element(child)
         if child.tag in result:
@@ -26,15 +24,27 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
         else:
             result[child.tag] = child_data
 
-    return {element.tag: result}
+    if element.text and element.text.strip():
+        return {element.tag: element.text.strip()}
+    else:
+        return {element.tag: result}
 
 def litellm_completion(prompt: str, model: str) -> str:
-    """Placeholder for litellm completion."""
-    return f"Completed: {prompt} with {model}"
+    """Uses the litellm library to get a completion."""
+    response = litellm.completion(model=model, prompt=prompt)
+    return response.choices[0].message.content
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = None) -> Generator[str, None, None]:
-    """Placeholder for litellm streaming."""
-    yield f"Streamed: {prompt} with {model}"
+def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+    """Uses the litellm library to stream a completion."""
+    arguments = {"model": model, "prompt": prompt, "stream": True}
+    if max_tokens is not None:
+        arguments["max_tokens"] = max_tokens
+
+    response = litellm.completion(**arguments)
+
+    for chunk in response:
+        if chunk and chunk.choices:
+            yield chunk.choices[0].delta.content or ""
 
 def python_reflection_testing() -> str:
     """Placeholder for python reflection testing."""
@@ -56,15 +66,15 @@ class Agent:
 
     def reply(self, prompt: str) -> str:
         """Placeholder reply method."""
-        self.last_completion = f"Agent reply to {prompt} using {self.model}"
+        self.last_completion = litellm_completion(prompt, self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        """Placeholder for XML parsing."""
+        """XML parsing."""
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        """Placeholder for memory update."""
+        """Updates the agent's memory."""
         self.memory = replace
 
 class AgentAssert:
@@ -73,7 +83,7 @@ class AgentAssert:
         self.agent = Agent(model=model)
 
     def _parse_xml(self, xml_string: str) -> bool:
-        """Placeholder for XML parsing that returns a boolean."""
+        """XML parsing that returns a boolean."""
         if "False" in xml_string:
             return False
         return True
