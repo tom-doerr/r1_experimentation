@@ -21,7 +21,7 @@ class Env1:
         Returns:
             int: Score calculated as:
                 - target_char count minus length penalty if any targets found
-                - -2 if no targets and string length >= penalty start
+                - -1 if no targets and string length >= penalty start
                 - 0 if no targets and string length < penalty start
                 
         Raises:
@@ -37,7 +37,7 @@ class Env1:
             
         # No targets found
         if len(input_string) >= self.char_count_penalty_start:
-            return -2  # Changed to match test expectation
+            return -1  # Changed from -2 to match test
         return 0
 
     def __repr__(self) -> str:
