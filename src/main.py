@@ -18,8 +18,8 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         for element in root:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
-            else: # if the element is a leaf node
-                data[element.tag] = element.text or ""
+            else:  # if the element is a leaf node
+                data[element.tag] = element.text if element.text is not None else ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
