@@ -15,7 +15,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     try:
         root = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root}
+        data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root if element.tag is not None}
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
@@ -23,7 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
 
 
 def python_reflection_testing() -> str:
-    return "test_output_var" # this is the expected return value, do not change
+    return "test_output_var"
 
 
 def test_env_1(input_string: str) -> int:
@@ -93,7 +93,6 @@ class Agent():
     """An agent that interacts with the user and maintains memory."""
 
     memory: str = ""
-    last_completion: str = ""
     model: str = DEFAULT_MODEL
 
     def __init__(self, model: str = DEFAULT_MODEL):
@@ -104,8 +103,7 @@ class Agent():
 
     def reply(self, prompt: str) -> str:
         full_prompt = f"{prompt}. Current memory: {self.memory}"
-        self.last_completion = litellm_completion(full_prompt, model=self.model)
-        return self.last_completion
+        return litellm_completion(full_prompt, model=self.model)
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
@@ -125,10 +123,10 @@ class AgentAssert(Agent):
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
-        if isinstance(parsed_reply, dict) and "bool" in parsed_reply and isinstance(parsed_reply["bool"], str) and parsed_reply["bool"].lower() in ["true", "false"]:
-            bool_value = self._parse_bool(parsed_reply["bool"])
-            return bool_value
-        return False
+        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
+            return False
+        bool_value = self._parse_bool(parsed_reply["bool"])
+        return bool_value
 
     def _parse_bool(self, bool_string: str) -> bool:
         """Parses a boolean string from XML to a boolean value."""
