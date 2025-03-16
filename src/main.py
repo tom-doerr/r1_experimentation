@@ -40,38 +40,6 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
             
     return result
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods.
-    
-    Args:
-        obj: Any Python object to inspect
-        
-    Returns:
-        Dictionary containing:
-            - type: The object's type
-            - attributes: Dictionary of instance attributes
-            - methods: List of method names
-    """
-    if obj is None:
-        raise ValueError("Cannot inspect None object")
-        
-    result = {
-        "type": str(type(obj)),
-        "attributes": {},
-        "methods": []
-    }
-    
-    # Get attributes
-    for name, value in vars(obj).items():
-        result["attributes"][name] = str(value)
-        
-    # Get methods
-    for name in dir(obj):
-        if callable(getattr(obj, name)) and not name.startswith('_'):
-            result["methods"].append(name)
-            
-    return result
-
 
 global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,
