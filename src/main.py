@@ -47,13 +47,9 @@ class ShellCodeExecutor:
         if not command:
             return "Error: No command provided."
 
-        command_parts: List[str] = shlex.split(command)
-        if not command_parts:
+        command_parts = shlex.split(command)
+        if not command_parts or command_parts[0] not in self.whitelisted_commands or command_parts[0] in self.blacklisted_commands:
             return "Error: No command provided."
-
-        command_name: str = command_parts[0]
-        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
-            return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
         try:
             result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
@@ -68,10 +64,10 @@ def litellm_completion(prompt: str, model: str) -> str:
         prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
 
     try:
-        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])  # type: ignore
-        return response.choices[0].message.content if response and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
+        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
     except litellm.LiteLLMError as e:  # type: ignore
-        return f"LiteLLMError: {type(e).__name__}: {e}"  # type: ignore
+        return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
@@ -115,7 +111,7 @@ class Agent():
         return parse_xml(xml_string)
 
     def _update_memory(self, replace: str, search: str="") -> None:
-        self.memory = replace
+        self.memory = replace # the search parameter is not used
 
 
 class AgentAssert(Agent):
@@ -124,6 +120,7 @@ class AgentAssert(Agent):
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
 
+        self.agent = Agent(model=model)
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self._parse_xml(reply)
