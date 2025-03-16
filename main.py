@@ -24,10 +24,8 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
         else:
             result[child.tag] = child_data
 
-    if element.text and element.text.strip() and not result and 'message' not in result:
+    if element.text and element.text.strip():
         result['message'] = element.text.strip()
-    elif element.text and element.text.strip():
-        return element.text.strip()
 
     return {element.tag: result} if result else None
 
