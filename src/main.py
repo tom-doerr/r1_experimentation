@@ -270,3 +270,5 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Generator, Optional
 
 import litellm
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+from src.envs import Env1
