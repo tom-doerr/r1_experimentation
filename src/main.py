@@ -52,9 +52,10 @@ class Tool:
         pass
 
 
-class ShellCodeExecutor(Tool): # executes shell commands
-    """Executes shell commands."""
-    whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
+class ShellCodeExecutor(Tool):
+    """Executes shell commands safely with allow/deny lists."""
+    blacklisted_commands = {'rm', 'cat', 'mv', 'cp'}
+    whitelisted_commands = {'ls', 'date'}
 
     def __call__(self, command: str) -> str:
         return self.run(command)
@@ -65,24 +66,38 @@ class ShellCodeExecutor(Tool): # executes shell commands
     def run(self, command: str) -> str:
         if not command:
             raise ValueError("No command provided")
-        command_parts = shlex.split(command)
-        if not command_parts:
-            raise ValueError("No command parts found")
-        if command_parts[0] not in self.whitelisted_commands:
-            raise ValueError(f"Command '{command_parts[0]}' is not whitelisted")
+        
+        cmd = command.strip().split()[0]
+        if cmd in self.blacklisted_commands:
+            raise PermissionError(f"Command {cmd} not allowed")
+        if cmd not in self.whitelisted_commands:
+            raise ValueError(f"Command {cmd} not whitelisted")
+
         try:
-            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
+            result = subprocess.run(
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=10
+            )
             return result.stdout
-        except subprocess.CalledProcessError:
-            return "Command failed"
+        except subprocess.CalledProcessError as e:
+            return f"Command failed: {e}"
         except Exception as e:
-            return f"An error occurred: {str(e)}"
+            return f"Error: {str(e)}"
 
 
-def litellm_completion(prompt: str, model: str) -> str: # completes the prompt using LiteLLM and returns the result.
+def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=100
+        )
         if not hasattr(response, 'choices') or not response.choices:
             raise ValueError(f"Unexpected response type: {type(response)}")
         if response.choices and response.choices[0].message and response.choices[0].message.content:
@@ -247,10 +262,29 @@ class Agent:
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> dict:
-        return parse_xml(xml_string)
+        """Parse XML string into nested dictionary structure"""
+        try:
+            root = ET.fromstring(xml_string)
+            return self._parse_xml_element(root)
+        except ET.ParseError as e:
+            return {"error": str(e)}
 
-    def _update_memory(self, search: str, replace: str):
-        self.memory = replace
+    def _parse_xml_element(self, element: ET.Element) -> dict:
+        """Recursively parse XML elements with nested handling"""
+        result = {}
+        for child in element:
+            if len(child) > 0:  # Has nested elements
+                result[child.tag] = self._parse_xml_element(child)
+            else:
+                result[child.tag] = child.text
+        return result
+
+    def _update_memory(self, search: str, replace: str) -> None:
+        """Update memory with replacement, appending if search not found"""
+        if search and search in self.memory:
+            self.memory = self.memory.replace(search, replace)
+        else:
+            self.memory += f"\n{replace}"
 
 class AgentAssert:
     """Agent for boolean assertions"""
