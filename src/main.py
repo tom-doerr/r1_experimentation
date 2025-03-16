@@ -16,15 +16,6 @@ from .reflection import python_reflection_test
 from .envs import Env1, Env2
 
 
-# Local imports
-from .agent import Agent, AgentAssert
-from .config import DEFAULT_MODEL, global_settings
-from .envs import Env1, Env2
-from .interface import UserInterface
-from .isolation import IsolatedEnvironment, run_container
-from .llm_utils import litellm_completion, litellm_streaming
-from .reflection import python_reflection_test
-from .utils import normalize_model_name as _normalize_model_name
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """Parse XML string into dictionary.
@@ -44,6 +35,18 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
         root = ET.fromstring(xml_string)
         return {root.tag: root.text}
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
+
+
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into a dictionary."""
+    if not isinstance(xml_string, str) or not xml_string.strip():
+        raise ValueError("Input must be a non-empty XML string")
+    
+    try:
+        root = ET.fromstring(xml_string)
+        return {elem.tag: elem.text for elem in root}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
