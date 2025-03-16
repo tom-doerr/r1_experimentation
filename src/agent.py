@@ -7,14 +7,19 @@ from .interface import UserInterface, ConsoleInterface
 class Agent(ABC):
     """Abstract base class for agents."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
+        if interface is not None and not isinstance(interface, UserInterface):
+            raise TypeError("interface must implement UserInterface protocol")
             
         self.model = model
         self.max_tokens = max_tokens
+        self.interface = interface or ConsoleInterface()
+        self.memory = ""
+        self.net_worth = global_settings['initial_net_worth']
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
@@ -29,8 +34,8 @@ class Agent(ABC):
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        super().__init__(model, max_tokens)
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
+        super().__init__(model, max_tokens, interface)
         
     def __call__(self, input_text: str) -> str:
         """Handle input with simple pattern matching."""
