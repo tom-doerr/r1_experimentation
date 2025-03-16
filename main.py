@@ -56,24 +56,6 @@ def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
     return 'test_output_var'
 
-def litellm_completion(message: str, model: str) -> str:
-    response = litellm.completion(
-        model=model,
-        messages=[{"content": message, "role": "user"}]
-    )
-    return response.choices[0].message.content
-
-def litellm_streaming(message: str) -> Generator[str, None, None]:
-    response = litellm.completion(
-        model="openrouter/google/gemini-2.0-flash-001",
-        messages=[{"content": message, "role": "user"}],
-        stream=True
-    )
-    for chunk in response:
-        yield chunk.choices[0].delta.content or ""
-
-def python_reflection_testing() -> str:
-    return 'test_output_var'
 
 class Agent:
     """Main agent for handling AI interactions"""
