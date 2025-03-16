@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import inspect
 import shlex
 import subprocess
 from typing import Any, Dict, Generator, Protocol
