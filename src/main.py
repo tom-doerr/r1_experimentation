@@ -81,8 +81,8 @@ def litellm_completion(prompt: str, model: str) -> str:
         return ""
     except Exception as e:
         print(f"LiteLLMError in litellm_completion: {e}")
- 
- 
+
+
 def litellm_streaming(
     prompt: str, model: str = FLASH, max_tokens: int = 100
 ) -> Generator[str, None, None]:
@@ -103,8 +103,6 @@ def litellm_streaming(
                 yield chunk["choices"][0]["delta"]["content"]
     except Exception as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
-
-
 
 
 class Agent(Tool):
