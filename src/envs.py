@@ -20,7 +20,7 @@ class Env1:
         if len(input_string) >= self.char_count_penalty_start:
             # Apply penalty of -1 for each character over threshold
             penalty = max(0, len(input_string) - self.char_count_penalty_start)
-            return count - penalty
+            return max(0, count - penalty)
         return count
 
     def __repr__(self) -> str:
@@ -40,8 +40,8 @@ class Env2:
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
             
-        # Return 1 if string is within max length, 0 otherwise
-        return 1 if len(input_string) <= self.max_char_count else 0
+        # Return 1 if string is within max length, -1 otherwise
+        return 1 if len(input_string) <= self.max_char_count else -1
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
