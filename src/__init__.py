@@ -11,10 +11,6 @@ from src.main import (
     DEFAULT_MODEL,
 )
 
-# Create a class for test_env_1 to match the test_env.py expectations
-"""
-Wrapper class for test_env_1 function.
-"""
 class Env1:
     def __call__(self, input_string: str):
         return test_env_1(input_string)

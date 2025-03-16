@@ -81,8 +81,6 @@ def litellm_completion(prompt: str, model: str) -> str:
         raise ValueError(f"Unexpected response type: {type(response)}")
     if response.choices and response.choices[0].message and response.choices[0].message.content:
         return response.choices[0].message.content
-    return "No completion found."
-    #except litellm.APIError as e:
 def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
