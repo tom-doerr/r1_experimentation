@@ -94,17 +94,3 @@ class AgentAssert(Agent):
     def __repr__(self) -> str:
         return f"AgentAssert(model={self.model!r}, max_tokens={self.max_tokens})"
 
-
-class AgentAssert:
-    """Utility class for agent assertions and validation."""
-    
-    @staticmethod
-    def validate_agent(agent: Agent) -> None:
-        """Validate that an object is a properly configured Agent."""
-        if not isinstance(agent, Agent):
-            raise TypeError("Must be an Agent instance")
-        if not hasattr(agent, '__call__'):
-            raise TypeError("Agent must be callable")
-        if not hasattr(agent, 'interface'):
-            raise AttributeError("Agent must have interface attribute")
-
