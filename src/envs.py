@@ -1,7 +1,7 @@
 class Env1:
     """Environment that counts target characters with penalty after threshold."""
     
-    def __init__(self, target_char: str = "a", char_count_penalty_start: int = 23) -> None:
+    def __init__(self, target_char: str = "a", char_count_penalty_start: int = 10) -> None:
         if not isinstance(target_char, str) or len(target_char) != 1:
             raise ValueError("target_char must be a single character")
         if not isinstance(char_count_penalty_start, int) or char_count_penalty_start < 0:
@@ -18,5 +18,5 @@ class Env1:
         if count == 0:
             return -1 if len(input_string) > self.char_count_penalty_start else 0
             
-        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 2
+        penalty = max(0, len(input_string) - self.char_count_penalty_start)
         return count - penalty
