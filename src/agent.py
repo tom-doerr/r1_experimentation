@@ -23,7 +23,7 @@ class Agent:
             raise ValueError("input_text must be a non-empty string")
             
         try:
-            response = litellm_completion(input_text, self.model)
+            response = litellm_completion(input_text, self.model, self.max_tokens)
             return response
         except Exception as e:
             self.interface.display_error(f"Error: {str(e)}")
