@@ -115,9 +115,12 @@ class Agent(Tool):
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        self.last_completion = litellm_completion(full_prompt, model=self.model)  # type: ignore
-        print(f"Exception in Agent.reply: {e}")
-        return ""
+        try:
+            self.last_completion = litellm_completion(full_prompt, model=self.model)  # type: ignore
+            return self.last_completion
+        except Exception as e:
+            print(f"Exception in Agent.reply: {e}")
+            return ""
 
     def update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
