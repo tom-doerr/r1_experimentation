@@ -17,5 +17,5 @@ __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
     "IsolatedEnvironment", "run_container", "UserInterface", "ConsoleInterface",
-    "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2"
+    "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2", "normalize_model_name"
 ]
