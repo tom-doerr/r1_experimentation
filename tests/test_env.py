@@ -1,3 +1,4 @@
+from src.main import Env1
 import pytest
 from src import *
 
