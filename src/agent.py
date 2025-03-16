@@ -4,31 +4,20 @@ class Agent:
     """Agent that interacts with users using LLM completions."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        """Initialize agent with model and token limits.
-        
-        Args:
-            model: The model name to use for completions
-            max_tokens: Maximum number of tokens to generate (must be positive)
-            
-        Raises:
-            ValueError: If max_tokens is invalid or model name is invalid
-            TypeError: If model is not a string
-        """
         if not isinstance(model, str):
             raise TypeError("model must be a string")
         if model == 'deepseek':
-            model = 'deepseek/deepseek-chat'  # Normalize deepseek model name
-        # Allow flash model as a special case
-        if not (model.startswith('openrouter/') or model == 'deepseek/deepseek-chat' or model == 'flash'):
-            model = 'openrouter/google/gemini-2.0-flash-001'  # Default to flash model
+            model = 'deepseek/deepseek-chat'
+        elif not model.startswith('openrouter/'):
+            model = f'openrouter/{model}'
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
         self.model = model
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
-        self.memory: str = ""  # Stores conversation history
-        self.last_completion: str = ""  # Stores last generated response
+        self.memory: str = ""
+        self.last_completion: str = ""
         self._validate_net_worth()
 
 
