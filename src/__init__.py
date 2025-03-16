@@ -1,4 +1,4 @@
-from .agent import Agent, AgentAssert, ConcreteAgent
+from .agent import Agent, ConcreteAgent
 from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
 from .main import (
@@ -15,6 +15,6 @@ from .envs import Env1, Env2
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "litellm_completion", 
     "litellm_streaming", "DEFAULT_MODEL", "global_settings", "IsolatedEnvironment", 
-    "run_container", "UserInterface", "Agent", "AgentAssert", "ConcreteAgent", 
+    "run_container", "UserInterface", "Agent", "ConcreteAgent", 
     "Env1", "Env2", "python_reflection_test"
 ]
