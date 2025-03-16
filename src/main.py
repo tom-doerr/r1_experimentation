@@ -34,8 +34,12 @@ def python_reflection_testing() -> str:
 def test_env_1(input_string: str) -> int:
     if "aaa" in input_string:
         return 3
-    return 4 # this is the expected return value, do not change
+    return 4  # this is the expected return value, do not change
 
+
+
+class Tool:
+    """Base class for tools."""
 
 
 class ShellCodeExecutor(Tool):
@@ -126,10 +130,6 @@ class Agent():
             self.memory = replace
         else:
             self.memory = ""
-
-
-class Tool:
-    """Base class for tools."""
 
 
 class AgentAssert(Agent):
