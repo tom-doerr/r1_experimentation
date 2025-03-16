@@ -62,7 +62,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
                 yield ""
         else:  # Handle streaming response
             for chunk in response:
-                if 'choices' in chunk and len(chunk['choices']) > 0 and 'delta' in chunk['choices'][0] and 'content' in chunk['choices'][0]['delta']:
+                if chunk.get('choices') and len(chunk['choices']) > 0 and chunk['choices'][0].get('delta') and chunk['choices'][0]['delta'].get('content'):
                     content = chunk['choices'][0]['delta']['content']
                     yield content
                 else:
