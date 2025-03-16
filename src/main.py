@@ -49,13 +49,13 @@ class ShellCodeExecutor:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command: # validate command
+        if not command:
             raise ValueError("No command provided")
-        
+
         command_parts = shlex.split(command)
-        if not command_parts: # validate command parts
+        if not command_parts:
             raise ValueError("No command parts found")
-        if command_parts[0] not in self.whitelisted_commands: # check if command is whitelisted
+        if command_parts[0] not in self.whitelisted_commands:
             raise ValueError(f"Command {command_parts[0]} is not whitelisted")
 
         try:
@@ -69,13 +69,13 @@ def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
 
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}]) # complete the prompt
-        if not hasattr(response, 'choices') or not response.choices: # validate response
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        if not hasattr(response, 'choices') or not response.choices:
             return f"Unexpected response type: {type(response)}"
-        if response.choices and response.choices[0].message and response.choices[0].message.content: # validate response content
+        if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
-        return "No completion found." # no completion found
-    except litellm.APIError as e: # handle litellm errors
+        return "No completion found."
+    except litellm.APIError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
@@ -101,7 +101,7 @@ class Agent():
     memory: str = ""
     model: str = DEFAULT_MODEL
     last_completion: str = ""
-    
+
     def __init__(self, model: str = DEFAULT_MODEL):
         self.model = model
 
@@ -136,6 +136,9 @@ class AgentAssert(Agent):
 
     def _parse_xml(self, xml_string: str) -> bool:
         parsed_reply = parse_xml(xml_string)
-        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
-            return False # indicate failure if bool is not in parsed_reply
-        return self._parse_bool(str(parsed_reply["bool"]))
+        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply:
+            return False
+        bool_value = parsed_reply.get("bool")
+        if not isinstance(bool_value, str):
+            return False
+        return self._parse_bool(bool_value)
