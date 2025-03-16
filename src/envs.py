@@ -49,17 +49,17 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on string length.
+        """Calculate score based on string content.
         
         Args:
             input_string: String to evaluate
             
         Returns:
-            int: 1 if string length <= max_char_count, else 0
+            int: 1 if input contains 'b', else 0
         """
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
-        return 1 if len(input_string) <= self.max_char_count else 0
+        return 1 if 'b' in input_string else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
