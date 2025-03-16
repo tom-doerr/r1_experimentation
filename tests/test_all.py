@@ -1,9 +1,10 @@
 import os
 import sys
 
-from src.main import Agent, DEFAULT_MODEL, ShellCodeExecutor, litellm_completion, Tool, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, AgentAssert
+from src import *
 
-FLASH = 'openrouter/google/gemini-2.0-flash-001'
+
+FLASH = 'openrouter/google/gemini-2.0-flash-001'  
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH
