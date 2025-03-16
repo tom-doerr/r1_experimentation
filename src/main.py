@@ -59,15 +59,22 @@ class ShellCodeExecutor(Tool):
                 return f"Error executing command: {e.stderr}"
 
 def litellm_completion(prompt: str, model: str) -> str:
-    response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-    return response.choices[0].message.content
+    try:
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        return response.choices[0].message.content
+    except Exception as e:
+        return _handle_litellm_error(e, "litellm_completion")
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-    for chunk in response:
-        if 'content' in chunk['choices'][0]['delta']:
-            yield chunk['choices'][0]['delta']['content']
+    try:
+        for chunk in response:
+            if 'content' in chunk['choices'][0]['delta']:
+                yield chunk['choices'][0]['delta']['content']
+    except Exception as e:
+        yield _handle_litellm_error(e, "litellm_streaming")
+        return
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
