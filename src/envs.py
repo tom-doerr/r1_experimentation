@@ -47,8 +47,9 @@ class Env2:
         """
         if not isinstance(input_string, str):
             return 0
+            
         if len(input_string) > self.max_char_count:
-            return 1 if input_string != input_string[::-1] else 0
+            return 1 if input_string == input_string[::-1] else 0
         return 0
 
 
