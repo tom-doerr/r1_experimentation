@@ -131,6 +131,9 @@ class AgentAssert:
             return bool_value.lower() == 'true'
         return False
 
+import shlex
+import subprocess
+
 class Tool(object):
     pass
 
