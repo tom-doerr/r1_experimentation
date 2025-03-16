@@ -1,10 +1,10 @@
 import os
 import sys
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import src
-from src import main
+from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -13,15 +13,15 @@ OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
-parsed_data = main.parse_xml(xml_data)
+parsed_data = parse_xml(xml_data)
 
-message = parsed_data.get('message')
+message = parsed_data['message']
 print("message:", message)
 
 # set flash as the default model
 # don't mock
-completion_result = main.litellm_completion('hi', model=MODEL)
-print("completion:", completion_result)
+completion = litellm_completion('hi', model=MODEL)
+print("completion:", completion)
 
 reply_generator = litellm_streaming('hi')
 print("reply_generator:", reply_generator)
@@ -31,65 +31,65 @@ for reply in reply_generator:
 
 
 
-test_output_var = main.python_reflection_testing()
+test_output_var = python_reflection_testing()
 print("test_output_var:", test_output_var)
 assert test_output_var == 'test_output_var'
 
 
 
-reward = main.test_env_1('aaa')
+reward = test_env_1('aaa')
 assert reward == 3
 
-reward = main.test_env_1('aabbjadfa')
+reward = test_env_1('aabbjadfa')
 assert reward == 4
 
 
 
-reply_generator = main.litellm_streaming('hi', model=OR1, max_tokens=40)
+reply_generator = litellm_streaming('hi', model=OR1, max_tokens=40)
 print("reply_generator:", reply_generator)
 for reply in reply_generator:
     print("-", reply, end='')
 
 
-agent = main.Agent(model=MODEL)
+agent = Agent(model=MODEL)
 
 output = agent.reply('hi')
 print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-parsed_data_agent = agent._parse_xml(xml_data)
-assert parsed_data_agent.get('message') == 'hello'
+parsed_data = agent._parse_xml(xml_data)
+assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
 parsed_data_2 = agent._parse_xml(xml_data_2)
-assert parsed_data_2.get('message') == 'Hi! How can I help you?'
-assert parsed_data_2.get('thinking') == 'test abc def'
-assert parsed_data_2.get('memory', {}).get('search') == ''
-assert parsed_data_2.get('memory', {}).get('replace') == 'The user wrote just hi.'
+assert parsed_data_2['message'] == 'Hi! How can I help you?'
+assert parsed_data_2['thinking'] == 'test abc def'
+assert parsed_data_2['memory']['search'] == ''
+assert parsed_data_2['memory']['replace'] == 'The user wrote just hi.'
 
 agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory']['replace'])
 assert agent.memory == 'The user wrote just hi.'
 
 
-agent_assert = main.AgentAssert(model=MODEL)
-assert isinstance(agent_assert, main.Agent)
+agent_assert = AgentAssert(model=MODEL)
+assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val is False
+assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
-assert isinstance(return_val, bool)
+assert type(return_val) == bool
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 is False
+assert two_plus_two_is_4 == False
 
 
-shell_code_executor = main.ShellCodeExecutor()
-assert isinstance(shell_code_executor, main.ShellCodeExecutor)
+shell_code_executor = ShellCodeExecutor()
+assert type(shell_code_executor) == Tool
 
 
 # check if this is a subset of the blacklisted commands
