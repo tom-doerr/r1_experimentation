@@ -15,7 +15,7 @@ max-locals=5
 max-returns=2
 
 # Maximum number of branches in function
-max-branches=4
+max-branches=2
 
 [METRICS]
 # Maximum cyclomatic complexity
