@@ -226,8 +226,8 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor",
-    "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container"
+    "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
+    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface"
 ]
 
 
