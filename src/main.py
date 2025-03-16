@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import litellm
+import inspect
 from .reflection import python_reflection_test
 
 
