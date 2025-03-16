@@ -15,10 +15,6 @@ from .envs import Env1, Env2
 from .llm_utils import litellm_completion
 
 
-
-
-
-
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
