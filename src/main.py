@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 import xml.etree.ElementTree as ET
 from .reflection import python_reflection_test
 from .agent import Agent, ConcreteAgent, AgentAssert
