@@ -1,3 +1,8 @@
+import os
+import sys
+
+import src
+from src import *
 from src.main import *
 
 
