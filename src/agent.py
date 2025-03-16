@@ -36,6 +36,9 @@ class ConcreteAgent(Agent):
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         super().__init__(model, max_tokens, interface)
+        self.model = normalize_model_name(model)
+        self.max_tokens = max_tokens
+        self.interface = interface or ConsoleInterface()
         
     def __call__(self, input_text: str) -> str:
         """Process input using LLM completion."""

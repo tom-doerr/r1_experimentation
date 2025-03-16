@@ -37,6 +37,7 @@ class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""
     
     def __init__(self):
+        super().__init__()
         self.running = False
         
     def display_message(self, message: str) -> None:

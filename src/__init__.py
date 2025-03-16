@@ -9,6 +9,7 @@ from .main import (
     run_container,
     UserInterface
 )
+from .interface import UserInterface, ConsoleInterface
 from .tools import Tool, ShellCodeExecutor
 from .envs import Env1, Env2
 
