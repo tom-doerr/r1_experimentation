@@ -10,7 +10,7 @@ class Agent:
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
         self.interface = interface
-        self.model = model
+        self.model = normalize_model_name(model)
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""

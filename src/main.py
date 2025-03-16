@@ -1,17 +1,16 @@
 from typing import Any, Dict, Generator, Protocol
-import subprocess
-import shlex
 from abc import abstractmethod
 import xml.etree.ElementTree as ET
+import subprocess
+import shlex
 import litellm
 from .config import DEFAULT_MODEL, global_settings
+from .utils import normalize_model_name
+from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
-from .interface import UserInterface
-from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 from .llm_utils import litellm_completion
-from .utils import normalize_model_name
 
 
 
@@ -269,6 +268,12 @@ class ShellCodeExecutor(Tool):
 
 
 
+
+def python_reflection_test(obj: object) -> str:
+    """Inspect an object and return its type information."""
+    if obj is None:
+        return "None"
+    return f"{type(obj).__name__}: {dir(obj)}"
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.
