@@ -36,10 +36,16 @@ class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
-        super().__init__(interface, model)
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("Model must be a non-empty string")
+        self.interface = interface
+        self.model = normalize_model_name(model)
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
         try:
             response = litellm_completion(input_text, self.model)
             return response
@@ -48,4 +54,4 @@ class AgentAssert(Agent):
             return "Sorry, I encountered an error."
             
     def __repr__(self) -> str:
-        return f"AgentAssert(model={self.model})"
+        return f"AgentAssert(model={self.model!r})"
