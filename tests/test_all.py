@@ -3,7 +3,7 @@ import sys
 
 import src
 from src import *
-from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
