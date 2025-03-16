@@ -126,6 +126,7 @@ class Agent():
 # Create a Tool class if it doesn't exist in src.main
 
 class Tool:
+    pass
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
