@@ -44,3 +44,6 @@ max-nested-blocks=2
 [FORMAT]
 # Maximum line length
 max-line-length=200
+
+# Disable whitespace and docstring checks
+disable=trailing-whitespace,missing-module-docstring,missing-function-docstring
