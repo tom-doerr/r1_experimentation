@@ -81,7 +81,7 @@ assert bool_val == False
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
-assert type(return_val) == bool
+assert return_val is False
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)

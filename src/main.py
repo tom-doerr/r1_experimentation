@@ -49,17 +49,17 @@ class ShellCodeExecutor:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command:
+        if not command: # validate command
             raise ValueError("No command provided")
-
+        
         command_parts = shlex.split(command)
-        if not command_parts:
+        if not command_parts: # validate command parts
             raise ValueError("No command parts found")
-        if command_parts[0] not in self.whitelisted_commands:
+        if command_parts[0] not in self.whitelisted_commands: # check if command is whitelisted
             raise ValueError(f"Command {command_parts[0]} is not whitelisted")
 
         try:
-            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10) # run the command
             return result.stdout
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Error executing command: {e.stderr}") from e
@@ -67,24 +67,24 @@ class ShellCodeExecutor:
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""    
-
+    
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        if not hasattr(response, 'choices') or not response.choices:
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}]) # complete the prompt
+        if not hasattr(response, 'choices') or not response.choices: # validate response
             return f"Unexpected response type: {type(response)}"
-        if response.choices and response.choices[0].message and response.choices[0].message.content:
+        if response.choices and response.choices[0].message and response.choices[0].message.content: # validate response content
             return response.choices[0].message.content
-        return "No completion found."
-    except litellm.APIError as e:
+        return "No completion found." # no completion found
+    except litellm.APIError as e: # handle litellm errors
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
-        for chunk in response:
+        for chunk in response: # iterate over chunks
             yield chunk["choices"][0]["delta"]["content"]
-    except (litellm.APIError, KeyError) as e:
+    except (litellm.APIError, KeyError) as e: # handle errors
         print(f"LiteLLMError in _extract_content_from_chunks: {e}")
         yield f"LiteLLMError: {e}"
 
@@ -92,7 +92,7 @@ def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
     """Streams completion from LiteLLM."""
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-    yield from _extract_content_from_chunks(response)
+    yield from _extract_content_from_chunks(response) # stream the response
 
 
 class Agent():
@@ -114,7 +114,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None: self.memory = replace
+    def _update_memory(self, replace: str) -> None: self.memory = replace # update memory
 
 
 class AgentAssert(Agent):
