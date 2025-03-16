@@ -90,6 +90,7 @@ class Agent:
             return parsed
         return parsed
 
+    
 class AgentAssert:
     """Assertion agent for testing."""
     def __init__(self, model: str):
