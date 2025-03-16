@@ -58,14 +58,8 @@ print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-# Fix the XML parsing test
-try:
-    parsed_data = agent._parse_xml(xml_data)
-    assert parsed_data['message'] == 'hello'
-except KeyError:
-    # If the original test fails, try with the direct parse_xml function
-    parsed_data = parse_xml(xml_data)
-    assert parsed_data['message'] == 'hello'
+parsed_data = agent._parse_xml(xml_data)
+assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
 parsed_data_2 = agent._parse_xml(xml_data_2)
