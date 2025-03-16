@@ -5,6 +5,37 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
     """Run a command in a container using podman/docker.
     
     Args:
+        image: Docker image to use
+        command: Command to run in container
+        timeout: Maximum execution time
+        
+    Returns:
+        Command output as string
+        
+    Raises:
+        RuntimeError: If execution fails
+        TimeoutError: If command times out
+    """
+    try:
+        result = subprocess.run(
+            ["podman", "run", "--rm", image, "sh", "-c", command],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError(f"Container command timed out after {timeout} seconds") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Container command failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error running container: {e}") from e
+
+def run_container(image: str, command: str, timeout: int = 10) -> str:
+    """Run a command in a container using podman/docker.
+    
+    Args:
         image: Container image to use
         command: Command to run in container
         timeout: Maximum execution time
