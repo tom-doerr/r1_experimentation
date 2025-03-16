@@ -16,11 +16,10 @@ class Agent(ABC):
         self.model = model
         self.max_tokens = max_tokens
 
+    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        if not isinstance(input_text, str) or not input_text.strip():
-            raise ValueError("Input must be a non-empty string")
-        return f"Response to: {input_text}"
+        raise NotImplementedError
 
 
 
