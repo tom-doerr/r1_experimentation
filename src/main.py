@@ -134,7 +134,7 @@ class Agent(Tool):
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _update_memory(self, search: str, replace: str) -> None: # type: ignore
+    def _update_memory(self, search: str, replace: str) -> None:  # type: ignore
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
