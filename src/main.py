@@ -6,6 +6,7 @@ import litellm
 from . import Tool
 
 DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
+ET = ElementTree
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
