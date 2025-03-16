@@ -6,12 +6,12 @@ from .main import (
     _parse_xml_value,
     _validate_global_settings,
     parse_xml,
-    python_reflection_test,
     Tool,
     ShellCodeExecutor,
     litellm_completion,
     litellm_streaming,
-    run_container
+    run_container,
+    python_reflection_test
 )
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2

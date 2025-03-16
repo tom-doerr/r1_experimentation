@@ -31,7 +31,7 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if count > 0:
-            penalty = max(0, len(input_string) - self.char_count_penalty_start)
+            penalty = max(0, len(input_string) - self.char_count_penalty_start + 1)
             return count - penalty
             
         # No targets found
@@ -66,6 +66,8 @@ class Env2:
             raise ValueError("input_string must be a string")
         if len(input_string) > self.max_char_count:
             return 0  # Return 0 if input exceeds max_char_count
+        if len(input_string) > self.max_char_count:
+            return 0
         return 1 if len(set(input_string)) < len(input_string) else 0
 
     def __repr__(self) -> str:

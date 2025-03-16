@@ -1,4 +1,3 @@
-from typing import Any
 import subprocess
 
 
@@ -26,7 +25,7 @@ def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
         
     try:
         docker_cmd = ["docker", "run", "--rm", image]
-        if command:
+        if command:  # Use image's default command if none specified
             docker_cmd += ["sh", "-c", command]
             
         result = subprocess.run(
