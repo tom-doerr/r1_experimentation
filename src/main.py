@@ -137,7 +137,7 @@ class AgentAssert(Agent):
         """
         reply: str = self.agent.reply(prompt=statement)
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self._parse_xml(reply)
-        if not parsed_reply:
+        if not parsed_reply or "bool" not in parsed_reply:
             return False
         bool_value: str | None = parsed_reply.get("bool", "False")
         return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
