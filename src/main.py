@@ -1,4 +1,4 @@
-import shlex
+import shlex # type: ignore
 from typing import Dict, List, Generator
 import subprocess  # nosec
 import litellm # type: ignore
@@ -14,7 +14,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
-            if not len(child):
+            if child:
                 data[child.tag] = child.text or ""
             else:
                 data[child.tag] = {
@@ -100,7 +100,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except litellm.LiteLLMError as e:
+    except litellm.LiteLLMError as e: # type: ignore
         print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
 
