@@ -18,9 +18,9 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            # Apply penalty for each character over 10
-            penalty = max(0, len(input_string) - 10)
-            return max(0, count - penalty)
+            # Apply penalty of -1 per character over threshold
+            penalty = len(input_string) - self.char_count_penalty_start + 1
+            return count - penalty
         return count
 
     def __repr__(self) -> str:
@@ -40,15 +40,16 @@ class Env2:
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
             
-        # Return 0 if string exceeds max length or has consecutive duplicates
         if len(input_string) > self.max_char_count:
             return 0
-        if len(input_string) >= 2 and any(input_string[i] == input_string[i+1] 
-               for i in range(len(input_string)-1)):
-            return 0
             
-        # Return length if valid
-        return len(input_string)
+        # Count number of consecutive duplicate character pairs
+        consecutive_pairs = 0
+        for i in range(1, len(input_string)):
+            if input_string[i] == input_string[i-1]:
+                consecutive_pairs += 1
+            
+        return consecutive_pairs
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
