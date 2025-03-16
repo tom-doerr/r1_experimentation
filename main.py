@@ -8,18 +8,21 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         result = {}
         if element.text and element.text.strip():
             result[element.tag] = element.text.strip()
-        else:
-            result[element.tag] = {}
-            
+        else:  # Handle nested elements
+            result[element.tag] = {}  # Initialize the tag
+
         for child in element:
             child_data = parse_element(child)
-            if child.tag in result[element.tag]:
-                if isinstance(result[element.tag][child.tag], list):
-                    result[element.tag][child.tag].append(child_data[child.tag])
+            if child.tag in result[element.tag]:  # If the tag already exists
+                if isinstance(result[element.tag][child.tag], list):  # If it's a list, append
+                    result[element.tag][child.tag].append(child_data[child.tag])  # Append new data
                 else:
-                    result[element.tag][child.tag] = [result[element.tag][child.tag], child_data[child.tag]]
+                    result[element.tag][child.tag] = [result[element.tag][child.tag], child_data[child.tag]]  # Convert to list and append
             else:
-                result[element.tag].update(child_data)
+                result[element.tag][child.tag] = child_data[child.tag]  # Add the new tag
+
+
+
         return result
 
     try:
@@ -106,10 +109,14 @@ class Agent:
             return self._last_response.choices[0].message.content
         return ""
 
-    def _update_memory(self, memory_data: dict) -> None:
+    def _update_memory(self, search_term: str, replace_term: str) -> None:
         """Update agent memory with new data"""
-        if 'memory' in memory_data:
-            self._memory.update(memory_data['memory'])
+        self._memory[search_term] = replace_term
+
+    @property
+    def memory(self) -> str:
+        """Return memory as a string"""
+        return str(self._memory)
 
 def test_env_1(input_data: str) -> int:
     # Returns count of 'a's in input
