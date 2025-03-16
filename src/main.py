@@ -2,7 +2,6 @@ from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
 import shlex
 import subprocess
-import shutil
 import xml.etree.ElementTree as ET
 import litellm
 from .agent import Agent, AgentAssert
