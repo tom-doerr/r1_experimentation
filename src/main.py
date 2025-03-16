@@ -7,21 +7,23 @@ import litellm
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 
 
-def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    return {child.tag: child.text or "" for child in element}
+def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
+    return {child.tag: child.text for child in element}
 
 
-def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    try: 
+from typing import Optional
+
+def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str | None] | None]:
+    try:
         root: ET.Element = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str]] = {}
+        data: Dict[str, str | Dict[str, str | None] | None] = {}
 
         for element in root:
             if list(element):
                 # If the element has children, parse them recursively
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = element.text or ""
+                data[element.tag] = element.text
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
@@ -60,13 +62,13 @@ class ShellCodeExecutor(Tool):
         if not command:
             raise ValueError("No command provided")
 
-        command_parts = shlex.split(command)
+        command_parts: List[str] = shlex.split(command)
         if not command_parts:
             raise ValueError("No command parts found")
         if command_parts[0] not in self.whitelisted_commands:
             raise ValueError(f"Command '{command_parts[0]} is not whitelisted")
 
-        try: 
+        try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
         except subprocess.CalledProcessError as e:
@@ -85,18 +87,20 @@ def litellm_completion(prompt: str, model: str) -> str:
     except litellm.APIError as e:
 
 
-def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
+from typing import Any
+
+def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
         for chunk in response:  # iterate over chunks
             yield chunk["choices"][0]["delta"]["content"]
-    except (litellm.APIError, KeyError) as e:  # handle errors
+    except (KeyError, litellm.APIError) as e:  # handle errors
         print(f"LiteLLMError in _extract_content_from_chunks: {e}")
         yield f"LiteLLMError: {e}"
 
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
-    response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
+    response: Any = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     yield from _extract_content_from_chunks(response)
 
 
@@ -115,7 +119,7 @@ class Agent:
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        self.last_completion: str = litellm_completion(full_prompt, model=self.model)
+        self.last_completion: str = litellm_completion(prompt=full_prompt, model=self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
@@ -136,10 +140,10 @@ class AgentAssert(Agent):
         self.agent: Agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
-        reply: str = self.reply(statement)
-        parsed_reply: Dict[str, str | Dict[str, str]] = self._parse_xml(reply)
+        reply: str = self.reply(prompt=statement)
+        parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self._parse_xml(reply)
         if not parsed_reply:
             return False
-        bool_value: str = parsed_reply.get("bool", "false")
+        bool_value: str | None = parsed_reply.get("bool", "false")
         return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
 
