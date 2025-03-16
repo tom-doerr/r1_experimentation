@@ -19,9 +19,10 @@ class Env1:
     def __call__(self, input_string: str) -> int:
         if not isinstance(input_string, str):
             return 0
-        if len(input_string) > self.char_count_penalty_start:
-            return 1 if input_string == input_string[::-1] else 0
-        return 0
+        count = input_string.count(self.target_char)
+        if count > self.char_count_penalty_start:
+            return max(0, count - self.char_count_penalty_start)
+        return count
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
