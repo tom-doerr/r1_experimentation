@@ -326,10 +326,19 @@ def python_reflection_test() -> str:
     Returns:
         str: A string containing reflection test results
     """
-    results = []
+    from importlib import import_module
     
-    # Test module inspection
-    current_module = sys.modules['src']
-    functions = [f[0] for f in inspect.getmembers(current_module, inspect.isfunction)]
-    classes = [c[0] for c in inspect.getmembers(current_module, inspect.isclass)]
-    return f"Functions: {functions}\nClasses: {classes}"
+    current_module = import_module('src')
+    functions = []
+    classes = []
+    
+    for name in dir(current_module):
+        if name.startswith('_'):
+            continue
+        obj = getattr(current_module, name)
+        if inspect.isfunction(obj):
+            functions.append(name)
+        elif inspect.isclass(obj):
+            classes.append(name)
+    
+    return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"

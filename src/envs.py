@@ -17,7 +17,7 @@ class Env1:
             raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
-        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 2
+        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 1  # Reduced penalty multiplier
         score = count - penalty
         return max(score, -2) if len(input_string) >= self.char_count_penalty_start else count
 
@@ -39,11 +39,13 @@ class Env2:
             raise ValueError("input_string must be a string")
         if len(input_string) > self.max_char_count:
             return 0
-        # Return 1 if no consecutive duplicates, 0 otherwise
-        for i in range(1, len(input_string)):
-            if input_string[i] == input_string[i-1]:
-                return 0
-        return 1
+        # Calculate mirror character matches
+        score = 0
+        n = len(input_string)
+        for i in range(n // 2):
+            if input_string[i] == input_string[n - i - 1]:
+                score += 1
+        return score
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
