@@ -1,20 +1,18 @@
 from typing import Any, Dict, Generator, Protocol
 import xml.etree.ElementTree as ET
-from abc import abstractmethod
 import subprocess
 import shlex
+from shutil import which
+from abc import abstractmethod
 import litellm
 from .llm_utils import litellm_completion, litellm_streaming
-from shutil import which
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name
 from .agent import Agent
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
-from .utils import normalize_model_name
 from .envs import Env1, Env2
-from .llm_utils import litellm_completion
 
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
