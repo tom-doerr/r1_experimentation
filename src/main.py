@@ -31,13 +31,11 @@ def python_reflection_testing() -> str:
 
 
 def test_env_1(input_string: str) -> int:
-   if "aaa" in input_string:
+    if "aaa" in input_string:
         return 3
-   elif "abjkldfa" in input_string:
-        return 2
-   elif "aabbjadfa" in input_string:
+    elif "aabbjadfa" in input_string:
         return 4
-   return 0
+    return 0
 
 
 

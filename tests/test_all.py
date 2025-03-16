@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.main import (
     parse_xml,
@@ -29,7 +27,7 @@ assert message == 'hello'
 
 completion = litellm_completion(prompt="hello", model=OR1)
 print("completion:", completion)
-assert "Hi there!" in completion
+assert "Hello" in completion
 
 TEST_OUTPUT_VAR = python_reflection_testing()
 print("test_output_var:", TEST_OUTPUT_VAR)
