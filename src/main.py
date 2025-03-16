@@ -81,8 +81,8 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content or ""
         else:
             return ""
-    except litellm.LiteLLMError:
-        pass
+    except litellm.LiteLLMError as e:
+        print(f"LiteLLMError in litellm_completion: {e}")
  
  
 def litellm_streaming(
