@@ -1,8 +1,8 @@
 import shlex # type: ignore
 from typing import Dict, List, Generator
-import subprocess  # nosec
+import subprocess
 import xml.etree.ElementTree as ET
-import litellm  # type: ignore
+import litellm
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
@@ -119,7 +119,7 @@ class Agent():
         return parse_xml(xml_string)
 
     def _update_memory(self, replace: str) -> None:
-        if replace:
+        if replace is not None:
             self.memory = replace
 
 
