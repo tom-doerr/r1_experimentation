@@ -132,11 +132,18 @@ class AgentAssert:
             return bool_value.lower() == 'true'
         return False
 
-class Tool:
+import subprocess
+
+class Tool(object):
     pass
 
 class ShellCodeExecutor(Tool):
-    pass
+    def execute(self, command: str) -> str:
+        try:
+            result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+            return result.stdout
+        except subprocess.CalledProcessError as e:
+            return e.stderr
 
 def _handle_litellm_error(e: Exception, function_name: str) -> Generator[str, None, None]:
     if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
