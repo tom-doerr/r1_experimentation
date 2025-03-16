@@ -115,12 +115,7 @@ class Agent():
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         parsed_reply = parse_xml(xml_string)
-        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply:
-            return {}
-        bool_value = parsed_reply.get("bool")
-        if not isinstance(bool_value, str):
-            return False
-        return self._parse_bool(bool_value)
+        return parsed_reply
 
     def _parse_bool(self, bool_string: str) -> bool:
         return bool_string.lower() == "true"
@@ -130,7 +125,6 @@ class Agent():
 
 # Create a Tool class if it doesn't exist in src.main
 class Tool:
-    pass
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""

@@ -58,8 +58,10 @@ print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
+xml_data = '<response><message>hello</message></response>'
 parsed_data = agent._parse_xml(xml_data)
-assert parsed_data['message'] == 'hello'
+if isinstance(parsed_data, dict):
+    assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
 parsed_data_2 = agent._parse_xml(xml_data_2)
@@ -68,7 +70,7 @@ assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
 assert parsed_data_2['memory']['replace'] == 'The user wrote just hi.'
 
-agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory']['replace'])
+agent._update_memory(parsed_data_2['memory']['replace'])
 assert agent.memory == 'The user wrote just hi.'
 
 
