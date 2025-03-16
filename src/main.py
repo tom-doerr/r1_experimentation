@@ -1,6 +1,5 @@
 from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
-import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
@@ -280,6 +279,10 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 
+
+def _escape_xml(text: str) -> str:
+    """Escape XML special characters."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API."""
