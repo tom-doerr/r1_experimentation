@@ -6,7 +6,10 @@ from .main import (
     ShellCodeExecutor,
     litellm_completion,
     litellm_streaming,
-    python_reflection_test
+    python_reflection_test,
+    Env1,
+    Env2,
+    UserInterface
 )
 from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
