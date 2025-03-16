@@ -13,28 +13,16 @@ class Env1:
         self.char_count_penalty_start = char_count_penalty_start
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on target character count and length penalty.
-        
-        Args:
-            input_string: String to evaluate (must be non-empty)
-            
-        Returns:
-            int: Score calculated as:
-                - target_char count minus length penalty if any targets found
-                - 0 if no targets found
-                
-        Raises:
-            ValueError: If input_string is empty
-        """
+        """Calculate score based on target character count and length penalty."""
         if not isinstance(input_string, str) or not input_string:
-            raise ValueError("input_string must be a non-empty string")
+            return -1
             
         count = input_string.count(self.target_char)
-        if count > 0:
-            penalty = max(0, len(input_string) - self.char_count_penalty_start)
-            return count - penalty
+        if count == 0:
+            return -1
             
-        return 0  # No targets found
+        penalty = max(0, len(input_string) - self.char_count_penalty_start)
+        return count - penalty
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -49,17 +37,10 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on string content.
-        
-        Args:
-            input_string: String to evaluate
-            
-        Returns:
-            int: 1 if input contains 'b', else 0
-        """
+        """Calculate score based on string length."""
         if not isinstance(input_string, str):
-            raise ValueError("input_string must be a string")
-        return 1 if 'b' in input_string else 0
+            return 1
+        return 1 if len(input_string) <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"

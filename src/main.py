@@ -188,6 +188,18 @@ class ShellCodeExecutor(Tool):
 
 
 
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities by inspecting this function."""
+    frame = inspect.currentframe()
+    if frame is None or frame.f_back is None:
+        return "Reflection failed"
+    
+    # Get the calling function's name
+    caller = frame.f_back.f_code.co_name
+    # Get the current function's name
+    current = frame.f_code.co_name
+    return f"Reflection test: called by {caller}, current function {current}"
+
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
     
