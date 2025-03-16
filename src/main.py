@@ -329,6 +329,32 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise RuntimeError(f"Streaming failed: {e}") from e
 
 
+def python_reflection_test(obj: Any) -> Dict[str, Union[str, Dict[str, str], List[str]]]:
+    """Inspect an object and return its attributes and methods.
+    
+    Args:
+        obj: The object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - 'type': The object's type name
+            - 'methods': Dictionary of method names to signatures
+            - 'attributes': List of attribute names
+    """
+    result = {
+        'type': type(obj).__name__,
+        'methods': {},
+        'attributes': []
+    }
+    
+    for name, member in inspect.getmembers(obj):
+        if inspect.ismethod(member) or inspect.isfunction(member):
+            result['methods'][name] = str(inspect.signature(member))
+        elif not name.startswith('_'):
+            result['attributes'].append(name)
+            
+    return result
+
 def _execute_command(command: str, timeout: int = 10) -> str:
     """Execute a shell command with proper error handling.
     
