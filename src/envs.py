@@ -42,9 +42,9 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
             
-        # Count number of unique characters
+        # Count number of unique characters, but return 0 if any duplicates
         unique_count = len(set(input_string))
-        return (unique_count - 1) if len(input_string) <= self.max_char_count else 0
+        return unique_count if len(input_string) == unique_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
