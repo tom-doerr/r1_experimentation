@@ -123,8 +123,6 @@ class Agent:
         if search and replace:
             if search in self.memory:
                 self.memory = self.memory.replace(search, replace)
-            else:
-                self.memory = replace
 
 
 class AgentAssert:
@@ -160,13 +158,13 @@ class ShellCodeExecutor(Tool):
         if command_parts and command_parts[0] in self.blacklisted_commands:
             return f"Command {command_parts[0]} is blacklisted."
         try:
-            result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+            result = subprocess.run(command_parts, capture_output=True, text=True, check=True)
             return result.stdout
         except subprocess.CalledProcessError as e:
             return e.stderr
 
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
+    if hasattr(litellm, 'utils') and isinstance(e, litellm.utils.LiteLLMError):
         error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
         print(error_message)
         return error_message
