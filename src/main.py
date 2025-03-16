@@ -75,7 +75,7 @@ class ShellCodeExecutor(Tool):
 def litellm_completion(prompt: str, model: str) -> str:
     try:
         response = litellm.completion(
-            model=model, messages=[{"role": "user", "content": prompt}]
+            model=model, messages=[{"role": "user", "content": prompt}],
         )
         if response.choices and response.choices[0].message:
            return response.choices[0].message.content or ""
@@ -128,7 +128,7 @@ class Agent(Tool):
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, replace: str) -> None:
+    def update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
@@ -144,6 +144,3 @@ class AgentAssert(Tool):
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
         return "False" not in reply
-
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        return parse_xml(xml_string)
