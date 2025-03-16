@@ -137,3 +137,7 @@ class AgentAssert(Agent):
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False
+
+    @property
+    def agent(self):
+        return self
