@@ -10,22 +10,7 @@ DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
 def _validate_global_settings(settings: Dict[str, float]) -> None:
-def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
-    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
-    if not required_keys.issubset(settings.keys()):
-        raise ValueError(f"Global settings must contain {required_keys}")
-    
-    if settings['min_net_worth'] < 0:
-        raise ValueError("min_net_worth cannot be negative")
-    if settings['max_net_worth'] <= settings['min_net_worth']:
-        raise ValueError("max_net_worth must be greater than min_net_worth")
-    if settings['starting_cash'] < settings['min_net_worth']:
-        raise ValueError("starting_cash cannot be less than min_net_worth")
-    if settings['starting_cash'] > settings['max_net_worth']:
-        raise ValueError("starting_cash cannot exceed max_net_worth")
-    if not 0 <= settings['cash_penalty'] <= 1:
-        raise ValueError("cash_penalty must be between 0 and 1")
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
     if not required_keys.issubset(settings.keys()):
         raise ValueError(f"Global settings must contain {required_keys}")
