@@ -17,7 +17,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root}
         return data
-    except ET.ParseError as e: # type: ignore
+    except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
         return {"error": f"XML ParseError: {str(e)}"}
 
@@ -62,7 +62,9 @@ class ShellCodeExecutor:
 def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
     try:
-        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        if not isinstance(response, litellm.CompletionResponse):
+            return f"Unexpected response type: {type(response)}"
         return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "No completion found."
     except litellm.APIError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
@@ -76,11 +78,10 @@ def _extract_content_from_chunks(response: any) -> Generator[str, None, None]: #
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
     """Streams completion from LiteLLM."""
+
     try:
-        response = litellm.completion(
-            model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens
-        ) # type: ignore
-        yield from _extract_content_from_chunks(response)  # type: ignore
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
+        yield from _extract_content_from_chunks(response)
     except litellm.APIError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
         yield f"LiteLLMError: {e}"
