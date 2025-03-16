@@ -40,7 +40,6 @@ def _parse_element(element: ET.Element) -> Dict[str, Optional[Any]]:
     return result
 
 def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
-    model = model or litellm.model
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
@@ -52,7 +51,6 @@ def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
 
 
 def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
-    model = model or litellm.model
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
