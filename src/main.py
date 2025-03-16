@@ -130,7 +130,7 @@ class AgentAssert(Agent):
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         return self._parse_xml(reply)
- 
+
     def _parse_bool(self, bool_string: str) -> bool:
         return bool_string.lower() == "true"
 
