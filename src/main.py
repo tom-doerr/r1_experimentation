@@ -1,4 +1,4 @@
-from typing import Dict, Any, Generator, Protocol
+from typing import Any, Dict, Generator, Protocol, Optional, Union
 from .reflection import python_reflection_test
 from abc import abstractmethod
 import subprocess
