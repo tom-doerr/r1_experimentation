@@ -13,21 +13,9 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
-
     for child in element:
-        child_data = _parse_element(child)
-        if child.tag in result:
-            if isinstance(result[child.tag], list):
-                result[child.tag].append(child_data)
-            else:
-                result[child.tag] = [result[child.tag], child_data]
-        else:
-            result[child.tag] = child_data
-
-    if element.text and element.text.strip():
-        result['message'] = element.text.strip()
-
-    return {element.tag: result} if result else (element.text.strip() if element.text else None)
+        result[child.tag] = child.text.strip() if child.text else None
+    return result
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
@@ -96,6 +84,6 @@ class AgentAssert:
 
     def _parse_xml(self, xml_string: str) -> bool:
         """XML parsing that returns a boolean."""
-        if "False" in xml_string:
-            return False
-        return True
+        parsed = parse_xml(xml_string)
+        bool_value = parsed['response'].get('bool', 'True')
+        return bool_value.lower() == 'true'
