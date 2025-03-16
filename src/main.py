@@ -213,7 +213,7 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
         raise RuntimeError(f"Error extracting content: {e}") from e
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Stream completion using LiteLLM API with robust error handling.
+    """Streaming version of litellm_completion that yields chunks of text.
     
     Args:
         prompt: Non-empty string prompt to send to the model
@@ -221,23 +221,19 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
         max_tokens: Positive integer for maximum tokens to generate
         
     Yields:
-        Generated text chunks
+        str: Chunks of generated text
         
     Raises:
         ValueError: For invalid inputs or model names
         RuntimeError: For API or execution errors
     """
-    # Validate inputs
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
         raise ValueError("Model must be a non-empty string")
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
-    if max_tokens > 4096:
-        raise ValueError("max_tokens cannot exceed 4096")
         
-    # Normalize model name format
     model = _normalize_model_name(model)
         
     try:
@@ -246,7 +242,7 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
             messages=[{"role": "user", "content": prompt}],
             stream=True,
             max_tokens=max_tokens,
-            timeout=30  # Add timeout
+            temperature=0.7
         )
         yield from _extract_content_from_chunks(response)
     except litellm.exceptions.BadRequestError as e:
