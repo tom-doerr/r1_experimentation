@@ -60,7 +60,7 @@ class ShellCodeExecutor(Tool):
             return f"Command '{command_name}' is blacklisted."
         if command_name in self.whitelisted_commands:
             return self._execute_command(command_parts)
-        return ""
+        return f"Command '{command_name}' is not whitelisted."
 
     def _execute_command(self, command_parts: List[str]) -> str:
         try:
@@ -103,14 +103,12 @@ def litellm_streaming(
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except Exception as e:
-        if isinstance(e, litellm.LiteLLMError):
-            yield _handle_litellm_error(e, "litellm_streaming")
+    except litellm.LiteLLMError as e:
         # raise e
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
-    return f"An error occurred during {method_name}: {type(e)} - {e}"
+    return f"An error occurred during {method_name}: {type(e).__name__} - {e}"
 
 
 class Agent(Tool):
@@ -133,7 +131,7 @@ class Agent(Tool):
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, replace: str, search: str = "") -> None:
+    def _update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
