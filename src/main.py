@@ -39,6 +39,16 @@ global_settings: Dict[str, float] = {
 
 _validate_global_settings(global_settings)
 
+global_settings: Dict[str, float] = {
+    'starting_cash': 1000.0,  # Default starting cash value
+    'max_net_worth': 10000.0,  # Maximum allowed net worth
+    'min_net_worth': 0.0,  # Minimum allowed net worth
+    'cash_penalty': 0.1,  # Percentage penalty for invalid operations
+    'initial_net_worth': 1000.0  # Initial net worth value
+}
+
+_validate_global_settings(global_settings)
+
 def _parse_xml_value(element: ET.Element) -> str | bool:
     """Parse XML element value."""
     if element.tag == 'bool':
