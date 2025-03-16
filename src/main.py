@@ -43,9 +43,13 @@ def python_reflection_testing() -> str:
 
 
 
-class Tool:
+from abc import ABCMeta, abstractmethod
+
+class Tool(metaclass=ABCMeta):
     """Base class for tools."""
-    pass
+    @abstractmethod
+    def run(self, command: str) -> str:
+        pass
 
 class ShellCodeExecutor(Tool):
     """Executes shell commands safely with allow/deny lists."""

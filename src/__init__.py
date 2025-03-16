@@ -6,8 +6,6 @@ from .main import (
     litellm_completion,
     litellm_streaming,
     DEFAULT_MODEL,
-    Agent,
-    AgentAssert,
 )
 from .agent import Agent, AgentAssert
 from .envs import Env1
