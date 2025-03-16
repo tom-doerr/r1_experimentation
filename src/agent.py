@@ -4,6 +4,16 @@ class Agent:
     """Agent that interacts with users using LLM completions."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        """Initialize agent with model and token limits.
+        
+        Args:
+            model: The model name to use for completions
+            max_tokens: Maximum number of tokens to generate (must be positive)
+            
+        Raises:
+            ValueError: If max_tokens is invalid or model name is invalid
+            TypeError: If model is not a string
+        """
         if not isinstance(model, str):
             raise TypeError("model must be a string")
         if model == 'deepseek':
