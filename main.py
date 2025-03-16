@@ -64,8 +64,6 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
     kwargs: Dict[str, Any] = {"messages": messages, "stream": True}
     if model:
         kwargs["model"] = model
-    else:
-        kwargs["model"] = litellm.model  # Use the default model if none is provided
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
