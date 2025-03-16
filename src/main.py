@@ -303,6 +303,8 @@ def python_reflection_test() -> str:
     return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"
 
 
+from .reflection import python_reflection_test
+
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():
