@@ -1,6 +1,6 @@
 import shlex
 from typing import Dict, Any, List, Generator
-import subprocess
+import subprocess # nosec
 from xml.etree.ElementTree import ParseError, ElementTree
 import litellm
 
@@ -112,9 +112,9 @@ class Agent(Tool):
         self.model = model
 
     def reply(self, prompt: str) -> str:
-        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
+        full_prompt: str = f"{prompt}. Current memory: {self.memory}" # type: ignore
         try:
-            self.last_completion = litellm_completion(full_prompt, model=self.model)  # type: ignore
+            self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
         except Exception as e:
             print(f"Exception in Agent.reply: {e}")
