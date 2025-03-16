@@ -1,14 +1,11 @@
-import shlex
 import subprocess
 from typing import Any, Dict, Generator, List, Optional
 import xml.etree.ElementTree as ET
 import litellm
 
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Default model for all operations
 from typing import Optional
 
-
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Single definition
 """Default model to use for LiteLLM completion."""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
@@ -163,27 +160,7 @@ class AgentAssert(Agent):
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
         return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
 
-import xml.etree.ElementTree as ET
-import subprocess
-from typing import Generator, Optional
-import litellm
 
-def parse_xml(xml_string: str) -> dict:
-    """Parse XML string into a dictionary"""
-    try:
-        root = ET.fromstring(xml_string)
-        return _parse_xml_element(root)
-    except ET.ParseError as e:
-        return {"error": str(e)}
-    """Parse XML string into a dictionary structure"""
-    try:
-        root = ET.fromstring(xml_string)
-        return _parse_xml_element(root)
-    except ET.ParseError:
-        return {}
-    """Parse XML string into a dictionary"""
-    root = ET.fromstring(xml_string)
-    return _parse_xml_element(root)
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
     parsed_data = {}
@@ -202,64 +179,12 @@ def python_reflection_testing() -> str:
     """Test function for reflection testing"""
     return 'test_output_var'
 
-class Env1:
-    """RL environment for character counting with penalty"""
-    def __init__(self, target_char: str = 'a', char_count_penalty_start: int = 23):
-        self.target_char = target_char
-        self.char_count_penalty_start = char_count_penalty_start
-
-    def __call__(self, input_string: str) -> int:
-        count = input_string.count(self.target_char)
-        if len(input_string) > self.char_count_penalty_start:
-            count -= (len(input_string) - self.char_count_penalty_start)
-        return max(count, -1) if count < 0 else count
 
 class Tool:
     """Base class for tools"""
     pass
 
-class ShellCodeExecutor(Tool):
-    """Execute whitelisted shell commands safely"""
-    def __init__(self):
-        self.blacklisted_commands = {'rm', 'cat', 'mv', 'cp'}
-        self.whitelisted_commands = {'ls', 'date'}
-
-    def __call__(self, command: str) -> str:
-        return self.run(command)
-
-    def run(self, command: str) -> str:
-        base_cmd = command.split()[0]
-        if base_cmd in self.blacklisted_commands:
-            raise PermissionError(f"Command {base_cmd} not allowed")
-        if base_cmd not in self.whitelisted_commands:
-            return f"Command {base_cmd} not whitelisted"
-        
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        return result.stdout
-
-def litellm_completion(prompt: str, model: str) -> str:
-    """Get LLM completion"""
-    response = litellm.completion(
-        model=model,
-        messages=[{"content": prompt, "role": "user"}],
-        temperature=0.7
-    )
-    return response.choices[0].message.content
 
 
 
-class AgentAssert:
-    """Agent for boolean assertions"""
-    def __init__(self, model: str):
-        self.agent = Agent(model)
 
-    def _parse_xml(self, xml_string: str) -> dict:
-        """Parse XML response from model"""
-        return parse_xml(xml_string)
-        root = ET.fromstring(xml_string)
-        bool_element = root.find('bool')
-        return bool_element.text.strip().lower() == 'true' if bool_element is not None else False
-
-    def __call__(self, statement: str) -> bool:
-        response = self.agent.reply(statement)
-        return self._parse_xml(response)
