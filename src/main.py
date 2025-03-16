@@ -81,7 +81,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content or ""
         else:
             return ""
-    except litellm.LiteLLMError as e:
+    except litellm.LiteLLMError:
         pass
  
  
@@ -103,8 +103,8 @@ def litellm_streaming(
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except litellm.LiteLLMError as e:
-        # raise e
+    except litellm.LiteLLMError:
+        pass
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
