@@ -9,9 +9,9 @@ from .main import (
     Tool,
     ShellCodeExecutor,
     litellm_completion,
-    litellm_streaming,
-    python_reflection_test
+    litellm_streaming
 )
+from .reflection import python_reflection_test
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 from .interface import UserInterface
