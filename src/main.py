@@ -42,13 +42,13 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
         raise ValueError("cash_penalty must be between 0 and 1")
 
 global_settings: Dict[str, float] = {
-    'starting_cash': 1000.0,  # Default starting cash value
-    'max_net_worth': 10000.0,  # Maximum allowed net worth
-    'min_net_worth': 0.0,  # Minimum allowed net worth
-    'cash_penalty': 0.1,  # Percentage penalty for invalid operations
-    'initial_net_worth': 1000.0  # Initial net worth value
+    'starting_cash': 1000.0,
+    'max_net_worth': 10000.0,
+    'min_net_worth': 0.0,
+    'cash_penalty': 0.1
 }
 
+# Validate settings immediately after definition
 _validate_global_settings(global_settings)
 
 def _parse_xml_value(element: ET.Element) -> str | bool:
@@ -407,7 +407,19 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
     return result
 
 def _execute_command(command: str, timeout: int = 10) -> str:
-    """Execute a command with timeout and validation."""
+    """Execute a command with timeout and validation.
+    
+    Args:
+        command: The command string to execute
+        timeout: Maximum execution time in seconds
+        
+    Returns:
+        Command output as string
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If execution fails
+    """
     if not isinstance(command, str) or not command.strip():
         raise ValueError("Command must be a non-empty string")
     if not isinstance(timeout, int) or timeout <= 0:
