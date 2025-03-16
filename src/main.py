@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 import xml.etree.ElementTree as ET
 from .reflection import python_reflection_test
 from .agent import Agent, ConcreteAgent, AgentAssert
@@ -8,6 +8,7 @@ from .interface import UserInterface, ConsoleInterface
 from .isolation import IsolatedEnvironment, run_container
 from .llm_utils import litellm_completion, litellm_streaming
 from .tools import Tool, ShellCodeExecutor
+from .utils import normalize_model_name
 
 
 
