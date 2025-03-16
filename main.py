@@ -85,13 +85,16 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                     if content:
                         yield content
                 else:
-                    print(f"Unexpected chunk format: {chunk}")
-                    yield ""
+                    error_message = f"Unexpected chunk format: {chunk}"
+                    print(error_message)
+                    yield error_message
         else:
-            print(f"Unexpected response type: {type(response)}")
-            yield ""
+            error_message = f"Unexpected response type: {type(response)}"
+            print(error_message)
+            yield error_message
     except Exception as e:
-        yield _handle_litellm_error(e, "litellm streaming")
+        error_message = _handle_litellm_error(e, "litellm streaming")
+        yield error_message
 
 def python_reflection_testing() -> str:
     return 'test_output_var'
