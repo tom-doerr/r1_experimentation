@@ -252,83 +252,41 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
     except Exception as e:
         raise RuntimeError(f"Streaming completion failed: {e}") from e
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Chunks of the generated completion
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    try:
-        model = _normalize_model_name(model)
-        response = litellm.completion(
-            model=model,
-            messages=[{"content": prompt, "role": "user"}],
-            max_tokens=max_tokens,
-            stream=True
-        )
-        
-        for chunk in response:
-            yield chunk.choices[0].delta.content or ""
-            
-    except Exception as e:
-        raise RuntimeError(f"Streaming completion failed: {e}") from e
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
+
+def _execute_command(command: str) -> str:
+    """Execute a shell command with basic validation.
     
     Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
+        command: The command to execute
         
-    Yields:
-        str: Chunks of generated text
+    Returns:
+        str: Command output
         
     Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
+        ValueError: If command is invalid
+        RuntimeError: If execution fails
     """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("Command must be a non-empty string")
         
-    model = _normalize_model_name(model)
-    
     try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10
         )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError("Command timed out") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Command failed: {e.stderr}") from e
     except Exception as e:
-        raise RuntimeError(f"Streaming error: {e}") from e
+        raise RuntimeError(f"Error executing command: {e}") from e
 
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
