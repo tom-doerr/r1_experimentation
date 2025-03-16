@@ -1,10 +1,10 @@
 from typing import Any, Optional
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL, global_settings
 from .interface import UserInterface, ConsoleInterface
 
 
-class Agent:
+class Agent(ABC):
     """Concrete agent implementation."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
