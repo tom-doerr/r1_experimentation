@@ -140,8 +140,8 @@ class AgentAssert(Tool):
     def __call__(self, statement: str) -> bool:
         try:
             reply = self.agent.reply(statement)
+            data: Dict[str, Any] = parse_xml(reply)
             return "False" not in reply
         except Exception as e:
             print(f"Exception in AgentAssert: {e}")
-        data: Dict[str, Any] = parse_xml(xml_string)
-        return data.get('bool') == 'True'
+            return False
