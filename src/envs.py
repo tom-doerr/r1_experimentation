@@ -53,13 +53,13 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on string length up to max limit.
+        """Count characters up to max limit.
         
         Args:
             input_string: String to evaluate
             
         Returns:
-            int: Length of string up to max_char_count
+            int: Number of characters up to max limit
         """
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
