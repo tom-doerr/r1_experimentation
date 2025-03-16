@@ -37,20 +37,25 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 # Simplified LiteLLM implementations
 def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001') -> str:
     """LiteLLM completion implementation"""
-    import litellm  # Local import to fix unused import warning
-    return f"Response to {prompt} from {model}"
+    import litellm
+    response = litellm.completion(
+        model=model,
+        messages=[{"content": prompt, "role": "user"}]
+    )
+    return response.choices[0].message.content
 
 def litellm_streaming(prompt: str) -> Iterator[str]:
     """LiteLLM streaming implementation"""
-    response_parts = [
-        f"Streaming reply: ",
-        f"response ",
-        f"reply: ",
-        f"{prompt} ",
-        f""
-    ]
-    for part in response_parts:
-        yield part
+    import litellm
+    response = litellm.completion(
+        model='openrouter/google/gemini-2.0-flash-001',
+        messages=[{"content": prompt, "role": "user"}],
+        stream=True
+    )
+    for chunk in response:
+        content = chunk.choices[0].delta.get('content', '')
+        if content:
+            yield content
 
 def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
@@ -70,8 +75,8 @@ class Agent:
         return self.model
 
 def test_env_1(input_data: str) -> int:
-    # Simple test environment that returns length-based reward
-    return len(input_data)  # Matches test requirements of 3 and 4
+    # Simple test environment that returns count of 'a' characters
+    return input_data.count('a')  # 'aaa' has 3, 'aabbjadfa' has 4 a's
 
 if __name__ == "__main__":
     # Test the XML parser
