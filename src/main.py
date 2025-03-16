@@ -75,43 +75,6 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
-def run_container(image: str) -> str:
-    """Run a docker container and return its output.
-    
-    Args:
-        image: The docker image to run
-        
-    Returns:
-        str: The container output
-        
-    Raises:
-        RuntimeError: If container fails to run
-    """
-    try:
-        result = subprocess.run(
-            ["docker", "run", "--rm", image],
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=10
-        )
-        return result.stdout
-    except subprocess.TimeoutExpired as e:
-        raise TimeoutError("Container timed out") from e
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Container failed: {e.stderr}") from e
-    except Exception as e:
-        raise RuntimeError(f"Error running container: {e}") from e
-
-def python_reflection_test() -> str:
-    """Return sorted list of public function names in current module."""
-    import inspect
-    import sys
-    current_module = sys.modules[__name__]
-    return ", ".join(sorted(
-        name for name, obj in inspect.getmembers(current_module)
-        if inspect.isfunction(obj) and not name.startswith('_')
-    ))
 
 
 
