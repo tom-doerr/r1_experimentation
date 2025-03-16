@@ -45,12 +45,13 @@ class Tool:
     """Base class for tools."""
     def __init__(self):
         pass
-
-
+ 
+ 
 class ShellCodeExecutor(Tool):
+    """Executes shell commands."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
-
+ 
     def __call__(self, command: str) -> str:
         return self.run(command)
 
@@ -110,9 +111,6 @@ class Agent(Tool):
     def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
-
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        return parse_xml(xml_string)
 
 
 
