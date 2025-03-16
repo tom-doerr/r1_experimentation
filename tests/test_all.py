@@ -57,7 +57,7 @@ assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ""
 assert parsed_data_2['memory']['replace'] == 'The user wrote just hi.'
-
+# the agent returns None sometimes, but the tests expect empty string
 agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory']['replace'])
 
 agent_assert = AgentAssert(model=MODEL)
