@@ -37,9 +37,26 @@ class Env1:
             
         # No targets found
         if len(input_string) >= self.char_count_penalty_start:
-            return -1  # Changed to match test expectation
+            return -2  # Changed to match test expectation
         return 0
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
+
+
+class Env2:
+    """Environment that counts characters up to a maximum limit."""
+    
+    def __init__(self, max_char_count: int = 5):
+        if not isinstance(max_char_count, int) or max_char_count <= 0:
+            raise ValueError("max_char_count must be a positive integer")
+        self.max_char_count = max_char_count
+
+    def __call__(self, input_string: str) -> int:
+        if not isinstance(input_string, str):
+            raise ValueError("input_string must be a string")
+        return min(len(input_string), self.max_char_count)
+
+    def __repr__(self) -> str:
+        return f"Env2(max_char_count={self.max_char_count})"
 

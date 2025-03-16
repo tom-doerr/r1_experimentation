@@ -9,7 +9,7 @@ from .main import (
     global_settings,
 )
 from .agent import Agent, AgentAssert
-from .envs import Env1
+from .envs import Env1, Env2
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment
 
