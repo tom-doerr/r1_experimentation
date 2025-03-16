@@ -19,8 +19,10 @@ class UserInterface(Protocol):
     def get_input(self, prompt: str) -> str:
         """Get input from the user."""
         ...  # Abstract method - implementation required
+        
     def interact_with_agent(self, agent: 'Agent') -> None:
         """Interact with an agent instance."""
+        pass  # Protocol method with default implementation
 
 class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""
