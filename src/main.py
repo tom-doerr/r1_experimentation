@@ -12,7 +12,6 @@ from .utils import normalize_model_name
 from .agent import Agent, AgentAssert
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
-from .reflection import python_reflection_test
 from .envs import Env1, Env2
 
 
