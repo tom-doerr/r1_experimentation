@@ -6,10 +6,11 @@ import xml.etree.ElementTree as ET
 import litellm
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
-from .utils import normalize_model_name, normalize_model_name as _normalize_model_name
+from .utils import normalize_model_name
 from .llm_utils import _escape_xml, litellm_completion
 from .reflection import python_reflection_test
 from .interface import UserInterface
+from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 
 

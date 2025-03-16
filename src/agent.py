@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import Any, Dict, Protocol
 from abc import abstractmethod
 from .llm_utils import litellm_completion
