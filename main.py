@@ -1,14 +1,16 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Iterator, List
+from typing import Dict, Any, Iterator
+import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
         
-        # Handle element text content
+        # Handle text content directly
         if element.text and element.text.strip():
-            result["text"] = element.text.strip()
+            result[element.tag] = element.text.strip()
+            return result
             
         # Handle child elements
         for child in element:
