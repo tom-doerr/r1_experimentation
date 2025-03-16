@@ -22,6 +22,27 @@ from .llm_utils import litellm_completion, litellm_streaming
 from .reflection import python_reflection_test
 from .utils import normalize_model_name as _normalize_model_name
 
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into dictionary.
+    
+    Args:
+        xml_string: XML content to parse
+        
+    Returns:
+        Dict[str, Any]: Parsed XML content as dictionary
+        
+    Raises:
+        ValueError: If input is invalid or XML is malformed
+    """
+    if not isinstance(xml_string, str) or not xml_string.strip():
+        raise ValueError("Input must be a non-empty string")
+    
+    try:
+        root = ET.fromstring(xml_string)
+        return {root.tag: root.text}
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
+
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
