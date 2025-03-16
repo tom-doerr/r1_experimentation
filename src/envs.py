@@ -1,5 +1,7 @@
 class Env1:
-    def __init__(self, target_char: str, char_count_penalty_start: int):
+    """Environment that counts target characters with penalty after threshold."""
+    
+    def __init__(self, target_char: str, char_count_penalty_start: int) -> None:
         self.target_char = target_char
         self.char_count_penalty_start = char_count_penalty_start
 
