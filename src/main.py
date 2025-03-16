@@ -83,9 +83,8 @@ def _extract_content_from_chunks(response: any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
         for chunk in response:
-            if chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]:
-                yield chunk["choices"][0]["delta"]["content"]
-    except litellm.APIError as e:
+            yield chunk["choices"][0]["delta"]["content"]
+    except (litellm.APIError, KeyError) as e:
         print(f"LiteLLMError in _extract_content_from_chunks: {e}")
         yield f"LiteLLMError: {e}"
 
