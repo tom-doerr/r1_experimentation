@@ -34,25 +34,23 @@ class AgentAssert:
         if "/" not in model:
             raise ValueError("Model must be in provider/model format")
 
-class Agent(ABC):
-    """Abstract base class for agents."""
+class Agent:
+    """Base class for agents."""
     
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        if not isinstance(interface, UserInterface):
-            raise TypeError("interface must implement UserInterface protocol")
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
-        self.interface = interface
         self.model = model
         self.max_tokens = max_tokens
 
-    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        raise NotImplementedError
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+        return f"Response to: {input_text}"
 
 
 
