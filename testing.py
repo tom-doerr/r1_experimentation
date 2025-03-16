@@ -1,4 +1,4 @@
-from src.main import *
+from main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -17,7 +17,7 @@ print("message:", message)
 completion = litellm_completion('hi', model=MODEL)
 print("completion:", completion)
 
-reply_generator = litellm_streaming('hi', model=MODEL)
+reply_generator = litellm_streaming('hi')
 print("reply_generator:", reply_generator)
 
 for reply in reply_generator:
@@ -90,12 +90,10 @@ assert type(shell_code_executor) == Tool
 assert {'rm', 'cat', 'mv', 'cp'} & set(shell_code_executor.blacklisted_commands) == {'rm', 'cat', 'mv', 'cp'}
 assert {'ls', 'date'} & set(shell_code_executor.whitelisted_commands) == {'ls', 'date'}
 
+
 shell_code_executor_ls = shell_code_executor('ls')
 print("shell_code_executor_ls:", shell_code_executor_ls)
 assert 'plex.md' in shell_code_executor_ls
-
-
-
 
 
 
