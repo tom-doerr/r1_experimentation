@@ -39,7 +39,7 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-
+    pass
 
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
@@ -77,7 +77,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             model=model, messages=[{"role": "user", "content": prompt}],
         )
         if response.choices and response.choices[0].message:
-           return response.choices[0].message.content or ""
+            return response.choices[0].message.content or ""
         return ""
     except Exception as e:
         print(f"LiteLLMError in litellm_completion: {e}")
@@ -118,7 +118,7 @@ class Agent(Tool):
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         try:
-            self.last_completion: str = litellm_completion(full_prompt, model=self.model)
+            self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
         except Exception as e:
             print(f"Exception in Agent.reply: {e}")
@@ -132,11 +132,16 @@ class Agent(Tool):
 class AgentAssert(Tool):
     """An agent that asserts statements."""
 
-    agent: "Agent"
+    agent: Agent
 
     def __init__(self, model: str = FLASH):
         self.agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
-        reply = self.agent.reply(statement)
-        return "False" not in reply
+        try:
+            reply = self.agent.reply(statement)
+            return "False" not in reply
+        except Exception as e:
+            print(f"Exception in AgentAssert: {e}")
+        data: Dict[str, Any] = parse_xml(xml_string)
+        return data.get('bool') == 'True'
