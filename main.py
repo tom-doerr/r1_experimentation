@@ -8,15 +8,18 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         root = ET.fromstring(xml_string)
         return _parse_element(root)
     except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {e}") from e
+        print(f"Invalid XML: {e}")
+        return {}
 
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
+        child_data: Any = {}
         if child.text:
-            result[child.tag] = child.text.strip()
+            child_data = child.text.strip()
         else:
-            result[child.tag] = None
+            child_data = _parse_element(child)
+        result[child.tag] = child_data
     return result
 
 def litellm_completion(prompt: str, model: str) -> str:
