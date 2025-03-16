@@ -7,13 +7,13 @@ from .interface import UserInterface, ConsoleInterface
 class Agent(ABC):
     """Concrete agent implementation."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be a non-empty string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
-        self.model = model
+        self.model = normalize_model_name(model)
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory = ''
