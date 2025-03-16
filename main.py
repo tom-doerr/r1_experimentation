@@ -25,9 +25,9 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
             result[child.tag] = child_data
 
     if element.text and element.text.strip():
-        return {element.tag: element.text.strip()}
+        return element.text.strip()
     else:
-        return {element.tag: result}
+        return result
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
