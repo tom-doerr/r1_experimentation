@@ -32,6 +32,19 @@ class Agent(ABC):
         raise NotImplementedError
 
 
+class ConcreteAgent(Agent):
+    """Concrete implementation of Agent using LiteLLM."""
+    
+    def __call__(self, input_text: str) -> str:
+        """Process input using LLM completion."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+        return litellm_completion(input_text, self.model, self.max_tokens)
+        
+    def __repr__(self) -> str:
+        return f"ConcreteAgent(model={self.model}, max_tokens={self.max_tokens})"
+
+
 
 
 

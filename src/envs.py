@@ -21,7 +21,8 @@ class Env1:
             return 0
         count = input_string.count(self.target_char)
         if count > self.char_count_penalty_start:
-            return max(0, count - self.char_count_penalty_start)
+            penalty = count - self.char_count_penalty_start
+            return max(0, penalty)  # Ensure non-negative return
         return count
 
     def __repr__(self) -> str:

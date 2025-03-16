@@ -131,7 +131,7 @@ from .utils import normalize_model_name
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "UserInterface", "ConsoleInterface",
+    "IsolatedEnvironment", "run_container", "ConsoleInterface",
     "Agent", "AgentAssert", "ConcreteAgent", "Env1", "Env2", "normalize_model_name"
 ]
 
