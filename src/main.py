@@ -5,7 +5,6 @@ import subprocess
 import xml.etree.ElementTree as ET
 import litellm
 from .isolation import IsolatedEnvironment, run_container
-from .isolation import IsolatedEnvironment, run_container
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 

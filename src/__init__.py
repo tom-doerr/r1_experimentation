@@ -9,10 +9,9 @@ from .main import (
     Tool,
     ShellCodeExecutor,
     litellm_completion,
-    litellm_streaming,
-    IsolatedEnvironment,
-    run_container
+    litellm_streaming
 )
+from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
