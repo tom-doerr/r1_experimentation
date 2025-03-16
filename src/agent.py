@@ -13,6 +13,11 @@ class Agent(ABC):
         self.model = model
         self.max_tokens = max_tokens
 
+    @abstractmethod
+    def __call__(self, input_text: str) -> str:
+        """Process input and return response."""
+        raise NotImplementedError
+
 
 
     @abstractmethod
