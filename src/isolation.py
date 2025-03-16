@@ -1,5 +1,4 @@
 from typing import Any
-import subprocess
 
 class IsolatedEnvironment:
     """Provides an isolated execution environment."""
