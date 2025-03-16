@@ -28,7 +28,7 @@ def litellm_completion(prompt: str, model: str = '') -> str:
     return f"Response from {model}: {prompt}"
 
 def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None]:
-    # Actual streaming implementation with model parameter
+    # Stream response as individual words with simple formatting
     response = f"Streaming reply: reply reply: from reply: to: reply: {prompt}"
     for word in response.split():
         yield word + " "
@@ -48,7 +48,7 @@ def python_reflection_testing() -> str:
 
 def test_env_1(input_data: str) -> int:
     # Simple test environment that returns fixed reward
-    return 3
+    return len(input_data)
 
 if __name__ == "__main__":
     # Test the XML parser
