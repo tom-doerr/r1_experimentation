@@ -10,6 +10,16 @@ DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
 
 
+def _validate_global_settings(settings: Dict[str, float]) -> None:
+    """Validate global settings values."""
+    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
+    if not isinstance(settings, dict):
+        raise TypeError("settings must be a dictionary")
+    if not all(key in settings for key in required_keys):
+        raise ValueError(f"settings must contain all required keys: {required_keys}")
+    if not all(isinstance(v, (int, float)) for v in settings.values()):
+        raise TypeError("All settings values must be numeric")
+
 global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,
     'max_net_worth': 10000.0,
