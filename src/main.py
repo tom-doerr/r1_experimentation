@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Dict
 import xml.etree.ElementTree as ET
 from .llm_utils import litellm_completion, litellm_streaming
 from .reflection import python_reflection_test
@@ -15,14 +15,14 @@ from .tools import Tool, ShellCodeExecutor
 
 
 
-def parse_xml(xml_string: str) -> Dict[str, Any]:
+def parse_xml(xml_string: str) -> Dict[str, str]:
     """Parse XML string into dictionary.
     
     Args:
         xml_string: XML content to parse
         
     Returns:
-        Dict[str, Any]: Parsed XML content as dictionary
+        Dict[str, str]: Parsed XML content as dictionary
         
     Raises:
         ValueError: If input is invalid or XML is malformed
