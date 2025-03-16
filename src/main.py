@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import subprocess
 import shlex
 import litellm
-from .llm_utils import litellm_completion
+from .llm_utils import litellm_completion, litellm_streaming
 from .config import DEFAULT_MODEL
 from shutil import which  # Move this to top level import
 from .config import DEFAULT_MODEL, global_settings
