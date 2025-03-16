@@ -6,6 +6,8 @@ import shutil
 import xml.etree.ElementTree as ET
 import litellm
 from .agent import Agent, AgentAssert
+from .envs import Env1, Env2
+from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
