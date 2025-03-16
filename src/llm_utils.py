@@ -7,20 +7,7 @@ def _escape_xml(content: str) -> str:
 
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
-    """Get single completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Returns:
-        str: The generated completion wrapped in XML response tags
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
+    """Get single completion using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
