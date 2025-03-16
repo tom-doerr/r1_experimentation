@@ -104,9 +104,12 @@ class Agent():
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
-     
+
     def __init__(self, model: str = FLASH):
         self.model = model
+
+    def __repr__(self):
+        return f"Agent(memory='{self.memory}', model='{self.model}')"
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
