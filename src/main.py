@@ -369,3 +369,27 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 
 
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities.
+    
+    Returns:
+        str: A string containing reflection test results
+    """
+    import inspect
+    import sys
+    
+    results = []
+    
+    # Test module inspection
+    current_module = sys.modules[__name__]
+    results.append(f"Module name: {current_module.__name__}")
+    
+    # Test function inspection
+    functions = inspect.getmembers(current_module, inspect.isfunction)
+    results.append(f"Found {len(functions)} functions")
+    
+    # Test class inspection
+    classes = inspect.getmembers(current_module, inspect.isclass)
+    results.append(f"Found {len(classes)} classes")
+    
+    return "\n".join(results)
