@@ -42,6 +42,7 @@ class ConsoleInterface(UserInterface):
     def __init__(self):
         super().__init__()
         self.running = False
+        self.running = False
         
     def display_message(self, message: str) -> None:
         print(f"Agent: {message}")
