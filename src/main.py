@@ -57,7 +57,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         ValueError: If XML string is invalid or empty
     """
     if not isinstance(xml_string, str) or not xml_string.strip():
-        raise ValueError("XML string must be a non-empty string")
+        return {}
         
     try:
         root = ET.fromstring(xml_string)
