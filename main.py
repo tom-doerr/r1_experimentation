@@ -34,6 +34,10 @@ def litellm_completion(prompt: str, model: str) -> str:
         print(f"Error during litellm completion: {type(e).__name__} - {e}")
         return ""
 
+from typing import Dict, Any, Generator, Optional
+import litellm
+
+
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     """Uses the litellm library to stream a completion."""
     messages = [{"role": "user", "content": prompt}]
@@ -50,7 +54,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None)
                     yield choice.delta.content
     except Exception as e:
         print(f"Error during litellm streaming: {type(e).__name__} - {e}")
-        yield ""  # or handle the error as appropriate
+        yield ""  # Handle the error as appropriate
 
 def python_reflection_testing() -> str:
     """Placeholder for python reflection testing."""
