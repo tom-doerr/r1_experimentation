@@ -320,32 +320,6 @@ def _normalize_model_name(model: str) -> str:
         return f'openrouter/{model}'
     return f'openrouter/{model}'
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API."""
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-    
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
-        )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
-    except Exception as e:
-        raise RuntimeError(f"Streaming error: {e}") from e
 
 
 
