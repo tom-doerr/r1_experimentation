@@ -135,5 +135,4 @@ class AgentAssert(Agent):
         return self._parse_bool(parsed_reply["bool"])
 
     def _parse_bool(self, bool_string: str) -> bool:
-        """Parses a boolean string from XML to a boolean value."""
         return bool_string.lower() == "true"
