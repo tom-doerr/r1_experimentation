@@ -1,7 +1,7 @@
 import os
 import sys
 
-from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -70,6 +70,7 @@ assert agent.memory == 'The user wrote just hi.'
 
 
 agent_assert = AgentAssert(model=MODEL)
+assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
 assert bool_val == False
