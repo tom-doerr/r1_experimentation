@@ -5,6 +5,7 @@ from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import litellm
 from importlib import import_module
+from .reflection import python_reflection_test
 import inspect
 
 
@@ -258,50 +259,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 
-def python_reflection_test() -> str:
-    """Test Python reflection capabilities.
-    
-    Returns:
-        str: A string containing reflection test results
-    """
-    functions = []
-    classes = []
-    
-    for name in dir(current_module):
-        if name.startswith('_'):
-            continue
-        obj = getattr(current_module, name)
-        if inspect.isfunction(obj):
-            functions.append(name)
-        elif inspect.isclass(obj):
-            classes.append(name)
-    
-    return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"
 
-
-def python_reflection_test() -> str:
-    """Test Python reflection capabilities.
-    
-    Returns:
-        str: A string containing reflection test results
-    """
-    current_module = import_module('src')
-    functions = []
-    classes = []
-    
-    for name in dir(current_module):
-        if name.startswith('_'):
-            continue
-        obj = getattr(current_module, name)
-        if inspect.isfunction(obj):
-            functions.append(name)
-        elif inspect.isclass(obj):
-            classes.append(name)
-    
-    return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"
-
-
-from .reflection import python_reflection_test
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API."""
