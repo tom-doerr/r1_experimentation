@@ -24,7 +24,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = None  # Initialize child_data
+        child_data: Any = None
 
         if len(child) > 0:
             child_data = _parse_element(child)
@@ -39,6 +39,11 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
         else:
             if child_data is not None:
                 result[child.tag] = child_data
+
+    # Ensure 'memory' key exists and contains 'search' and 'replace' keys
+    if 'memory' in result:
+        if 'search' not in result['memory']:
+            result['memory']['search'] = ''
     return result
 
 def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
