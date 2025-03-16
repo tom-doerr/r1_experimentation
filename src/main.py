@@ -7,8 +7,6 @@ import xml.etree.ElementTree as ET
 import litellm
 from .agent import Agent, AgentAssert
 from .isolation import IsolatedEnvironment, run_container
-from .agent import Agent, AgentAssert
-from .agent import Agent, AgentAssert
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
