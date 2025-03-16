@@ -9,7 +9,6 @@ FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
     """Parses a single XML element and returns a dictionary of its children."""
-    data: Dict[str, str] = {}
     return {child.tag: child.text or "" for child in element}
 
 
@@ -17,7 +16,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary."""
     try:
         root = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str]] = {}
+        data: Dict[str, str | Dict[str, str]] = {} # initialize data
         for element in root:
             data[element.tag] = _parse_xml_element(element) if list(element) else element.text or ""
         return data
@@ -48,11 +47,11 @@ class ShellCodeExecutor(Tool):
     def __call__(self, command: str) -> str: # type: ignore
         return self.run(command)
 
-    def run(self, command: str) -> str:
+    def run(self, command: str) -> str: # type: ignore
         if not command:
             return "No command provided."
         command_parts: List[str] = shlex.split(command)
-        if not command_parts:
+        if not command_parts: # check if command_parts is empty
             return "No command provided."
         command_name = command_parts[0]
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
@@ -109,7 +108,7 @@ class Agent(Tool):
     last_completion: str = ""
     model: str = FLASH
     
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         """Parses an XML string and returns a dictionary."""
         try:
             root = ET.fromstring(xml_string)
@@ -145,8 +144,9 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        parsed_reply = self.parse_xml(reply)
+        parsed_reply = self._parse_xml(reply)
         if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False
++
