@@ -3,10 +3,10 @@ from .main import (
     parse_xml,
     Tool,
     ShellCodeExecutor,
-    litellm_completion,
-    litellm_streaming,
-    python_reflection_test
+    litellm_streaming
 )
+from .llm_utils import litellm_completion
+from .reflection import python_reflection_test
 from .isolation import IsolatedEnvironment, run_container
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2

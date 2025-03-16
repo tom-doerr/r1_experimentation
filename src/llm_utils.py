@@ -1,6 +1,10 @@
 import litellm
 from .utils import normalize_model_name as _normalize_model_name
 
+def _escape_xml(content: str) -> str:
+    """Escape XML special characters."""
+    return content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API.

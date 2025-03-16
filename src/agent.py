@@ -1,7 +1,8 @@
 import litellm
 from typing import Dict
 from .constants import DEFAULT_MODEL, global_settings
-from .main import litellm_completion, normalize_model_name as _normalize_model_name
+from .llm_utils import litellm_completion
+from .utils import normalize_model_name as _normalize_model_name
 
 
 class Agent:
