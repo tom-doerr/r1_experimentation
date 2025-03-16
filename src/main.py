@@ -460,6 +460,40 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
             
     return result
 
+def _execute_command(command: str) -> str:
+    """Execute a shell command safely with validation.
+    
+    Args:
+        command: The command string to execute
+        
+    Returns:
+        Command output as string
+        
+    Raises:
+        ValueError: If command is invalid
+        RuntimeError: If execution fails
+    """
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("Command must be a non-empty string")
+        
+    try:
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError("Command timed out") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Command failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error executing command: {e}") from e
+
+
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
     
