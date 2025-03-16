@@ -14,10 +14,10 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
         root = ET.fromstring(xml_string)
-        data = {}
+        data: Dict[str, str | Dict[str, str] | None] = {}
         for element in root:
             if list(element):
-                data[element.tag] = _parse_xml_element(element) # type: ignore
+                data[element.tag] = _parse_xml_element(element)  # type: ignore
             else:  # if the element is a leaf node
                 data[element.tag] = element.text if element.text is not None else ""
         return data
@@ -131,12 +131,12 @@ class AgentAssert(Agent):
 
     def _evaluate_statement(self, statement: str) -> bool:
         """
-        Evaluates a statement using the agent and returns a boolean value.
-        """
-        reply: str = self.agent.reply(prompt=statement)
-        parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self._parse_xml(reply)
-        if not parsed_reply or "bool" not in parsed_reply:
-            return False
-        bool_value: str | None = parsed_reply.get("bool", "False")
-        return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
+       Evaluates a statement using the agent and returns a boolean value.
+       """
+       reply: str = self.agent.reply(prompt=statement)
+       parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
+       if not parsed_reply or "bool" not in parsed_reply:
+           return False
+       bool_value: str | None = parsed_reply.get("bool")
+       return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
 
