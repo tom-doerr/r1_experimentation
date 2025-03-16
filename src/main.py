@@ -1,7 +1,7 @@
 import shlex  # type: ignore
 from typing import Dict, List, Generator
 import subprocess
-import xml.etree.ElementTree as ElementTree
+import xml.etree.ElementTree as ET
 import litellm
 from . import Tool
 
@@ -15,7 +15,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     try:
-        root = ET.fromstring(xml_string)
+        root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for element in root:
             if list(element):
@@ -23,7 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
             else:
                 data[element.tag] = element.text or ""
         return data
-    except ElementTree.ParseError as e:
+    except ET.ParseError as e:
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
 
