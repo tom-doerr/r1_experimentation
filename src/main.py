@@ -32,10 +32,15 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         raise ValueError("Input must be a non-empty string")
     
     try:
+        def parse_element(element):
+            if len(element) == 0:
+                return element.text
+            return {child.tag: parse_element(child) for child in element}
+            
         root = ET.fromstring(xml_string)
         if not root:
             raise ValueError("Empty XML document")
-        return {elem.tag: elem.text for elem in root}
+        return {root.tag: parse_element(root)}
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
     except AttributeError as e:
