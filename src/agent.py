@@ -6,8 +6,8 @@ from .llm_utils import litellm_completion
 from .utils import normalize_model_name
 
 
-class Agent:
-    """Concrete agent implementation."""
+class Agent(ABC):
+    """Abstract base class for agents."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         if not isinstance(model, str) or not model.strip():
@@ -21,19 +21,10 @@ class Agent:
         self.memory = ''
         self.interface = interface or ConsoleInterface()
 
+    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        if not isinstance(input_text, str) or not input_text.strip():
-            raise ValueError("Input must be a non-empty string")
-            
-        try:
-            return litellm_completion(
-                prompt=input_text,
-                model=self.model,
-                max_tokens=self.max_tokens
-            )
-        except Exception as e:
-            return f"Error processing request: {str(e)}"
+        raise NotImplementedError
 
 
 
@@ -44,9 +35,7 @@ class ConcreteAgent(Agent):
     """Concrete agent implementation using LLM completions."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
-        self.model = model
-        self.max_tokens = max_tokens
-        self.interface = interface or ConsoleInterface()
+        super().__init__(model, max_tokens, interface)
         
     def __call__(self, input_text: str) -> str:
         """Process input using LLM completion."""
