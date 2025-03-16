@@ -71,13 +71,11 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 def python_reflection_testing() -> str:
-    """Return sorted list of public function names in current module."""
-    import inspect
-    import sys
+    """Return sorted list of function names in current module."""
     current_module = sys.modules[__name__]
     return ", ".join(sorted(
         name for name, obj in inspect.getmembers(current_module)
-        if inspect.isfunction(obj) and not name.startswith('_')
+        if inspect.isfunction(obj) and obj.__module__ == __name__
     ))
 
 
