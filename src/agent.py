@@ -1,6 +1,10 @@
 from typing import Any
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
+
+class AgentAssert:
+    """Utility class for agent assertions."""
+    
 from .interface import UserInterface
 
 class AgentAssert:
