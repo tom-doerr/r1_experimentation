@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 
 import litellm
 
-DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
@@ -72,9 +72,12 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 def python_reflection_test() -> str:
     """Return sorted list of public function names in current module."""
+    import inspect
+    import sys
+    current_module = sys.modules[__name__]
     return ", ".join(sorted(
-        name for name, obj in globals().items()
-        if callable(obj) and not name.startswith('_')
+        name for name, obj in inspect.getmembers(current_module)
+        if inspect.isfunction(obj) and not name.startswith('_')
     ))
 
 

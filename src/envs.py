@@ -40,3 +40,21 @@ class Env1:
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
+
+def run_container(image: str) -> str:
+    """Run a docker container and return its output."""
+    try:
+        result = subprocess.run(
+            ["docker", "run", "--rm", image],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError("Container timed out") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Container failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error running container: {e}") from e
