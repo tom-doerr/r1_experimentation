@@ -76,10 +76,7 @@ class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
-        if not isinstance(model, str) or not model.strip():
-            raise ValueError("Model must be a non-empty string")
-        self.interface = interface
-        self.model = model
+        super().__init__(interface, model)  # Call parent constructor
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
