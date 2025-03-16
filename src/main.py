@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 import subprocess
 import shlex
 import litellm
+from .llm_utils import litellm_completion
+from .config import DEFAULT_MODEL
 from shutil import which  # Move this to top level import
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name as _normalize_model_name
