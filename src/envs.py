@@ -42,11 +42,15 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
             
-        # Count consecutive duplicate characters
-        consecutive_dups = 0
-        for i in range(1, len(input_string)):
-            if input_string[i] == input_string[i-1]:
-                consecutive_dups += 1
+        # Count number of consecutive duplicate characters
+        consecutive_count = 0
+        prev_char = None
+        for char in input_string:
+            if char == prev_char:
+                consecutive_count += 1
+            prev_char = char
+            
+        return consecutive_count
         return consecutive_dups
 
     def __repr__(self) -> str:
