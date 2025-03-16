@@ -127,12 +127,12 @@ class Agent():
             self.memory = ""
 
 
-# Create a Tool class if it doesn't exist in src.main
 
 class Tool:
     pass
 
 class AgentAssert(Agent):
+    """Agent that asserts a statement."""
 
     def __init__(self, model: str = DEFAULT_MODEL):
         super().__init__(model=model)
@@ -144,5 +144,5 @@ class AgentAssert(Agent):
             return False
         bool_value = parsed_reply.get("bool", "false")
         if isinstance(bool_value, str):
-            return self._parse_bool(bool_value)
+            return bool_value.lower() == "true"
         return bool(bool_value)
