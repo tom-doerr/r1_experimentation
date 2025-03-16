@@ -40,15 +40,16 @@ def python_reflection_testing() -> str:
 def test_env_1(input_string: str) -> int:
     if "aaa" in input_string:
         return 3
-    else:
-        return 4
+    return 4
 
 
 class Tool:
+    """Base class for tools."""
     pass
- 
- 
+
+
 class ShellCodeExecutor(Tool):
+    """Executes shell commands."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd"]
 
@@ -56,11 +57,16 @@ class ShellCodeExecutor(Tool):
         return self.run(command)
 
     def run(self, command: str) -> str:
-        command_parts: List[str] = shlex.split(command)  # type: ignore
-        if command_parts and command_parts[0] in self.blacklisted_commands:
-            return f"Command {command_parts[0]} is blacklisted."
-        if command_parts and command_parts[0] not in self.whitelisted_commands:
-            return f"Command {command_parts[0]} is not whitelisted."
+        command_parts: List[str] = shlex.split(command)
+        if not command_parts:
+            return "No command provided."
+
+        command_name = command_parts[0]
+        if command_name in self.blacklisted_commands:
+            return f"Command {command_name} is blacklisted."
+        if command_name not in self.whitelisted_commands:
+            return f"Command {command_name} is not whitelisted."
+
         try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True)
             return result.stdout
@@ -81,8 +87,8 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
-    print(f"LiteLLM Error in {method_name}: {e}")
-    return f"An error occurred during {method_name}: {e}"
+    print(f"LiteLLM Error in {method_name}: {type(e)} - {e}")
+    return f"An error occurred during {method_name}: {type(e)} - {e}"
 
 
 class Agent(Tool):
@@ -102,13 +108,34 @@ class Agent(Tool):
         except Exception as e:
             return _handle_litellm_error(e, "Agent.reply")
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:  # type: ignore
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:  # type: ignore
+    def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
 
+
+class Agent(Tool):
+    """An agent that interacts with the user and maintains memory."""
+    memory: str = ""
+    last_completion: str = ""
+    model: str = FLASH
+
+    def __init__(self, model: str = FLASH):
+        self.model = model
+
+    def reply(self, prompt: str) -> str:
+        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
+        try:
+            completion: str = litellm_completion(full_prompt, model=self.model)
+            self.last_completion = completion
+            return completion
+        except Exception as e:
+            return _handle_litellm_error(e, "Agent.reply")
+
+
 class AgentAssert(Tool):
+    """Asserts agent behavior."""
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
@@ -116,6 +143,4 @@ class AgentAssert(Tool):
 
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
-        if "False" in reply:
-            return False
-        return True
+        return "False" not in reply

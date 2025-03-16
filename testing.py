@@ -17,7 +17,7 @@ print("message:", message)
 completion = litellm_completion('hi', model=MODEL)
 print("completion:", completion)
 
-reply_generator = litellm_streaming('hi')
+reply_generator = litellm_streaming('hi', model=MODEL)
 print("reply_generator:", reply_generator)
 
 for reply in reply_generator:
