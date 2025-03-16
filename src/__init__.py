@@ -1,4 +1,5 @@
 from .agent import Agent, AgentAssert
+from .reflection import python_reflection_test
 from .config import DEFAULT_MODEL, global_settings
 from .main import (
     parse_xml,

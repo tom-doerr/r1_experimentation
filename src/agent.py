@@ -4,14 +4,24 @@ from .config import DEFAULT_MODEL
 from .interface import UserInterface
 from .interface import UserInterface
 
-class Agent(ABC):
-    """Abstract base class for agents."""
+class Agent:
+    """Concrete agent implementation."""
     
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        """Initialize agent with interface and model settings."""
-        self.interface = interface
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         self.model = model
         self.max_tokens = max_tokens
+        
+    def __call__(self, input_text: str) -> str:
+        """Handle input with simple pattern matching."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
+        lower_input = input_text.lower()
+        if "hello" in lower_input:
+            return "Hello! How can I help you?"
+        elif "goodbye" in lower_input:
+            return "Goodbye! Have a great day!"
+        return "I'm not sure how to respond to that."
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
