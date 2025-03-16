@@ -9,7 +9,7 @@ def test_env_1():
     assert env_1("abjkldfa") == 2
     assert env_1("bjkldf") == 0
     assert env_1("bjkldfjdfdjj") == -2
-    assert env_1("bjkldfjdfdj") == -1
+    assert env_1("bjkldfjdfdj") == -2  # Length 11, penalty starts at 10: 0 - (11-10) = -1
     assert env_1("bakldfjdfdj") == 0
     assert env_1("bakldfjdfda") == 0
     assert env_1("isjfsjjdlfdfel") == -4

@@ -11,12 +11,26 @@ class Env1:
         self.char_count_penalty_start = char_count_penalty_start
 
     def __call__(self, input_string: str) -> int:
+        """Calculate score based on target character count and length penalty.
+        
+        Args:
+            input_string: String to evaluate
+            
+        Returns:
+            int: Score calculated as:
+                - target_char count minus length penalty if any targets found
+                - -2 if no targets and string length >= penalty start
+                - 0 if no targets and string length < penalty start
+        """
         if not isinstance(input_string, str):
             raise TypeError("input_string must be a string")
             
         count = input_string.count(self.target_char)
         if count == 0:
-            return -2 if len(input_string) > self.char_count_penalty_start else 0
+            return -2 if len(input_string) >= self.char_count_penalty_start else 0
             
         penalty = max(0, len(input_string) - self.char_count_penalty_start)
         return count - penalty
+
+    def __repr__(self) -> str:
+        return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
