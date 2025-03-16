@@ -16,18 +16,15 @@ litellm.model_list = [{
 
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parses an XML string and returns a dictionary."""
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
         for child in root:
-            if child:
-                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
-            else:
-                data[child.tag] = child.text or ""
+            data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} if len(child) else child.text or ""
         return data
     except ET.ParseError as e:
-        print(f"XML ParseError: {e}")
-        return {}
+        return {"error": f"XML ParseError: {e}"}
 
 
 def python_reflection_testing() -> str:
@@ -42,12 +39,14 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
-    """Base class for tools."""
+    """Base class for tools."""    
     def __init__(self):
         pass
  
  
 class ShellCodeExecutor(Tool):
+    """Executes shell commands.
+    """
     """Executes shell commands."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -62,10 +61,8 @@ class ShellCodeExecutor(Tool):
 
         command_name: str = command_parts[0]
         if command_name in self.blacklisted_commands:
-            return f"Command {command_name} is blacklisted."
+            return f"Command '{command_name}' is blacklisted."
         if command_name not in self.whitelisted_commands:
-            return f"Command {command_name} is not whitelisted."
- 
         try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
             return result.stdout
@@ -77,7 +74,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     return response.choices[0].message.content
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
     response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     for chunk in response:
         if 'content' in chunk['choices'][0]['delta']:
@@ -90,6 +87,8 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
 
 
 class Agent(Tool):
+    """An agent that interacts with the user.
+    """
     """An agent that interacts with the user."""
     memory: str = ""
     last_completion: str = ""
@@ -108,7 +107,7 @@ class Agent(Tool):
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, replace: str, search: str = "") -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
@@ -116,6 +115,8 @@ class Agent(Tool):
 
 
 class AgentAssert(Tool):
+    """Asserts agent behavior.
+    """
     """Asserts agent behavior."""
     agent: "Agent"
 
@@ -135,7 +136,6 @@ class AgentAssert(Tool):
                     data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
                 else:
                     data[child.tag] = child.text or ""
-            return data
-        except ET.ParseError as e:
+        except ET.ParseError as e:            
             print(f"XML ParseError: {e}")
             return {}
