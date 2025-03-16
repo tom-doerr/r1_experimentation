@@ -1,6 +1,8 @@
 import os
 import sys
 
+from src.main import Agent, DEFAULT_MODEL, ShellCodeExecutor, litellm_completion, Tool, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, AgentAssert
+
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
@@ -8,8 +10,6 @@ MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
 parsed_data = parse_xml(xml_data)
-
-from src.main import Agent, DEFAULT_MODEL, ShellCodeExecutor, litellm_completion, Tool, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, AgentAssert
 
 message = parsed_data['message']
 print("message:", message)
