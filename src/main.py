@@ -1,8 +1,9 @@
-import shlex # type: ignore
+import shlex  # type: ignore
 from typing import Dict, List, Generator
 import subprocess
 import xml.etree.ElementTree as ET
 import litellm
+from . import Tool
 
 DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
