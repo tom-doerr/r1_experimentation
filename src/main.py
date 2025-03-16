@@ -13,12 +13,9 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    # Parses an XML string and returns a dictionary.
     try:
-        root = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str]] = {} # initialize data
-        for element in root:
-            data[element.tag] = _parse_xml_element(element) if list(element) else element.text or ""
+        root: ET.Element = ET.fromstring(xml_string)
+        data: Dict[str, str | Dict[str, str]] = {element.tag: _parse_xml_element(element) if list(element) else element.text or "" for element in root}
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
@@ -51,13 +48,14 @@ class ShellCodeExecutor(Tool):
         if not command:
             return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
-        if not command_parts:
-            return "Error: No command provided."
+
+        if not command_parts: return "Error: No command provided."
+
         command_name = command_parts[0]
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands: return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
         try:
-            result = subprocess.run(
+            result: subprocess.CompletedProcess = subprocess.run(
                 command_parts, capture_output=True, text=True, check=True, timeout=10
             )
             return result.stdout
@@ -68,21 +66,16 @@ class ShellCodeExecutor(Tool):
 def litellm_completion(prompt: str, model: str) -> str:
     try:
         response = litellm.completion(
-            model=model, messages=[{"role": "user", "content": prompt}],
+            model=model, messages=[{"role": "user", "content": prompt}]
         )
-        if response.choices and response.choices[0].message and response.choices[0].message.content:
-            return response.choices[0].message.content
-        return "Error: No completion found."
+        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
     except litellm.LiteLLMError as e:
         return f"LiteLLMError: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
-    """Extracts content from LiteLLM streaming response chunks."""
     for chunk in response:
-        if (
-            chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]
-        ):
+        if chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]:
             yield chunk["choices"][0]["delta"]["content"]
 
 
@@ -115,8 +108,10 @@ class Agent(Tool):
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
+    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+        return parse_xml(xml_string)
+
     def _update_memory(self, replace: str) -> None:
-        """Updates the agent's memory with the replace string."""
         self.memory = replace
 
 
