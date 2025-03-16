@@ -6,13 +6,15 @@ import litellm
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
 
+import xml.etree.ElementTree as ET
+
+
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
-    from xml.etree import ElementTree as ET
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
-        for child in root: # type: ignore
+        for child in root:
             if not len(child):
                 data[child.tag] = child.text or ""
             else:
@@ -21,6 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                     for grandchild in child
                 }
     except ET.ParseError as e:
+        print(f"XML ParseError: {str(e)}")
         return {"error": f"XML ParseError: {str(e)}"}
 
 
@@ -37,6 +40,7 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
+    pass
 
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
