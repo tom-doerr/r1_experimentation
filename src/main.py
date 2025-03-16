@@ -33,7 +33,7 @@ def test_env_1(input_string: str) -> int:
 
 
 
-class ShellCodeExecutor():
+class ShellCodeExecutor(object):
     """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -72,12 +72,12 @@ def litellm_completion(prompt: str, model: str) -> str:
         prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
 
     try:
-        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        if response and response.choices and response.choices[0].message and response.choices[0].message.content:
+            return response.choices[0].message.content
+        return "Error: No completion found."
     except litellm.LiteLLMError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
-    if response and response.choices and response.choices[0].message and response.choices[0].message.content:
-        return response.choices[0].message.content
-    return "Error: No completion found."
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
@@ -120,10 +120,8 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
-        if search and search in self.memory:
-            self.memory = self.memory.replace(search, replace)
-        else:
+    def _update_memory(self, replace: str) -> None:
+        if replace:
             self.memory = replace
 
 
@@ -140,7 +138,3 @@ class AgentAssert(Agent):
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False
-
-    @property
-    def agent(self):
-        return self
