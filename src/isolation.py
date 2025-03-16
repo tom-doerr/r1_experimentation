@@ -1,6 +1,4 @@
 import subprocess
-import shlex
-
 
 def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     """Run a command in a container and return the output.

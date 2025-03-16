@@ -1,10 +1,9 @@
-from typing import Dict, Any, Generator
-import xml.etree.ElementTree as ET
-import litellm
 import subprocess
 import shlex
+import xml.etree.ElementTree as ET
+from typing import Dict, Any, Generator
 from abc import ABC, abstractmethod
-from .isolation import IsolatedEnvironment, run_container
+import litellm
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
@@ -331,7 +330,7 @@ def python_reflection_test() -> str:
     results = []
     
     # Test module inspection
-    current_module = sys.modules[__name__]
+    current_module = sys.modules['src']
     results.append(f"Module name: {current_module.__name__}")
     
     # Test function inspection
