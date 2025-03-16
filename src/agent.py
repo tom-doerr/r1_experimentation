@@ -1,8 +1,38 @@
 from typing import Any
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
-
 from .interface import UserInterface
+
+class AgentAssert:
+    """Utility class for agent assertions and validation."""
+    
+    @staticmethod
+    def assert_equal(actual: Any, expected: Any, message: str = "") -> None:
+        """Assert that two values are equal."""
+        if actual != expected:
+            raise AssertionError(f"{message}\nExpected: {expected}\nActual: {actual}")
+
+    @staticmethod
+    def assert_true(condition: bool, message: str = "") -> None:
+        """Assert that a condition is true."""
+        if not condition:
+            raise AssertionError(f"Condition not true: {message}")
+
+    @staticmethod
+    def validate_interface(interface: Any) -> None:
+        """Validate that interface implements UserInterface protocol."""
+        if not hasattr(interface, 'display_message') or \
+           not hasattr(interface, 'display_error') or \
+           not hasattr(interface, 'get_input'):
+            raise TypeError("Interface must implement UserInterface protocol")
+
+    @staticmethod
+    def validate_model(model: str) -> None:
+        """Validate model name format."""
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("Model must be a non-empty string")
+        if "/" not in model:
+            raise ValueError("Model must be in provider/model format")
 
 class Agent(ABC):
     """Abstract base class for agents."""
