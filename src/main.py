@@ -33,7 +33,8 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
 def _parse_xml_value(element: ET.Element) -> str | bool:
     """Parse XML element value."""
     if element.tag == 'bool':
-        return element.text and element.text.lower() == 'true'
+        text = element.text or ""
+        return text.lower() in ('true', '1', 'yes')
     return element.text or ""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, Any]:
