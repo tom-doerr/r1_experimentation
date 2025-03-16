@@ -148,6 +148,12 @@ class ShellCodeExecutor(Tool):
             raise PermissionError(f"Command {cmd} is blacklisted")
         if cmd not in self.whitelisted_commands:
             raise ValueError(f"Command {cmd} is not whitelisted")
+            
+        # Additional validation for command arguments
+        if len(parts) > 1:
+            for arg in parts[1:]:
+                if any(char in arg for char in ['\n', '\r', '\0', ';', '|', '&', '`', '$', '(', ')', '>', '<']):
+                    raise ValueError(f"Invalid character in argument: {arg}")
 
     def run(self, command: str) -> str:
         """Execute a shell command with strict validation."""
