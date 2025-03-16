@@ -1,4 +1,7 @@
 import xml.etree.ElementTree as ET
+import subprocess
+import shlex
+from shutil import which
 from typing import Any, Dict, Protocol, Generator
 from abc import abstractmethod
 # Local imports
