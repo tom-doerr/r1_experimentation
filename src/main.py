@@ -511,7 +511,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise RuntimeError(f"Streaming failed: {e}") from e
 
 
-def run_container(image: str, command: str, timeout: int = 10) -> str:
+def run_container(image: str, command: str, timeout: int = 30) -> str:
     """Run a command in a container using Docker.
     
     Args:
@@ -546,8 +546,6 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
         raise TimeoutError(f"Container timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Container failed: {e.stderr}") from e
-    except FileNotFoundError:
-        raise RuntimeError("docker not found - make sure Docker is installed") from None
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
