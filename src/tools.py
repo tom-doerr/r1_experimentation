@@ -10,27 +10,7 @@ class Tool(Protocol):
     @abstractmethod
     def stream(self, command: str) -> Generator[str, None, None]:
         """Stream command output."""
-        self._validate_command(command)
-        try:
-            process = subprocess.Popen(
-                shlex.split(command),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-            
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
-                if output:
-                    yield output
-                    
-            if process.returncode != 0:
-                raise RuntimeError(process.stderr.read())
-                
-        except Exception as e:
-            raise RuntimeError(f"Error executing command: {e}") from e
+        raise NotImplementedError
 
     def run(self, command: str) -> str:
         """Execute a command and return the result.
