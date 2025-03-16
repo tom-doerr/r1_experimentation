@@ -14,7 +14,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
         
-    model = normalize_model_name(model)
+    model = _normalize_model_name(model)
     
     try:
         response = litellm.completion(
