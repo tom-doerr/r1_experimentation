@@ -113,23 +113,6 @@ class Agent(Tool):
         self.memory = replace
 
 
-class Agent(Tool):
-    # An agent that interacts with the user and maintains memory.
-    memory: str = ""
-    last_completion: str = ""
-    model: str = FLASH
-
-    def __init__(self, model: str = FLASH):
-        self.model = model
-
-    def reply(self, prompt: str) -> str:
-        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        try:
-            completion: str = litellm_completion(full_prompt, model=self.model)
-            self.last_completion = completion
-            return completion
-        except Exception as e:
-            return _handle_litellm_error(e, "Agent.reply")
 
 
 class AgentAssert(Tool):
