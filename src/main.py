@@ -6,7 +6,10 @@ import xml.etree.ElementTree as ET
 import litellm
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
-from .utils import normalize_model_name as _normalize_model_name
+from .utils import normalize_model_name
+from .llm_utils import _escape_xml
+from .llm_utils import litellm_completion
+from .reflection import python_reflection_test
 from .interface import UserInterface
 from .envs import Env1, Env2
 from .reflection import python_reflection_test
@@ -186,35 +189,6 @@ class ShellCodeExecutor(Tool):
 
 
 
-def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
-    """Get single completion using LiteLLM API."""
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-    
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7
-        )
-        content = response.choices[0].message.content
-        escaped_content = _escape_xml(content)
-        return f"<response>{escaped_content}</response>"
-    except litellm.exceptions.BadRequestError as e:
-        if "not a valid model ID" in str(e):
-            raise ValueError(f"Invalid model: {model}") from e
-        raise RuntimeError(f"Bad request: {e}") from e
-    except litellm.APIError as e:
-        raise RuntimeError(f"API Error: {e}") from e
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error: {e}") from e
 
 
 def _escape_xml(text: str) -> str:
@@ -294,10 +268,10 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 __all__ = [
-    "parse_xml", "Tool", "ShellCodeExecutor",
+    "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
     "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface",
-    "Env1", "Env2", "python_reflection_test"
+    "Env1", "Env2"
 ]
 
 
