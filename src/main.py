@@ -326,11 +326,10 @@ def python_reflection_test() -> str:
     Returns:
         str: A string containing reflection test results
     """
-    
     results = []
     
     # Test module inspection
-    current_module = sys.modules[__name__]  # Use current module
+    current_module = sys.modules['src']
     results.append(f"Module name: {current_module.__name__}")
     
     # Test function inspection

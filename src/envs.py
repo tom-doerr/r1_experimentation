@@ -17,9 +17,9 @@ class Env1:
             raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
-        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 2  # Double penalty
+        penalty = max(0, len(input_string) - self.char_count_penalty_start)
         score = count - penalty
-        return max(score, -2)
+        return max(score, -2)  # Ensure minimum score is -2
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -39,7 +39,8 @@ class Env2:
             raise ValueError("input_string must be a string")
         if len(input_string) > self.max_char_count:
             return 0
-        return 1 if len(set(input_string)) < len(input_string) else 0
+        # Return 1 if all characters are unique, 0 otherwise
+        return 1 if len(set(input_string)) == len(input_string) else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
