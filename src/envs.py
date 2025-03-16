@@ -18,11 +18,9 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            # Only apply penalty if we have more than 10 characters
-            if len(input_string) > 10:
-                penalty = len(input_string) - 10
-                return count - penalty
-            return count
+            # Apply penalty for each character over 10
+            penalty = max(0, len(input_string) - 10)
+            return max(0, count - penalty)
         return count
 
     def __repr__(self) -> str:
@@ -49,7 +47,8 @@ class Env2:
                for i in range(len(input_string)-1)):
             return 0
             
-        return 1 if input_string else 0
+        # Return length if valid
+        return len(input_string)
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
