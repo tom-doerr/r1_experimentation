@@ -153,3 +153,6 @@ class AgentAssert(Tool):
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
         return self._parse_xml(reply)
+
+
+# Move standard library import to the top
