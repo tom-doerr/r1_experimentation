@@ -327,7 +327,7 @@ def python_reflection_test(obj: Any) -> Dict[str, Any]:
     return result
 
 def _execute_command(command: str, timeout: int = 10) -> str:
-    """Execute a shell command with proper error handling.
+    """Execute a shell command and return the output.
     
     Args:
         command: The command string to execute
@@ -338,7 +338,6 @@ def _execute_command(command: str, timeout: int = 10) -> str:
         
     Raises:
         ValueError: If command is invalid
-        TimeoutError: If command times out
         RuntimeError: If execution fails
     """
     if not isinstance(command, str) or not command.strip():
@@ -348,7 +347,8 @@ def _execute_command(command: str, timeout: int = 10) -> str:
         
     try:
         result = subprocess.run(
-            shlex.split(command),
+            command,
+            shell=True,
             capture_output=True,
             text=True,
             check=True,
