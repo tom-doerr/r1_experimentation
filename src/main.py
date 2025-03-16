@@ -221,7 +221,7 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
         raise RuntimeError(f"Error running container: {e}") from e
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API."""
+    """Stream completion using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
@@ -243,8 +243,15 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         for chunk in response:
             if chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content
+                
+    except litellm.exceptions.BadRequestError as e:
+        if "not a valid model ID" in str(e):
+            raise ValueError(f"Invalid model: {model}") from e
+        raise RuntimeError(f"Bad request: {e}") from e
+    except litellm.APIError as e:
+        raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
-        raise RuntimeError(f"Streaming error: {e}") from e
+        raise RuntimeError(f"Unexpected error: {e}") from e
     """Generate streaming completion using LiteLLM API.
     
     Args:
@@ -284,39 +291,6 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise RuntimeError(f"Streaming error: {e}") from e
 
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods.
-    
-    Args:
-        obj: Any Python object to inspect
-        
-    Returns:
-        Dictionary containing:
-            - 'type': The object's type
-            - 'attributes': Dictionary of instance attributes
-            - 'methods': Dictionary of method signatures
-    """
-    if obj is None:
-        raise ValueError("Object cannot be None")
-        
-    result = {
-        "type": str(type(obj)),
-        "attributes": {},
-        "methods": {}
-    }
-    
-    # Get attributes
-    for name, value in vars(obj).items():
-        result["attributes"][name] = str(type(value))
-        
-    # Get methods
-    for name, method in inspect.getmembers(obj, inspect.ismethod):
-        result["methods"][name] = {
-            "parameters": str(inspect.signature(method)),
-            "docstring": method.__doc__ or ""
-        }
-        
-    return result
 
 def _execute_command(command: str, timeout: int = 10) -> str:
     """Execute a shell command and return the output.
@@ -391,7 +365,6 @@ def _normalize_model_name(model: str) -> str:
         
     return f"openrouter/{model}"
 
-def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Generate completion using LiteLLM API with robust error handling."""
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
