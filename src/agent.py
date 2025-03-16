@@ -35,23 +35,10 @@ class Agent(ABC):
 class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
     
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if not isinstance(model, str) or not model.strip():
             raise ValueError("Model must be a non-empty string")
-        super().__init__(interface, model)
-        
-    def __call__(self, input_text: str) -> str:
-        """Process input using LLM and return response."""
-        if not isinstance(input_text, str) or not input_text.strip():
-            raise ValueError("Input must be a non-empty string")
-            
-        try:
-            return litellm_completion(input_text, self.model)
-        except Exception as e:
-            return f"Error: {str(e)}"
-            
-    def __repr__(self) -> str:
-        return f"AgentAssert(model={self.model!r})"
+        super().__init__(interface, model, max_tokens)
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
@@ -59,11 +46,11 @@ class AgentAssert(Agent):
             raise ValueError("Input must be a non-empty string")
             
         try:
-            response = litellm_completion(input_text, self.model)
+            response = litellm_completion(input_text, self.model, self.max_tokens)
             return response
         except Exception as e:
             self.interface.display_error(f"Error: {str(e)}")
             return "Sorry, I encountered an error."
             
     def __repr__(self) -> str:
-        return f"AgentAssert(model={self.model!r})"
+        return f"AgentAssert(model={self.model!r}, max_tokens={self.max_tokens})"
