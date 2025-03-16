@@ -14,9 +14,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
-        for child in root:  # type: ET.Element
-            if not isinstance(child.tag, str):
-                continue
+        for child in root:
             if len(child):
                 data[child.tag] = {
                     grandchild.tag: grandchild.text or "" for grandchild in child
@@ -83,9 +81,7 @@ def litellm_completion(prompt: str, model: str) -> str:
             return response.choices[0].message.content or ""
         else:
             return ""
-    except Exception as e:
-        if isinstance(e, litellm.LiteLLMError):
-            return _handle_litellm_error(e, "litellm_completion")
+    except litellm.LiteLLMError as e:
         # raise e
 
 
