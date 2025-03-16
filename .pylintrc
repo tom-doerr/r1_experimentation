@@ -1,0 +1,46 @@
+[MASTER]
+# Maximum number of lines in a module
+max-module-lines=200
+
+# Maximum number of lines in a function
+max-function-lines=15
+
+# Maximum number of arguments in function
+max-args=3
+
+# Maximum number of locals in function
+max-locals=5
+
+# Maximum number of return statements in function
+max-returns=2
+
+# Maximum number of branches in function
+max-branches=4
+
+[METRICS]
+# Maximum cyclomatic complexity
+max-complexity=5
+
+# Maximum number of methods in a class
+max-methods=5
+
+# Maximum number of attributes in a class
+max-attributes=5
+
+[DESIGN]
+# Maximum number of parents for a class
+max-parents=1
+
+# Maximum number of public methods in a class
+max-public-methods=5
+
+[BASIC]
+# Maximum number of statements in function
+max-statements=10
+
+# Maximum number of nested blocks
+max-nested-blocks=2
+
+[FORMAT]
+# Maximum line length
+max-line-length=80
