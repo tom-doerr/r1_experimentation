@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import subprocess

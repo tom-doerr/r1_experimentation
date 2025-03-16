@@ -32,6 +32,10 @@ class Agent:
     def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         return parse_xml(xml_string)
 
+    def __call__(self, prompt: str) -> str:
+        """Make Agent callable for convenience."""
+        return self.reply(prompt)
+
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""

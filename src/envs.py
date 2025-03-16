@@ -43,7 +43,7 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if count == 0:
-            return -2 if len(input_string) >= self.char_count_penalty_start else 0
+            return -1 if len(input_string) >= self.char_count_penalty_start else 0
             
         penalty = max(0, len(input_string) - self.char_count_penalty_start)
         return count - penalty
