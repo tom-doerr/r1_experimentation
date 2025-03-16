@@ -70,46 +70,22 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 class Tool(Protocol):
-    """Abstract base class for command execution tools."""
+    """Protocol defining interface for command execution tools."""
     
     @abstractmethod
     def run(self, command: str) -> str:
-        """Execute a command and return the result.
-        
-        Args:
-            command: The command to execute
-            
-        Returns:
-            str: The command output
-            
-        Raises:
-            ValueError: If command is invalid
-            RuntimeError: If execution fails
-        """
-        if not isinstance(command, str) or not command.strip():
-            raise ValueError("Command must be a non-empty string")
-        raise NotImplementedError("Subclasses must implement run()")
+        """Execute a command and return the result."""
+        ...
         
     @abstractmethod 
     def __call__(self, command: str) -> str:
-        """Make tool callable for convenience.
-        
-        Args:
-            command: The command to execute
-            
-        Returns:
-            str: The command output
-        """
-        raise NotImplementedError("Subclasses must implement __call__()")
+        """Make tool callable for convenience."""
+        ...
         
     @abstractmethod
     def __repr__(self) -> str:
-        """Return string representation of tool.
-        
-        Returns:
-            str: The string representation
-        """
-        raise NotImplementedError("Subclasses must implement __repr__()")
+        """Return string representation of tool."""
+        ...
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
