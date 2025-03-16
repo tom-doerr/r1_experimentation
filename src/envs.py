@@ -20,7 +20,7 @@ class Env1:
         Returns:
             int: Score calculated as:
                 - target_char count minus length penalty if any targets found
-                - -1 if no targets and string length >= penalty start
+                - -2 if no targets and string length >= penalty start
                 - 0 if no targets and string length < penalty start
                 
         Raises:
@@ -36,7 +36,7 @@ class Env1:
             
         # No targets found
         if len(input_string) >= self.char_count_penalty_start:
-            return -1
+            return -2
         return 0
 
     def __repr__(self) -> str:
@@ -52,17 +52,18 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on string length.
+        """Calculate score based on duplicate characters.
         
         Args:
             input_string: String to evaluate
             
         Returns:
-            int: Returns 0 if length <= max_char_count, 1 otherwise
+            int: Returns 0 if all characters are unique, 1 if any duplicates
         """
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
-        return 0 if len(input_string) <= self.max_char_count else 1
+        unique_chars = len(set(input_string))
+        return 0 if unique_chars == len(input_string) else 1
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
