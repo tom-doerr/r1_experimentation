@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator
+import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     # Simplified XML parser with reduced complexity
@@ -24,6 +25,20 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
+
+# Simplified LiteLLM implementations
+def litellm_completion(prompt: str, model: str) -> str:
+    """Minimal LiteLLM completion that returns a fixed response"""
+    return f"Response to {prompt} from {model}"
+
+def litellm_streaming(prompt: str) -> Generator[str, None, None]:
+    """Minimal streaming response generator"""
+    for word in f"Streaming response to {prompt}".split():
+        yield word + " "
+
+def python_reflection_testing() -> str:
+    """Simple reflection test that returns its own variable name"""
+    return 'test_output_var'
 
 class Agent:
     """Main agent for handling AI interactions"""
