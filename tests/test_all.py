@@ -62,7 +62,7 @@ parsed_data = agent.parse_xml(xml_data)
 assert parsed_data['message'] == 'hello'
 
 xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
-parsed_data_2 = agent._parse_xml(xml_data_2)
+parsed_data_2 = agent.parse_xml(xml_data_2)
 assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
