@@ -61,7 +61,7 @@ class ShellCodeExecutor(Tool):
         if command_name not in self.whitelisted_commands:
             return self._execute_command(command_parts)
 +        return ""
- 
++
 +    def _execute_command(self, command_parts: List[str]) -> str:
 +        """Executes a command and returns the output."""
 +        try:
