@@ -46,17 +46,17 @@ class ShellCodeExecutor:
 
     def run(self, command: str) -> str:
         if not command:
-            return "Error: No command provided."
+            raise ValueError("No command provided.")
 
         command_parts = shlex.split(command)
         if not command_parts or command_parts[0] not in self.whitelisted_commands:
-            return f"Error: Command {command_parts[0]} is not whitelisted."
+            raise ValueError(f"Command {command_parts[0]} is not whitelisted.")
 
         try:
             result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
             return result.stdout
         except subprocess.CalledProcessError as e:
-            return f"Error: {e.stderr}"
+            raise RuntimeError(f"Error executing command: {e.stderr}") from e
 
 
 def litellm_completion(prompt: str, model: str) -> str:
@@ -75,16 +75,15 @@ def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
+    """Streams completion from LiteLLM."""
     try:
         response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            stream=True,
-            max_tokens=max_tokens,
+            model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens
         )
         yield from _extract_content_from_chunks(response)  # type: ignore
     except litellm.APIError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
++        yield f"LiteLLMError: {e}"
 
 
 class Agent():
