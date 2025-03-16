@@ -1,4 +1,5 @@
 from typing import Any, Dict, Protocol
+from abc import abstractmethod
 from .llm_utils import litellm_completion
 from .config import DEFAULT_MODEL
 
