@@ -5,6 +5,7 @@ from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import litellm
 from importlib import import_module
+import inspect
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
