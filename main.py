@@ -15,12 +15,7 @@ def parse_xml(xml_string: str):
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = None
-        if child.text:
-            child_data = child.text.strip()
-        else:
-            child_data = _parse_element(child)
-
+        child_data: Any = child.text.strip() if child.text else _parse_element(child)
         result[child.tag] = child_data
     return result
 
@@ -84,10 +79,7 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str):
-        if replace is not None:
-            self.memory: str = replace
-        else:
-            self.memory: str = ""
+        self.memory: str = replace if replace is not None else ""
 
 class AgentAssert:
     """Assertion agent for testing."""
