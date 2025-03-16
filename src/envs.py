@@ -13,20 +13,6 @@ class Env1:
         self.char_count_penalty_start = char_count_penalty_start
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on target character count and length penalty.
-        
-        Args:
-            input_string: String to evaluate (must be non-empty)
-            
-        Returns:
-            int: Score calculated as:
-                - target_char count minus length penalty if any targets found
-                - -2 if no targets and string length >= penalty start
-                - -1 if no targets and string length < penalty start
-                
-        Raises:
-            ValueError: If input_string is empty
-        """
         if not isinstance(input_string, str) or not input_string:
             raise ValueError("input_string must be a non-empty string")
             
