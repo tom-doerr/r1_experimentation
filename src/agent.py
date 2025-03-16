@@ -17,6 +17,8 @@ class Agent:
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory = ''
+        self.net_worth = global_settings['starting_cash']
+        self.memory = ''
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
@@ -48,4 +50,16 @@ class ConcreteAgent(Agent):
 
     def __repr__(self) -> str:
         return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens}, interface={self.interface!r})"
+
+
+class AgentAssert:
+    """Utility class for agent assertions."""
+    
+    @staticmethod
+    def has_net_worth(agent: Agent) -> bool:
+        return hasattr(agent, 'net_worth')
+        
+    @staticmethod 
+    def has_memory(agent: Agent) -> bool:
+        return hasattr(agent, 'memory')
 
