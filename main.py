@@ -4,6 +4,7 @@ import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 # Set flash as the default model
+litellm.model = FLASH
 litellm.model_list = [{
         "model_name": "default",
         "litellm_params": {
