@@ -80,7 +80,7 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
     except Exception as e:
-        yield from _handle_litellm_error(e, "litellm streaming")
+        yield _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
     return "test_output_var"
@@ -121,8 +121,7 @@ class AgentAssert:
         parsed: Dict[str, Any] = self.agent._parse_xml(response)
         if 'message' in parsed:
             message: str = parsed['message']
-            if "match specifications" in message:
-                return False
+            return "match specifications" not in message
         return True
 
     def _parse_xml(self, xml_string: str) -> bool:
@@ -145,10 +144,12 @@ class ShellCodeExecutor(Tool):
         except subprocess.CalledProcessError as e:
             return e.stderr
 
-def _handle_litellm_error(e: Exception, function_name: str) -> Generator[str, None, None]:
+def _handle_litellm_error(e: Exception, function_name: str) -> str:
     if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
-        print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
-        yield f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
+        error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
+        print(error_message)
+        return error_message
     else:
-        print(f"General error during {function_name}: {type(e).__name__} - {e}")
-        yield f"General error during {function_name}: {type(e).__name__} - {e}"
+        error_message = f"General error during {function_name}: {type(e).__name__} - {e}"
+        print(error_message)
+        return error_message
