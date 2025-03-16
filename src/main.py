@@ -66,8 +66,8 @@ class ShellCodeExecutor:
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    """Completes the prompt using LiteLLM and returns the result."""    
-    
+    """Completes the prompt using LiteLLM and returns the result."""
+
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}]) # complete the prompt
         if not hasattr(response, 'choices') or not response.choices: # validate response
