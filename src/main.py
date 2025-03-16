@@ -1,29 +1,27 @@
 import shlex
 import subprocess
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Generator
+from typing import Dict, List, Generator, Optional, Any
 import litellm
+
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
-    return {child.tag: child.text for child in element}
+    return {child.tag: element.text for child in element}
 
-
-from typing import Optional
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
-        root: ET.Element = ET.fromstring(xml_string)
-        data: Dict[str, str | Dict[str, str | None] | None] = {}
+        root = ET.fromstring(xml_string)
+        data = {}
 
         for element in root:
             if list(element):
-                # If the element has children, parse them recursively
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = element.text
+                data[element.tag] = element.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
@@ -49,8 +47,6 @@ class Tool:
 
 
 class ShellCodeExecutor(Tool):
-
-
     """Executes shell commands."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -64,13 +60,11 @@ class ShellCodeExecutor(Tool):
     def run(self, command: str) -> str:
         if not command:
             raise ValueError("No command provided")
-
-        command_parts: List[str] = shlex.split(command)
+        command_parts = shlex.split(command)
         if not command_parts:
             raise ValueError("No command parts found")
         if command_parts[0] not in self.whitelisted_commands:
             raise ValueError(f"Command '{command_parts[0]} is not whitelisted")
-
         try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
@@ -129,8 +123,8 @@ class Agent:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
-    def _update_memory(self, search: str, replace: str) -> None:
-        if replace is not None: # if replace is not empty
+    def _update_memory(self, replace: str) -> None:
+        if replace: # if replace is not empty
             self.memory = replace
         else:
             self.memory = ""
