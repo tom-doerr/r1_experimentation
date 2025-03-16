@@ -146,4 +146,3 @@ class AgentAssert(Agent):
             return bool_value.lower() == "true"
         return bool(bool_value)
 
-ET = ElementTree
