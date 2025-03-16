@@ -76,9 +76,6 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
 
 
 class Agent(Tool):
-    """An agent that interacts with the user.
-    """
-    """An agent that interacts with the user."""
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
@@ -121,10 +118,7 @@ class AgentAssert(Tool):
             root = ET.fromstring(xml_string)
             data: Dict[str, Any] = {}
             for child in root:
-                if len(child):
-                    data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
-                else:
-                    data[child.tag] = child.text or ""
-        except ET.ParseError as e:            
+                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} if len(child) else child.text or ""
+        except ET.ParseError as e:
             print(f"XML ParseError: {e}")
             return {}
