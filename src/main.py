@@ -11,6 +11,23 @@ from .utils import normalize_model_name
 
 
 
+def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
+    """Get single completion using LiteLLM API."""
+    if not isinstance(prompt, str) or not prompt.strip():
+        raise ValueError("Prompt must be a non-empty string")
+        
+    try:
+        model = normalize_model_name(model)
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        raise RuntimeError(f"Completion error: {e}") from e
+
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
@@ -292,7 +309,8 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface"
+    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface",
+    "Env1", "Env2", "python_reflection_test"
 ]
 
 
