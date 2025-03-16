@@ -127,9 +127,9 @@ class Agent():
             self.memory = ""
 
 
-
 class Tool:
     """Base class for tools."""
+
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""
