@@ -166,11 +166,10 @@ class ShellCodeExecutor(Tool):
             return e.stderr
 
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError'):
-        if isinstance(e, litellm.utils.LiteLLMError):
-            error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
-            print(error_message)
-            return error_message
+    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
+        error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
+        print(error_message)
+        return error_message
     error_message = f"General error during {function_name}: {type(e).__name__} - {e}"
     print(error_message)
     return error_message
