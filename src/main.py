@@ -2,7 +2,7 @@ import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 from .isolation import run_container
-from typing import Dict, Any, Generator
+from typing import Dict, Any, Generator, Protocol
 from abc import ABC, abstractmethod
 import litellm
 
