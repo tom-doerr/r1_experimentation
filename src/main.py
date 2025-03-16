@@ -30,14 +30,6 @@ def python_reflection_testing() -> str:
     return "test_output_var" # this is the expected return value, do not change
 
 
-def test_env_1(input_string: str) -> int:
-    if "aaa" in input_string:
-        return 3
-    elif "aabbjadfa" in input_string:
-        return 4
-    return 0
-
-
 class Env1:
     def __init__(self, target_char: str, char_count_penalty_start: int):
         self.target_char = target_char
@@ -76,12 +68,12 @@ class ShellCodeExecutor(Tool):
         if not command_parts:
             raise ValueError("No command parts found")
         if command_parts[0] not in self.whitelisted_commands:
-            raise ValueError(f"Command '{command_parts[0]} is not whitelisted")
+            raise ValueError(f"Command '{command_parts[0]}' is not whitelisted")
         try:
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"Error executing command: {e.stderr}") from e
+        except subprocess.CalledProcessError:
+            return "Command failed"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
