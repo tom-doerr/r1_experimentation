@@ -60,14 +60,14 @@ class ShellCodeExecutor:
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    """Completes the prompt using LiteLLM."""
+    """Completes the prompt using LiteLLM and returns the result."""
     if "assert" in prompt.lower():
         prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
 
     try:
         response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
-    except litellm.LiteLLMError as e:  # type: ignore
+    except litellm.LiteLLMError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
@@ -111,7 +111,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str, search: str="") -> None:
+    def _update_memory(self, replace: str) -> None:
         self.memory = replace # the search parameter is not used
 
 
