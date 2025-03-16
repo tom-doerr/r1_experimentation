@@ -1,21 +1,19 @@
 import xml.etree.ElementTree as ET
 
 def parse_xml(xml_string: str) -> dict:
-    # Parse XML string and extract text content from elements
+    # Parse XML string and return flattened dict of text content
     root = ET.fromstring(xml_string)
     result = {}
     
-    # Recursively parse all elements
-    def parse_element(element, parent_dict):
+    def parse_element(element):
+        # Recursively parse elements, flattening the structure
         if len(element) == 0:  # Leaf node
-            parent_dict[element.tag] = element.text
-        else:  # Branch node
-            new_dict = {}
-            parent_dict[element.tag] = new_dict
-            for child in element:
-                parse_element(child, new_dict)
+            return element.text
+        return {child.tag: parse_element(child) for child in element}
     
-    parse_element(root, result)
+    # Start parsing from root's children
+    for child in root:
+        result[child.tag] = parse_element(child)
     return result
 
 if __name__ == "__main__":
