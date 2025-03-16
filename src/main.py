@@ -202,42 +202,7 @@ class ShellCodeExecutor(Tool):
 
 
 
-def _normalize_model_name(model: str) -> str:
-    """Normalize model name to include proper provider prefix.
-    
-    Args:
-        model: Raw model name string
-        
-    Returns:
-        Normalized model name with proper prefix
-        
-    Raises:
-        ValueError: If model name is invalid
-    """
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-        
-    model = model.strip().lower()
-    
-    # Handle flash alias
-    if model == "flash":
-        return "openrouter/google/gemini-2.0-flash-001"
-        
-    # Handle deepseek models
-    if model == "deepseek":
-        return "deepseek/deepseek-chat"
-    if model.startswith("deepseek/"):
-        return model
-        
-    # Handle openrouter models
-    if model.startswith("openrouter/"):
-        return model
-        
-    # Handle other models
-    if "/" in model:
-        return f"openrouter/{model}"
-        
-    return f"openrouter/{model}"
+from .utils import normalize_model_name as _normalize_model_name
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.
