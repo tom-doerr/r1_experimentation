@@ -40,9 +40,6 @@ class Agent:
         self.last_completion = litellm_completion(prompt=full_prompt, model=self.model)
         return self.last_completion
 
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
-        return parse_xml(xml_string)
-
     def __call__(self, prompt: str) -> str:
         """Make Agent callable for convenience.
         
