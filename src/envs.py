@@ -53,7 +53,7 @@ class Env2:
             raise ValueError("input_string must be a string")
         if len(input_string) > self.max_char_count:
             return 0
-        return 1 if len(set(input_string)) < len(input_string) else 0  # Return 1 for duplicates
+        return 0 if len(set(input_string)) < len(input_string) else 1  # Return 1 for no duplicates
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
