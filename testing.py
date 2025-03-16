@@ -1,4 +1,4 @@
-from src.main import *
+from src import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
