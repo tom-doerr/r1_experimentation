@@ -6,7 +6,7 @@ from .llm_utils import litellm_completion
 from .utils import normalize_model_name
 
 
-class Agent(ABC):
+class Agent:
     """Abstract base class for agents."""
     
     @abstractmethod
