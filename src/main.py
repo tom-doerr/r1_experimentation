@@ -16,15 +16,14 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for element in root:
-            if element.tag is not None:
-                if list(element):
-                    data[element.tag] = _parse_xml_element(element)
-                else:
-                    data[element.tag] = element.text or ""
+            if list(element):
+                data[element.tag] = _parse_xml_element(element)
+            else:
+                data[element.tag] = element.text or ""
         return data
     except ET.ParseError as e:
-        print(f"XML ParseError: {str(e)}")
-        return {"error": f"XML ParseError: {str(e)}"}
+        print(f"XML ParseError: {e}")
+        return {"error": str(e)}
 
 
 def python_reflection_testing() -> str:
