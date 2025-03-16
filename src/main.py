@@ -173,7 +173,7 @@ class ShellCodeExecutor(Tool):
 
 
 
-def run_container(image: str, command: str, timeout: int = 10) -> str:
+def run_container(image: str, command: str = "echo hello", timeout: int = 10) -> str:
     """Run a command in a container using Docker.
     
     Args:
@@ -286,6 +286,14 @@ def python_reflection_test() -> str:
     """Test Python reflection capabilities by inspecting the Agent class."""
     from .agent import Agent
     return str(inspect.getmembers(Agent))
+
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities by inspecting this function itself.
+    
+    Returns:
+        str: The name of this function
+    """
+    return inspect.currentframe().f_code.co_name
 
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
