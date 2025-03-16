@@ -79,7 +79,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         )
         if response.choices and response.choices[0].message:
             return response.choices[0].message.content or ""
-        return ""
+        return "" # type: ignore
     except litellm.LiteLLMError as e:
         return f"LiteLLMError in litellm_completion: {e}"
 
@@ -110,6 +110,21 @@ class Agent(Tool):
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
+    
+    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+        """Parses an XML string and returns a dictionary."""
+        try:
+            root = ET.fromstring(xml_string)
+            data: Dict[str, str | Dict[str, str]] = {}
+            for child in root:
+                if not len(child):
+                    data[child.tag] = child.text or ""
+                else:
+                    data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
+            return data
+        except ET.ParseError as e:
+            print(f"XML ParseError: {str(e)}")
+            return {"error": f"XML ParseError: {str(e)}"}
 
     def __init__(self, model: str = FLASH):
         self.model = model
