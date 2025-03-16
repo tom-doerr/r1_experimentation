@@ -129,7 +129,7 @@ class Agent():
 
 
 class Tool:
-    pass
+    """Base class for tools."""
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""
