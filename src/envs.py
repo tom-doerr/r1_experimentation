@@ -45,26 +45,9 @@ class Env1:
 
 
 class Env2:
-    """Second environment implementation."""
-    
-    def __init__(self, max_char_count: int = 5):
-        if not isinstance(max_char_count, int) or max_char_count <= 0:
-            raise ValueError("max_char_count must be a positive integer")
-        self.max_char_count = max_char_count
-        
-    def __call__(self, input_string: str) -> int:
-        if not isinstance(input_string, str):
-            raise ValueError("input_string must be a string")
-        return min(len(input_string), self.max_char_count)
-        
-    def __repr__(self) -> str:
-        return f"Env2(max_char_count={self.max_char_count})"
-
-
-class Env2:
     """Environment that counts characters up to a maximum limit."""
     
-    def __init__(self, max_char_count: int = 5) -> None:
+    def __init__(self, max_char_count: int = 5):
         if not isinstance(max_char_count, int) or max_char_count <= 0:
             raise ValueError("max_char_count must be a positive integer")
         self.max_char_count = max_char_count
