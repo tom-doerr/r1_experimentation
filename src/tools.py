@@ -177,3 +177,28 @@ class ShellCodeExecutor(Tool):
             raise RuntimeError(f"Command failed: {e.stderr}") from e
         except Exception as e:
             raise RuntimeError(f"Error executing command: {e}") from e
+
+    def stream(self, command: str) -> Generator[str, None, None]:
+        """Stream command output."""
+        self._validate_command(command)
+        try:
+            process = subprocess.Popen(
+                shlex.split(command),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                if output:
+                    yield output
+                    
+            process.stdout.close()
+            return_code = process.wait()
+            if return_code != 0:
+                raise RuntimeError(f"Command failed with code {return_code}")
+        except Exception as e:
+            raise RuntimeError(f"Error executing command: {e}") from e
