@@ -313,19 +313,6 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         raise RuntimeError(f"Container error: {e}") from e
 
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect Python object and return metadata."""
-    if obj is None:
-        raise ValueError("Object cannot be None")
-        
-    return {
-        'type': str(type(obj)),
-        'module': obj.__module__ if hasattr(obj, '__module__') else None,
-        'name': getattr(obj, '__name__', None),
-        'doc': getattr(obj, '__doc__', None),
-        'methods': [name for name, _ in inspect.getmembers(obj, inspect.ismethod)],
-        'attributes': [name for name, _ in inspect.getmembers(obj, lambda x: not inspect.ismethod(x))]
-    }
 
 
 
