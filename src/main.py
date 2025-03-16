@@ -281,7 +281,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         content = response.choices[0].message.content
         # Properly escape XML content
         escaped_content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        return f"<response><bool>{escaped_content}</bool></response>"
+        return f"<response>{escaped_content}</response>"
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
