@@ -3,17 +3,7 @@ from .main import DEFAULT_MODEL, global_settings, _normalize_model_name, litellm
 class Agent:
     """Agent that interacts with users using LLM completions."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        """Initialize agent with model and token limits.
-        
-        Args:
-            model: The model name to use for completions
-            max_tokens: Maximum number of tokens to generate (must be positive)
-            
-        Raises:
-            ValueError: If max_tokens is invalid or model name is invalid
-            TypeError: If model is not a string
-        """
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> None:
         if not isinstance(model, str):
             raise TypeError("model must be a string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
@@ -49,18 +39,6 @@ class Agent:
 
 
     def reply(self, prompt: str) -> str:
-        """Generate a response to the given prompt.
-        
-        Args:
-            prompt: The input prompt string to process
-            
-        Returns:
-            str: The generated response
-            
-        Raises:
-            TypeError: If prompt is not a string
-            RuntimeError: If completion fails
-        """
         if not isinstance(prompt, str):
             raise TypeError("prompt must be a string")
             
@@ -76,17 +54,6 @@ class Agent:
             raise RuntimeError(f"Completion failed: {e}") from e
 
     def __call__(self, prompt: str) -> str:
-        """Make Agent callable for convenience.
-        
-        Args:
-            prompt: The input prompt string to process
-            
-        Returns:
-            str: The generated response
-            
-        Raises:
-            TypeError: If prompt is not a string
-        """
         if not isinstance(prompt, str):
             raise TypeError("prompt must be a string")
         return self.reply(prompt)
@@ -118,7 +85,6 @@ class AgentAssert(Agent):
         return self._evaluate_statement(statement)
 
     def _evaluate_statement(self, statement: str) -> bool:
-        """Internal method to evaluate statement and parse response."""
         reply = self.reply(prompt=statement)
         try:
             parsed_reply = parse_xml(reply)
