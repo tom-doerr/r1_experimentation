@@ -108,7 +108,7 @@ class Agent(Tool):
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
     def _update_memory(self, replace: str) -> None:
@@ -120,10 +120,10 @@ class AgentAssert(Agent):
 
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
-
+ 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        parsed_reply = self.parse_xml(reply)
+        parsed_reply = self._parse_xml(reply)
         if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
