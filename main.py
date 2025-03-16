@@ -2,19 +2,18 @@ import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
+    def parse_element(element: ET.Element) -> Dict[str, Any]:
+        result = {}
+        for child in element:
+            # Handle both text and nested elements
+            if len(child) == 0:  # No nested elements
+                result[child.tag] = child.text.strip() if child.text else None
+            else:
+                result[child.tag] = parse_element(child)
+        return result
+
     root = ET.fromstring(xml_string)
-    
-    # Extract direct children of root element
-    result = {}
-    for child in root:
-        # Get text content if no nested elements
-        if len(child) == 0:
-            result[child.tag] = child.text.strip() if child.text else None
-        else:
-            # Handle nested elements recursively
-            result[child.tag] = parse_xml(ET.tostring(child).decode())
-            
-    return result
+    return parse_element(root)
 
 def litellm_completion(prompt: str) -> str:
     # Simple mock implementation for testing
