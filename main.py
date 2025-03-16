@@ -20,8 +20,11 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
                     result[element.tag][child.tag] = [result[element.tag][child.tag], child_data[child.tag]]  # Convert to list and append
             else:
                 result[element.tag][child.tag] = child_data[child.tag]  # Add the new tag
-
-        return result
+        
+        # Initialize parsed_xml to avoid NameError
+        parsed_xml = result[element.tag]
+        return parsed_xml
+    
 
     try:
         root = ET.fromstring(xml_string)
