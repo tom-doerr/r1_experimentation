@@ -17,9 +17,10 @@ class Env1:
             raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
-        over_limit = max(0, len(input_string) - self.char_count_penalty_start)
-        score = count - over_limit  # 1:1 penalty for excess characters
-        return max(min(score, count), -2) if count > 0 else max(score, -2)
+        if len(input_string) >= self.char_count_penalty_start:
+            penalty = len(input_string) - self.char_count_penalty_start
+            return count - penalty
+        return count
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -40,10 +41,11 @@ class Env2:
             
         if len(input_string) > self.max_char_count:
             return 0
-                
-        # Check for consecutive duplicates using zip for cleaner iteration
-        has_duplicates = any(a == b for a, b in zip(input_string, input_string[1:]))
-        return 0 if has_duplicates else len(input_string)
+            
+        # Only score if all characters are the same
+        if len(input_string) >= 3 and all(c == input_string[0] for c in input_string):
+            return 1
+        return 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
