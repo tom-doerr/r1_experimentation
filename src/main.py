@@ -17,6 +17,24 @@ from .envs import Env1, Env2
 from .llm_utils import litellm_completion
 
 
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into a dictionary.
+    
+    Args:
+        xml_string: XML string to parse
+        
+    Returns:
+        Dict: Parsed XML data
+        
+    Raises:
+        ValueError: If XML is invalid
+    """
+    try:
+        root = ET.fromstring(xml_string)
+        return {elem.tag: elem.text for elem in root}
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
+
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
@@ -172,6 +190,41 @@ class ShellCodeExecutor(Tool):
 
 
 
+
+def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
+    """Generate streaming completion using LiteLLM API.
+    
+    Args:
+        prompt: The input prompt string
+        model: The model name to use
+        max_tokens: Maximum number of tokens to generate
+        
+    Yields:
+        str: Chunks of the generated completion
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If completion fails
+    """
+    if not isinstance(prompt, str) or not prompt.strip():
+        raise ValueError("Prompt must be a non-empty string")
+        
+    try:
+        model = normalize_model_name(model)
+        response = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            stream=True
+        )
+        
+        for chunk in response:
+            content = chunk.choices[0].delta.content
+            if content:
+                yield content
+                
+    except Exception as e:
+        raise RuntimeError(f"Streaming error: {e}") from e
 
 def python_reflection_test(obj: object) -> str:
     """Inspect an object and return its type information."""
