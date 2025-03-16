@@ -3,17 +3,18 @@ import shlex
 from typing import Dict, Any, List, Generator
 import subprocess
 from xml.etree.ElementTree import ParseError
+from xml.etree.ElementTree import Element
 
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
 
-def parse_xml(xml_string: str) -> Dict[str, Any]:
+def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     try:
         root = ET.fromstring(xml_string)
-        data: Dict[str, Any] = {}
+        data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
             if len(child):
                 data[child.tag] = {
@@ -22,7 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
             else:
                 data[child.tag] = child.text or ""
         return data
-    except ParseError as e:
+    except ParseError as e: # type: ignore
         return {"error": f"XML ParseError: {str(e)}"}
 
 
@@ -39,7 +40,7 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-    pass
+    pass # Placeholder for potential future functionality
 
 class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
@@ -53,14 +54,13 @@ class ShellCodeExecutor(Tool):
         command_parts: List[str] = shlex.split(command)
         if not command_parts:
             return "No command provided."
-
-        command_name: str = command_parts[0]
-        if command_name in self.blacklisted_commands:
-            return f"Command '{command_name}' is blacklisted."
-        if command_name in self.whitelisted_commands:
+ 
+        if command_parts[0] in self.blacklisted_commands:
+            return f"Command '{command_parts[0]}' is blacklisted."
+        if command_parts[0] in self.whitelisted_commands:
             return self._execute_command(command_parts)
-        return f"Command '{command_name}' is not whitelisted."
-
+        return f"Command '{command_parts[0]}' is not whitelisted."
+    
     def _execute_command(self, command_parts: List[str]) -> str:
         try:
             result = subprocess.run(
@@ -79,7 +79,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         if response.choices and response.choices[0].message:
             return response.choices[0].message.content or ""
         return ""
-    except Exception as e:
+    except litellm.LiteLLMError as e:
         print(f"LiteLLMError in litellm_completion: {e}")
 
 
@@ -120,7 +120,7 @@ class Agent(Tool):
         try:
             self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
-        except Exception as e:
+        except litellm.LiteLLMError as e:
             print(f"Exception in Agent.reply: {e}")
             return ""
 
@@ -142,6 +142,6 @@ class AgentAssert(Tool):
             reply = self.agent.reply(statement)
             data: Dict[str, Any] = parse_xml(reply)
             return "False" not in reply
-        except Exception as e:
+        except litellm.LiteLLMError as e:
             print(f"Exception in AgentAssert: {e}")
             return False
