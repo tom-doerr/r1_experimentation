@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-import inspect
 import shlex
 import subprocess
-import sys
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Dict, Generator, Protocol
 import xml.etree.ElementTree as ET
 import litellm
 
@@ -29,16 +27,6 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
         raise ValueError("starting_cash cannot exceed max_net_worth")
     if not 0 <= settings['cash_penalty'] <= 1:
         raise ValueError("cash_penalty must be between 0 and 1")
-
-global_settings: Dict[str, float] = {
-    'starting_cash': 1000.0,  # Default starting cash value
-    'max_net_worth': 10000.0,  # Maximum allowed net worth
-    'min_net_worth': 0.0,  # Minimum allowed net worth
-    'cash_penalty': 0.1,  # Percentage penalty for invalid operations
-    'initial_net_worth': 1000.0  # Initial net worth value
-}
-
-_validate_global_settings(global_settings)
 
 global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,  # Default starting cash value
