@@ -7,6 +7,7 @@ from .main import (
     litellm_streaming,
     DEFAULT_MODEL,
     global_settings,
+    run_container
 )
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
