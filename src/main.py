@@ -2,10 +2,9 @@ import shlex # type: ignore
 from typing import Dict, List, Generator
 import subprocess  # nosec
 import litellm # type: ignore
+import xml.etree.ElementTree as ET
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
-
-import xml.etree.ElementTree as ET
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
