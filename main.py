@@ -88,17 +88,8 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                     content: str = chunk['choices'][0]['delta']['content']
                     if content:
                         yield content
-                elif (
-                    chunk.get('choices')
-                    and len(chunk['choices']) > 0
-                    and chunk['choices'][0]['delta'].get('reasoning_content')
-                ):
-                    reasoning_content: str = chunk['choices'][0]['delta']['reasoning_content']
-                    if reasoning_content:
-                        yield reasoning_content
                 else:
                     print(f"Unexpected chunk format: {chunk}")
-                    # Consider yielding an empty string or a specific error message
                     yield ""
         else:
             print(f"Unexpected response type: {type(response)}")
