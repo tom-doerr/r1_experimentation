@@ -5,24 +5,10 @@ import litellm
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
-        result: Dict[str, Any] = {element.tag: None}
-        
-        children = list(element)
-        if children:
-            result = {}
-            for child in children:
-                child_data = parse_element(child)
-                key = child.tag
-                if key in result:
-                    if not isinstance(result[key], list):
-                        result[key] = [result[key]]
-                    result[key].append(child_data[key])
-                else:
-                    result[key] = child_data[key]
-        elif element.text and element.text.strip():
-            result[element.tag] = element.text.strip()
-        
-        return result
+        # Simplified parsing logic
+        if len(element):  # Has children
+            return {element.tag: [parse_element(child) for child in element]}
+        return {element.tag: element.text.strip() if element.text else None}
 
     try:
         root = ET.fromstring(xml_string)
@@ -60,8 +46,8 @@ def python_reflection_testing() -> str:
 
 class Agent:
     """Main agent for handling AI interactions"""
-    def __init__(self) -> None:
-        self.model = "default-model"
+    def __init__(self, model: str = "default-model") -> None:
+        self.model = model
 
     def set_model(self, model_name: str) -> None:
         """Set the model to use for processing"""
