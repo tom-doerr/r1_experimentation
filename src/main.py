@@ -102,7 +102,7 @@ class Agent():
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
     def reply(self, prompt: str) -> str:
-        full_prompt = f"{prompt}. Current memory: {self.memory}"
+        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         return litellm_completion(full_prompt, model=self.model)
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
