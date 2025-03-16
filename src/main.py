@@ -108,7 +108,6 @@ class Tool(ABC):
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
-    
     blacklisted_commands = {'rm', 'cat', 'mv', 'cp', 'sudo', 'sh', 'bash', 'wget', 'curl', 'ssh'}
     whitelisted_commands = {'ls', 'date', 'pwd', 'echo', 'whoami', 'uname', 'hostname'}
     max_command_length = 100
@@ -120,24 +119,13 @@ class ShellCodeExecutor(Tool):
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        """Execute a shell command with strict validation.
-        
-        Args:
-            command: Command string to execute
-            
-        Returns:
-            Command output as string
-            
-        Raises:
-            ValueError: For invalid commands or arguments
-            PermissionError: For blacklisted commands
-            RuntimeError: For execution failures
-            TimeoutError: If command times out
-        """
+        """Execute a shell command with strict validation."""
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
         if len(command) > self.max_command_length:
             raise ValueError(f"Command exceeds maximum length of {self.max_command_length}")
+        if any(char in command for char in ['\n', '\r', '\0']):
+            raise ValueError("Command contains invalid newline or null characters")
             
         parts = command.strip().split()
         if not parts:
@@ -148,6 +136,13 @@ class ShellCodeExecutor(Tool):
             raise PermissionError(f"Command {cmd} is blacklisted")
         if cmd not in self.whitelisted_commands:
             raise ValueError(f"Command {cmd} is not whitelisted")
+            
+        if len(parts) > 1:
+            for arg in parts[1:]:
+                if any(char in arg for char in [';', '|', '&', '`', '$', '(', ')', '>', '<']):
+                    raise ValueError(f"Invalid characters in argument: {arg}")
+                if '..' in arg:
+                    raise ValueError("Path traversal detected in arguments")
             
         try:
             result = subprocess.run(
