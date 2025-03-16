@@ -6,11 +6,11 @@ import xml.etree.ElementTree as ET
 import litellm
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
-from .llm_utils import litellm_completion
 from .reflection import python_reflection_test
 from .interface import UserInterface
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
+from .llm_utils import litellm_completion
 from .utils import normalize_model_name
 
 
@@ -305,7 +305,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "UserInterface",
+    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface",
     "Env1", "Env2"
 ]
 
