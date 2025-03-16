@@ -194,7 +194,21 @@ class ShellCodeExecutor(Tool):
 
 
 def run_container(image: str, command: str, timeout: int = 10) -> str:
-    """Run a command in a container with timeout."""
+    """Run a command in a container using Docker.
+    
+    Args:
+        image: Docker image to use
+        command: Command to run in container
+        timeout: Maximum execution time in seconds
+        
+    Returns:
+        Command output as string
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If container execution fails
+        TimeoutError: If command times out
+    """
     if not isinstance(image, str) or not image.strip():
         raise ValueError("Image must be a non-empty string")
     if not isinstance(command, str) or not command.strip():
@@ -258,30 +272,38 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise RuntimeError(f"Streaming error: {e}") from e
 
 
-def python_reflection_test(obj: Any) -> Dict[str, Union[str, Dict[str, str], List[str]]]:
-    """Inspect an object and return its attributes and methods.
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
     
     Args:
-        obj: The object to inspect
+        obj: Any Python object to inspect
         
     Returns:
         Dictionary containing:
-            - 'type': The object's type name
-            - 'methods': Dictionary of method names to signatures
-            - 'attributes': List of attribute names
+            - 'type': The object's type
+            - 'attributes': Dictionary of instance attributes
+            - 'methods': Dictionary of method signatures
     """
+    if obj is None:
+        raise ValueError("Object cannot be None")
+        
     result = {
-        'type': type(obj).__name__,
-        'methods': {},
-        'attributes': []
+        "type": str(type(obj)),
+        "attributes": {},
+        "methods": {}
     }
     
-    for name, member in inspect.getmembers(obj):
-        if inspect.ismethod(member) or inspect.isfunction(member):
-            result['methods'][name] = str(inspect.signature(member))
-        elif not name.startswith('_'):
-            result['attributes'].append(name)
-            
+    # Get attributes
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(type(value))
+        
+    # Get methods
+    for name, method in inspect.getmembers(obj, inspect.ismethod):
+        result["methods"][name] = {
+            "parameters": str(inspect.signature(method)),
+            "docstring": method.__doc__ or ""
+        }
+        
     return result
 
 def python_reflection_test(obj: Any) -> Dict[str, Any]:
