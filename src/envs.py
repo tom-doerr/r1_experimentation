@@ -19,7 +19,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty
+            return count - 2 * penalty  # Double penalty for excess characters
         return count
 
     def __repr__(self) -> str:
@@ -42,10 +42,9 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
             
-        # Only score if all characters are the same
-        if len(input_string) >= 3 and all(c == input_string[0] for c in input_string):
-            return 1
-        return 0
+        # Score 1 only for valid length with no duplicates
+        has_duplicates = len(set(input_string)) != len(input_string)
+        return 1 if (not has_duplicates and len(input_string) <= self.max_char_count) else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"

@@ -7,7 +7,7 @@ def python_reflection_test() -> str:
     Returns:
         str: A string containing reflection test results
     """
-    current_module = import_module('src')
+    current_module = import_module(__name__.rsplit('.', 1)[0])  # Get root package name
     functions = []
     classes = []
     
