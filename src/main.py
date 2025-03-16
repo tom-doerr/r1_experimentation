@@ -106,7 +106,6 @@ class Agent(Tool): # type: ignore
             completion: str = litellm_completion(full_prompt, model=self.model)
             self.last_completion = completion
             return completion # type: ignore
-            return _handle_litellm_error(e, "Agent.reply")
 
     def _update_memory(self, search: str, replace: str) -> None:
         # Updates the agent's memory.
