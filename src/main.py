@@ -45,7 +45,7 @@ class ShellCodeExecutor:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command:
+        if not command:            
             raise ValueError("No command provided")
 
         command_parts: List[str] = shlex.split(command)
@@ -60,10 +60,10 @@ class ShellCodeExecutor:
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    """Completes the prompt using LiteLLM and returns the result."""
+    """Completes the prompt using LiteLLM and returns the result."""    
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        if not isinstance(response, litellm.CompletionResponse):
+        if not hasattr(response, 'choices') or not response.choices:
             return f"Unexpected response type: {type(response)}"
         return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "No completion found."
     except litellm.APIError as e:
@@ -100,7 +100,7 @@ class Agent():
     def __repr__(self):
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
-    def reply(self, prompt: str) -> str:
+    def reply(self, prompt: str) -> str:        
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
@@ -108,7 +108,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, replace: str) -> None:
         self.memory = replace
 
 
