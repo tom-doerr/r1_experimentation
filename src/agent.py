@@ -18,8 +18,9 @@ class Agent:
             raise TypeError("model must be a string")
         if model == 'deepseek':
             model = 'deepseek/deepseek-chat'  # Normalize deepseek model name
-        if not (model.startswith('openrouter/') or model == 'deepseek/deepseek-chat'):
-            raise ValueError("model must start with 'openrouter/' prefix or be an approved local model")
+        # Allow flash model as a special case
+        if not (model.startswith('openrouter/') or model == 'deepseek/deepseek-chat' or model == 'flash'):
+            model = 'openrouter/google/gemini-2.0-flash-001'  # Default to flash model
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
