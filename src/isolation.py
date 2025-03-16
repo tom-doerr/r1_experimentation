@@ -22,7 +22,7 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     try:
         docker_cmd = ["docker", "run", "--rm", image]
         if command.strip():  # Only add command if not empty
-            docker_cmd += shlex.split(command)  # Split command into parts
+            docker_cmd += ["sh", "-c", command]  # Execute command via shell
             
         result = subprocess.run(
             docker_cmd,
