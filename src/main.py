@@ -129,7 +129,7 @@ class Agent(Tool):
         try:
             self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
-        except Exception as e: # type: ignore
+        except Exception as e:
             print(f"Exception in Agent.reply: {e}")
             return ""
 
@@ -145,5 +145,5 @@ class AgentAssert(Agent):
         super().__init__(model=model)
 
     def __call__(self, statement: str) -> bool:
-        reply = self.agent.reply(statement)
-        return self._parse_xml(reply) # type: ignore
+        reply = self.reply(statement)
+        return self._parse_xml(reply)
