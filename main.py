@@ -3,11 +3,28 @@ from typing import Dict, Any, Iterator
 import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """XML parser with simplified complexity"""
+    """XML parser with nested structure support"""
+    def parse_element(element: ET.Element) -> Dict[str, Any]:
+        result = {}
+        if element.text and element.text.strip():
+            result[element.tag] = element.text.strip()
+        else:
+            result[element.tag] = {}
+            
+        for child in element:
+            child_data = parse_element(child)
+            if child.tag in result[element.tag]:
+                if isinstance(result[element.tag][child.tag], list):
+                    result[element.tag][child.tag].append(child_data[child.tag])
+                else:
+                    result[element.tag][child.tag] = [result[element.tag][child.tag], child_data[child.tag]]
+            else:
+                result[element.tag].update(child_data)
+        return result
+
     try:
         root = ET.fromstring(xml_string)
-        # Simple flat dict parsing for <response><message> format
-        return {child.tag: child.text.strip() for child in root}
+        return parse_element(root)
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
@@ -24,9 +41,9 @@ def litellm_completion(prompt: str, model: str = 'openrouter/deepseek-ai/deepsee
     return response.choices[0].message.content
 
 def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 20, temperature: float = 0.7) -> Iterator[str]:
-    # Valid model check for OpenRouter compatibility
-    if 'deepseek-reasoner' in model:
-        model = 'deepseek-ai/deepseek-r1'  # Official OpenRouter model ID (lowercase)
+    # Normalize model names for OpenRouter compatibility
+    if model == 'deepseek/deepseek-reasoner':
+        model = 'openrouter/deepseek-ai/deepseek-r1'
     # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
         model=model,
@@ -38,6 +55,15 @@ def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek
         if chunk.choices[0].delta.content:
             yield chunk.choices[0].delta.content
 
+class AgentAssert:
+    """Test utility for agent assertions"""
+    def __init__(self, model: str = "openrouter/google/gemini-2.0-flash-001"):
+        self.agent = Agent(model)
+        
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
+        """XML parsing for test validation"""
+        return parse_xml(xml_string)
+
 def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
     return 'test_output_var'
@@ -45,9 +71,10 @@ def python_reflection_testing() -> str:
 
 class Agent:
     """Main agent for handling AI interactions"""
-    def __init__(self, model: str = "default-model") -> None:
+    def __init__(self, model: str = "openrouter/google/gemini-2.0-flash-001") -> None:
         self.model = model
         self._memory = {}
+        self._last_response = None
 
     def set_model(self, model_name: str) -> None:
         """Set the model to use for processing"""
@@ -75,8 +102,8 @@ class Agent:
     @property
     def last_completion(self) -> str:
         """Get last completion from litellm history"""
-        if litellm.completion_cache:
-            return litellm.completion_cache[-1].choices[0].message.content
+        if self._last_response:
+            return self._last_response.choices[0].message.content
         return ""
 
     def _update_memory(self, memory_data: dict) -> None:
