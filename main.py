@@ -24,7 +24,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = None
+        child_data: Optional[Any] = None
 
         if len(child) > 0:
             child_data = _parse_element(child)
@@ -40,9 +40,8 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
             if child_data is not None:
                 result[child.tag] = child_data
 
-    # Ensure 'memory' key exists and contains 'search' and 'replace' keys
     if 'memory' in result and isinstance(result['memory'], dict):
-        memory = result['memory']
+        memory: Dict[str, str] = result['memory']
         if 'search' not in memory:
             memory['search'] = ''
         if 'replace' not in memory:
@@ -166,11 +165,11 @@ class ShellCodeExecutor(Tool):
             return e.stderr
 
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
-        error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
-        print(error_message)
-        return error_message
-    else:
-        error_message = f"General error during {function_name}: {type(e).__name__} - {e}"
-        print(error_message)
-        return error_message
+    if hasattr(litellm, 'utils') and hasattr(litellm.utils, 'LiteLLMError'):
+        if isinstance(e, litellm.utils.LiteLLMError):
+            error_message = f"LiteLLMError during {function_name}: {type(e).__name__} - {e}"
+            print(error_message)
+            return error_message
+    error_message = f"General error during {function_name}: {type(e).__name__} - {e}"
+    print(error_message)
+    return error_message
