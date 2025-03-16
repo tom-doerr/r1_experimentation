@@ -109,4 +109,4 @@ class AgentAssert:
         if 'bool' in parsed:
             bool_value: str = parsed['bool']
             return bool_value.lower() == 'true'
-        return False
+    return False
