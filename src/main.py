@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 import litellm
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
-from .utils import normalize_model_name
+from .utils import normalize_model_name as _normalize_model_name
 
 
 
