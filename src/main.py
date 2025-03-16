@@ -79,12 +79,15 @@ class ShellCodeExecutor(Tool):
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""
-
-    response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-    if not hasattr(response, 'choices') or not response.choices:
-        raise ValueError(f"Unexpected response type: {type(response)}")
-    if response.choices and response.choices[0].message and response.choices[0].message.content:
-        return response.choices[0].message.content
+    try:
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
+        if not hasattr(response, 'choices') or not response.choices:
+            raise ValueError(f"Unexpected response type: {type(response)}")
+        if response.choices and response.choices[0].message and response.choices[0].message.content:
+            return response.choices[0].message.content
+        raise ValueError("No content in response")
+    except Exception as e:
+        return f"LiteLLMError: {e}"
 def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]:
     """Extracts content from response chunks."""
     try:
