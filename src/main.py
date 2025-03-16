@@ -191,19 +191,18 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
         timeout: Maximum execution time in seconds
         
     Returns:
-        Command output as string
+        str: Command output
         
     Raises:
         ValueError: If inputs are invalid
         RuntimeError: If container execution fails
-        TimeoutError: If command times out
     """
     if not isinstance(image, str) or not image.strip():
-        raise ValueError("Image must be a non-empty string")
+        raise ValueError("image must be a non-empty string")
     if not isinstance(command, str) or not command.strip():
-        raise ValueError("Command must be a non-empty string")
+        raise ValueError("command must be a non-empty string")
     if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("Timeout must be a positive integer")
+        raise ValueError("timeout must be a positive integer")
         
     try:
         result = subprocess.run(
@@ -215,9 +214,9 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
         )
         return result.stdout
     except subprocess.TimeoutExpired as e:
-        raise TimeoutError(f"Container command timed out after {timeout} seconds") from e
+        raise TimeoutError(f"Container timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Container command failed: {e.stderr}") from e
+        raise RuntimeError(f"Container failed: {e.stderr}") from e
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
