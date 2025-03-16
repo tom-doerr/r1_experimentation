@@ -1,4 +1,5 @@
 from typing import Any
+from .main import _execute_command
 
 class IsolatedEnvironment:
     """Provides an isolated execution environment."""
