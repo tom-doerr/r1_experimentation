@@ -12,17 +12,19 @@ global_settings = {
     'starting_cash': 1000.0  # Default starting cash value
 }
 
+def _parse_xml_value(element: ET.Element) -> str | bool | None:
+    """Helper to parse XML element values."""
+    if element.tag == 'bool':
+        return element.text.lower() == 'true' if element.text else False
+    return element.text if element.text is not None else ""
+
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
     parsed_data = {}
     for child in element:
         if len(child) > 0:
             parsed_data[child.tag] = _parse_xml_element(child)
         else:
-            # Convert boolean values
-            if child.tag == 'bool':
-                parsed_data[child.tag] = child.text.lower() == 'true' if child.text else False
-            else:
-                parsed_data[child.tag] = child.text
+            parsed_data[child.tag] = _parse_xml_value(child)
     return parsed_data
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
@@ -33,11 +35,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
             else:
-                # Handle empty elements and boolean values
-                if element.tag == 'bool':
-                    data[element.tag] = element.text.lower() == 'true' if element.text else False
-                else:
-                    data[element.tag] = element.text if element.text is not None else ""
+                data[element.tag] = _parse_xml_value(element)
         return data
     except ET.ParseError as e:
         return {"error": str(e)}
@@ -45,11 +43,10 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 def python_reflection_testing() -> str:
     """Return sorted list of function names in current module."""
-    import inspect
-    import sys
+    current_module = __import__(__name__)
     return ", ".join(sorted(
-        name for name, obj in inspect.getmembers(sys.modules[__name__])
-        if inspect.isfunction(obj)
+        name for name, obj in vars(current_module).items()
+        if callable(obj) and not name.startswith('_')
     ))
 
 
