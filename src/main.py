@@ -227,20 +227,7 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
         raise RuntimeError(f"Error extracting content: {e}") from e
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Streaming version of litellm_completion that yields chunks of text.
-    
-    Args:
-        prompt: Non-empty string prompt to send to the model
-        model: Model identifier string (with or without provider prefix)
-        max_tokens: Positive integer for maximum tokens to generate
-        
-    Yields:
-        str: Chunks of generated text
-        
-    Raises:
-        ValueError: For invalid inputs or model names
-        RuntimeError: For API or execution errors
-    """
+    """Streaming version of litellm_completion that yields chunks of text."""
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
@@ -258,7 +245,15 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
             max_tokens=max_tokens,
             temperature=0.7
         )
-        yield from _extract_content_from_chunks(response)
+        
+        for chunk in response:
+            if chunk and isinstance(chunk, dict):
+                if "choices" in chunk and chunk["choices"]:
+                    if "delta" in chunk["choices"][0]:
+                        if "content" in chunk["choices"][0]["delta"]:
+                            content = chunk["choices"][0]["delta"]["content"]
+                            if content:
+                                yield content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
