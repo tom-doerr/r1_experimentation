@@ -14,12 +14,11 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root:
-            if child:
+            if not len(child):
                 data[child.tag] = child.text or "" # type: ignore
             else:
-                data[child.tag] = {
-                    grandchild.tag: grandchild.text or ""
-                    for grandchild in child
+                data[child.tag] = {grandchild.tag: grandchild.text or ""
+                    for grandchild in child # type: ignore
                 }
         return data
     except ET.ParseError as e:
@@ -152,7 +151,7 @@ class AgentAssert(Tool):
 
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
-        return self._parse_xml(reply)
+        return self._parse_xml(reply) # type: ignore
 
 
 # Move standard library import to the top
