@@ -1,3 +1,5 @@
+from .config import DEFAULT_MODEL
+
 def normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix."""
     if not isinstance(model, str) or not model.strip():
