@@ -120,9 +120,9 @@ class ShellCodeExecutor(Tool):
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
         if len(command) > self.max_command_length:
-            raise ValueError(f"Command exceeds maximum length of {self.max_command_length}")
+            raise ValueError(f"Command exceeds maximum length of {self.max_command_length} characters")
         if any(char in command for char in ['\n', '\r', '\0']):
-            raise ValueError("Command contains invalid newline or null characters")
+            raise ValueError("Command contains invalid control characters (newline or null)")
             
         parts = command.strip().split()
         if not parts:
@@ -246,14 +246,7 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
             temperature=0.7
         )
         
-        for chunk in response:
-            if chunk and isinstance(chunk, dict):
-                if "choices" in chunk and chunk["choices"]:
-                    if "delta" in chunk["choices"][0]:
-                        if "content" in chunk["choices"][0]["delta"]:
-                            content = chunk["choices"][0]["delta"]["content"]
-                            if content:
-                                yield content
+        yield from _extract_content_from_chunks(response)
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e

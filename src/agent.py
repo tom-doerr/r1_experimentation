@@ -41,13 +41,13 @@ class Agent:
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
     def _validate_net_worth(self) -> None:
-        """Validate net worth against global settings and apply penalty if needed."""
+        """Validate net worth against global settings."""
+        if not isinstance(self.net_worth, (int, float)):
+            raise TypeError("net_worth must be numeric")
         if self.net_worth < global_settings['min_net_worth']:
             self.net_worth = global_settings['min_net_worth']
-            self.net_worth -= self.net_worth * global_settings['cash_penalty']
-        elif self.net_worth > global_settings['max_net_worth']:
+        if self.net_worth > global_settings['max_net_worth']:
             self.net_worth = global_settings['max_net_worth']
-            self.net_worth -= self.net_worth * global_settings['cash_penalty']
 
 
     def reply(self, prompt: str) -> str:
