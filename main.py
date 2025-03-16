@@ -88,8 +88,7 @@ class AgentAssert:
 
     def _parse_xml(self, xml_string: str) -> bool:
         parsed = parse_xml(xml_string)
-        if 'response' in parsed and 'bool' in parsed['response']:
-            bool_value = parsed['response']['bool']
+        if 'bool' in parsed:
+            bool_value = parsed['bool']
             return bool_value.lower() == 'true'
-        # Return False if 'response' or 'bool' is missing, indicating a failed assertion
         return False
