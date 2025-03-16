@@ -15,7 +15,7 @@ MODEL = FLASH
 xml_data = '<response><message>hello</message></response>'
 parsed_data = parse_xml(xml_data)
 
-message = parsed_data['message']
+message: str = parsed_data['message']  # type: ignore
 print("message:", message)
 
 # set flash as the default model
