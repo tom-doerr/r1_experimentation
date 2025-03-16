@@ -316,7 +316,6 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             temperature=0.7
         )
         content = response.choices[0].message.content
-        # Properly escape XML content
         escaped_content = _escape_xml(content)
         return f"<response>{escaped_content}</response>"
     except litellm.exceptions.BadRequestError as e:
