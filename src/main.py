@@ -235,7 +235,7 @@ def _escape_xml(text: str) -> str:
 
 __all__ = [
     "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
-    "litellm_completion", "litellm_streaming", "Agent", "AgentAssert",
+    "litellm_streaming", "Agent", "AgentAssert",
     "DEFAULT_MODEL", "global_settings", "UserInterface",
     "IsolatedEnvironment", "run_container"
 ]
