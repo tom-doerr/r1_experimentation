@@ -76,7 +76,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         )
         if response.choices and response.choices[0].message:
             return response.choices[0].message.content
-        return "" # type: ignore
+        return ""  # type: ignore
     except Exception as e:
         return f"LiteLLMError in litellm_completion: {e}"
 
@@ -118,7 +118,7 @@ class Agent(Tool):
             data: Dict[str, str | Dict[str, str]] = {}
             for child in root:
                 if not len(child):
-                    data[child.tag] = child.text or "" # type: ignore
+                    data[child.tag] = child.text or ""  # type: ignore
                 else:
                     data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
             return data
@@ -147,4 +147,10 @@ class AgentAssert(Agent):
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
-        return self._parse_xml(reply)
+        parsed_reply = self._parse_xml(reply)
+        if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
+            bool_value = parsed_reply["bool"].lower() == "true"
+            return bool_value
+        else:
+            # Handle the case where 'bool' is not in the response or the response is not a dict
+            return False
