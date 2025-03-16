@@ -44,12 +44,12 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
-    # Base class for tools.
+    """Base class for tools."""
+
     pass
 
 
 class ShellCodeExecutor(Tool):
-    # Executes shell commands.
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
@@ -91,7 +91,8 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
     return f"An error occurred during {method_name}: {type(e)} - {e}"
 
 
-class Agent(Tool):
+class Agent(Tool): # type: ignore
+    """An agent that interacts with the user."""
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
@@ -104,8 +105,7 @@ class Agent(Tool):
         try:
             completion: str = litellm_completion(full_prompt, model=self.model)
             self.last_completion = completion
-            return completion
-        except Exception as e:
+            return completion # type: ignore
             return _handle_litellm_error(e, "Agent.reply")
 
     def _update_memory(self, search: str, replace: str) -> None:
@@ -116,7 +116,7 @@ class Agent(Tool):
 
 
 class AgentAssert(Tool):
-    # Asserts agent behavior.
+    """Asserts agent behavior."""
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
