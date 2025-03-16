@@ -57,9 +57,6 @@ class Agent:
 
 
 
-class AgentAssert:
-    """Utility class for agent assertions."""
-    
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
