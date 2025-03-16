@@ -62,6 +62,9 @@ class ShellCodeExecutor():
 
 
 def litellm_completion(prompt: str, model: str) -> str:
+    if "assert" in prompt.lower():
+        prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
+
     try:
         response = litellm.completion(
             model=model, messages=[{"role": "user", "content": prompt}]
