@@ -1,8 +1,9 @@
+from abc import ABC, abstractmethod
+import subprocess
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
-import subprocess
+
 import litellm
-from abc import ABC, abstractmethod
 
 DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
@@ -39,18 +40,12 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 def python_reflection_testing() -> str:
-    # Actually test Python reflection capabilities
+    """Return sorted list of function names in current module."""
     import inspect
-    import sys
-    
-    # Get current module
-    current_module = sys.modules[__name__]
-    
-    # Get all functions in module
-    functions = inspect.getmembers(current_module, inspect.isfunction)
-    
-    # Return sorted list of function names
-    return ", ".join(sorted(name for name, _ in functions))
+    return ", ".join(sorted(
+        name for name, obj in inspect.getmembers(sys.modules[__name__])
+        if inspect.isfunction(obj)
+    )
 
 
 
@@ -59,10 +54,21 @@ def python_reflection_testing() -> str:
 
 
 class Tool(ABC):
-    """Base class for tools."""
+    """Base class for tools that execute commands."""
     @abstractmethod
     def run(self, command: str) -> str:
-        pass
+        """Execute a command and return the result.
+        
+        Args:
+            command: The command to execute
+            
+        Returns:
+            str: The result of executing the command
+            
+        Raises:
+            NotImplementedError: Must be implemented by subclasses
+        """
+        raise NotImplementedError("Subclasses must implement run()")
 
 class ShellCodeExecutor(Tool):
     """Executes shell commands safely with allow/deny lists."""
