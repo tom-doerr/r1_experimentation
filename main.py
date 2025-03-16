@@ -4,13 +4,13 @@ import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 # Set flash as the default model
-litellm.model = FLASH
 litellm.model_list = [{
         "model_name": "default",
         "litellm_params": {
             "model": FLASH,
         }
     }]
+litellm.model = "default"
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """Parses an XML string and returns a dictionary."""
