@@ -48,7 +48,8 @@ class ShellCodeExecutor(Tool):
             return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
 
-        if not command_parts: return "Error: No command provided."
+        if not command_parts:
+            return "Error: No command provided."
 
         command_name = command_parts[0]
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands: return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
@@ -79,7 +80,6 @@ def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Streams responses from LiteLLM."""
     try:
         response = litellm.completion(
             model=model,
