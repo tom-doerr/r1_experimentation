@@ -180,7 +180,6 @@ def _escape_xml(text: str) -> str:
     """Escape XML special characters."""
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.
