@@ -25,6 +25,9 @@ class UserInterface(Protocol):
 class ConsoleInterface(UserInterface):
     """Concrete implementation of UserInterface for console interaction."""
     
+    def __init__(self):
+        pass
+        
     def display_message(self, message: str) -> None:
         print(message)
         
