@@ -49,13 +49,12 @@ class ShellCodeExecutor(Tool):
 
     def run(self, command: str) -> str: # type: ignore
         if not command:
-            return "No command provided."
+            return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
         if not command_parts:
-            return "No command provided."
+            return "Error: No command provided."
         command_name = command_parts[0]
-        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
-            return f"Command '{command_name}' is not whitelisted or is blacklisted."
+        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands: return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
         try:
             result = subprocess.run(
@@ -63,7 +62,7 @@ class ShellCodeExecutor(Tool):
             )
             return result.stdout
         except subprocess.CalledProcessError as e:
-            return f"Error executing command: {e.stderr}"
+            return f"Error: {e.stderr}"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
@@ -73,9 +72,9 @@ def litellm_completion(prompt: str, model: str) -> str:
         )
         if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
-        return ""  # type: ignore
+        return "Error: No completion found."
     except litellm.LiteLLMError as e:
-        return f"LiteLLMError in litellm_completion: {e}"
+        return f"LiteLLMError: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
@@ -108,21 +107,6 @@ class Agent(Tool):
     last_completion: str = ""
     model: str = FLASH
      
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
-        """Parses an XML string and returns a dictionary."""
-        try:
-            root = ET.fromstring(xml_string)
-            data: Dict[str, str | Dict[str, str]] = {}
-            for child in root:
-                if not len(child):
-                    data[child.tag] = child.text or ""  # type: ignore
-                else:
-                    data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} # type: ignore
-            return data
-        except ET.ParseError as e:
-            print(f"XML ParseError: {str(e)}")
-            return {"error": f"XML ParseError: {str(e)}"}
-
     def __init__(self, model: str = FLASH):
         self.model = model
 
@@ -131,7 +115,7 @@ class Agent(Tool):
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _update_memory(self, replace: str) -> None:  # type: ignore
+    def _update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
@@ -145,7 +129,6 @@ class AgentAssert(Agent):
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
         parsed_reply = self.parse_xml(reply)
-        if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
-            bool_value = parsed_reply["bool"].lower() == "true"
+        if isinstance(parsed_reply, dict) and "bool" in parsed_reply: bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
         return False
