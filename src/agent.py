@@ -64,24 +64,33 @@ class Agent:
         return self.reply(prompt)
 
 class AgentAssert(Agent):
-    """Agent that asserts a statement."""
-    def __init__(self, model: str = DEFAULT_MODEL) -> None:
-        super().__init__(model=model)
+    """Agent that evaluates statements and returns boolean assertions."""
+    
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> None:
+        super().__init__(model=model, max_tokens=max_tokens)
 
     def __call__(self, statement: str) -> bool:
+        """Evaluate a statement and return boolean assertion.
+        
+        Args:
+            statement: The statement to evaluate (must be non-empty string)
+            
+        Returns:
+            bool: The evaluated assertion
+            
+        Raises:
+            TypeError: If statement is not a string
+            ValueError: If statement is empty
+        """
         if not isinstance(statement, str):
             raise TypeError("statement must be a string")
+        if not statement.strip():
+            raise ValueError("statement cannot be empty")
+            
         return self._evaluate_statement(statement)
 
     def _evaluate_statement(self, statement: str) -> bool:
-        """Evaluate if a statement is true based on agent's response.
-        
-        Args:
-            statement: The statement to evaluate
-            
-        Returns:
-            bool: True if parsed XML response indicates true, False otherwise
-        """
+        """Internal method to evaluate statement and parse response."""
         reply = self.reply(prompt=statement)
         try:
             parsed_reply = parse_xml(reply)
