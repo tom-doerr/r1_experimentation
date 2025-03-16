@@ -54,10 +54,11 @@ class ShellCodeExecutor(Tool):
         if not command:
             return "No command provided."
         command_parts: List[str] = shlex.split(command)
-        command_name: str = command_parts[0]
-        if command_name in self.whitelisted_commands and command_name not in self.blacklisted_commands:
-            return self._execute_command(command_parts)
-        return f"Command '{command_name}' is not whitelisted or is blacklisted."
+        if not command_parts:
+            return "No command provided."
+        command_name = command_parts[0]
+        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
+            return f"Command '{command_name}' is not whitelisted or is blacklisted."
 
     def _execute_command(self, command_parts: List[str]) -> str:
         try:
@@ -77,7 +78,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
         return ""  # type: ignore
-    except Exception as e:
+    except litellm.LiteLLMError as e:
         return f"LiteLLMError in litellm_completion: {e}"
 
 
@@ -100,7 +101,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
             max_tokens=max_tokens,
         )
         yield from _extract_content_from_chunks(response)
-    except Exception as e:
+    except litellm.LiteLLMError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
 
@@ -111,7 +112,7 @@ class Agent(Tool):
     last_completion: str = ""
     model: str = FLASH
     
-    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         """Parses an XML string and returns a dictionary."""
         try:
             root = ET.fromstring(xml_string)
