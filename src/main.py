@@ -1,7 +1,7 @@
 import shlex
-from typing import Dict, List, Generator, Any
+from typing import Dict, List, Generator
 import subprocess  # nosec
-import litellm
+import litellm # type: ignore
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
@@ -80,7 +80,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         if response.choices and response.choices[0].message:
             return response.choices[0].message.content or ""
         return "" # type: ignore
-    except litellm.LiteLLMError as e:
+    except Exception as e:
         return f"LiteLLMError in litellm_completion: {e}"
 
 
