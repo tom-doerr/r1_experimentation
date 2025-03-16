@@ -4,7 +4,26 @@ import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
-from .reflection import python_reflection_test
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities by inspecting the current module.
+    
+    Returns:
+        str: A string containing reflection test results
+    """
+    import sys
+    current_module = sys.modules[__name__]
+    functions = []
+    classes = []
+    
+    for name, obj in vars(current_module).items():
+        if name.startswith('_'):
+            continue
+        if callable(obj):
+            functions.append(name)
+        elif isinstance(obj, type):
+            classes.append(name)
+    
+    return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
