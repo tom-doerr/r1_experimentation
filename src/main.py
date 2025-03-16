@@ -142,4 +142,7 @@ class AgentAssert(Agent):
         parsed_reply = self._parse_xml(reply)
         if not parsed_reply:
             return False
-        return self._parse_bool(parsed_reply.get("bool", "false")) # type: ignore
+        bool_value = parsed_reply.get("bool", "false")
+        if isinstance(bool_value, str):
+            return self._parse_bool(bool_value)
+        return bool(bool_value)
