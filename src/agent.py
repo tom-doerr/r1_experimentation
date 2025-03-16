@@ -81,4 +81,4 @@ class AgentAssert(Agent):
     def _evaluate_statement(self, statement: str) -> bool:
         reply = self.reply(prompt=statement)
         # Handle raw boolean responses
-        return str(reply).strip().lower() in ('true', 'yes', '1')
+        return str(reply).strip().lower() in ('true', 'yes', '1', 'correct', 'valid')
