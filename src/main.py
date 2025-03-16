@@ -19,22 +19,6 @@ from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
 from .envs import Env1, Env2
 
-def parse_xml(xml_string: str) -> ET.Element:
-    """Parse XML string and return ElementTree element.
-    
-    Args:
-        xml_string: XML content to parse
-        
-    Returns:
-        ET.Element: Parsed XML element
-        
-    Raises:
-        ValueError: If XML is invalid
-    """
-    try:
-        return ET.fromstring(xml_string)
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {str(e)}") from e
 
 # Third party imports
 import litellm
