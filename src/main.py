@@ -14,14 +14,14 @@ from .envs import Env1, Env2
 
 
 
-def parse_xml(xml_string: str) -> Dict[str, str]:
+def parse_xml(xml_string: str) -> Dict[str, Any]:
     """Parse XML string into dictionary.
     
     Args:
         xml_string: XML content to parse
         
     Returns:
-        Dict[str, str]: Parsed XML content as dictionary
+        Dict[str, Any]: Parsed XML content as dictionary
         
     Raises:
         ValueError: If input is invalid or XML is malformed
