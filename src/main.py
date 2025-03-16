@@ -13,8 +13,12 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, Any] = {}
-        for child in root:
-            data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} if len(child) else child.text or ""
+        for child in root:# type: ET.Element
+            if len(child):
+                data[child.tag] = {
+                    grandchild.tag: grandchild.text or "" for grandchild in child
+                }
+            else: data[child.tag] = child.text or ""
         return data
     except ET.ParseError as e:
         return {"error": f"XML ParseError: {e}"}
@@ -32,10 +36,7 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
-    def __init__(self):
-        pass
- 
- 
+    pass
 class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -78,7 +79,6 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
-    print(f"LiteLLM Error in {method_name}: {type(e)} - {e}")
     return f"An error occurred during {method_name}: {type(e)} - {e}"
 
 
@@ -121,7 +121,7 @@ class AgentAssert(Tool):
         try:
             root = ET.fromstring(xml_string)
             data: Dict[str, Any] = {}
-            for child in root:
+            for child in root:# type: ET.Element
                 data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} if len(child) else child.text or ""
         except ET.ParseError as e:
             print(f"XML ParseError: {e}")
