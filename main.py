@@ -68,13 +68,6 @@ class ShellCodeExecutor(Tool):
         except subprocess.CalledProcessError as e:
             return e.stderr
 
-
-class Agent:
-    def __init__(self, model: str = FLASH):
-        self.model: str = model
-        self.memory: str = ""
-        self.last_completion: Optional[str] = None
-
     def reply(self, prompt: str) -> str:
         """Generates a reply using LiteLLM and updates memory."""
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
