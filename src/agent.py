@@ -25,13 +25,15 @@ class Agent:
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""
-    def __init__(self, model: str = DEFAULT_MODEL):
+    def __init__(self, model: str = DEFAULT_MODEL) -> None:
         super().__init__(model=model)
 
     def __call__(self, statement: str) -> bool:
+        if not isinstance(statement, str):
+            raise TypeError("statement must be a string")
         return self._evaluate_statement(statement)
 
     def _evaluate_statement(self, statement: str) -> bool:
-        reply: str = self.agent.reply(prompt=statement)
+        reply: str = self.reply(prompt=statement)
         parsed_reply = self.parse_xml(reply)
         return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
