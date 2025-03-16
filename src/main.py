@@ -330,7 +330,7 @@ def python_reflection_test() -> str:
     results = []
     
     # Test module inspection
-    current_module = sys.modules['src']
+    current_module = sys.modules[__name__]  # Use current module
     results.append(f"Module name: {current_module.__name__}")
     
     # Test function inspection
