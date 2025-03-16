@@ -41,6 +41,9 @@ class ShellCodeExecutor():
     def __call__(self, command: str) -> str:
         return self.run(command)
 
+    def __repr__(self):
+        return self.run(command)
+
     def run(self, command: str) -> str:
         if not command:
             return "Error: No command provided."
@@ -69,9 +72,11 @@ def litellm_completion(prompt: str, model: str) -> str:
         response = litellm.completion(
             model=model, messages=[{"role": "user", "content": prompt}]
         )
-        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
-    except litellm.LiteLLMError as e:
-        return f"LiteLLMError: {e}"
+        if response.choices and response.choices[0].message and response.choices[0].message.content:
+            return response.choices[0].message.content
+        return "Error: No completion found."
+    except Exception as e:
+        return f"LiteLLMError: {e}" #  if isinstance(e, litellm.LiteLLMError) else f"An error occurred: {e}"
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
