@@ -1,6 +1,6 @@
 import shlex
-from typing import Dict, List, Generator
-import subprocess # nosec
+from typing import Dict, List, Generator, Any
+import subprocess  # nosec
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
