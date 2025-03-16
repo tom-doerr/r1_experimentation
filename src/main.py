@@ -86,7 +86,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     except Exception as e:
         if isinstance(e, litellm.LiteLLMError):
             return _handle_litellm_error(e, "litellm_completion")
-        raise e
+        # raise e
 
 
 def litellm_streaming(
@@ -110,7 +110,7 @@ def litellm_streaming(
     except Exception as e:
         if isinstance(e, litellm.LiteLLMError):
             yield _handle_litellm_error(e, "litellm_streaming")
-        raise e
+        # raise e
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
