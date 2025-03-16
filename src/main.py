@@ -329,7 +329,7 @@ def python_reflection_test() -> str:
     results = []
     
     # Test module inspection
-    current_module = sys.modules[__name__]
+    current_module = sys.modules['src']
     functions = [f[0] for f in inspect.getmembers(current_module, inspect.isfunction)]
     classes = [c[0] for c in inspect.getmembers(current_module, inspect.isclass)]
     return f"Functions: {functions}\nClasses: {classes}"

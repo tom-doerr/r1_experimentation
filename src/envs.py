@@ -17,7 +17,7 @@ class Env1:
             raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
-        penalty = max(0, len(input_string) - self.char_count_penalty_start)
+        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 2
         score = count - penalty
         return max(score, -2) if len(input_string) >= self.char_count_penalty_start else count
 
