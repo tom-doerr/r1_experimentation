@@ -1,8 +1,9 @@
-import litellm
 import shlex
 import subprocess
-import xml.etree.ElementTree as ET
 from typing import Any, Dict, Generator, List
+import xml.etree.ElementTree as ET
+import litellm
+from typing import Optional
 
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
@@ -11,14 +12,14 @@ DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
     return {child.tag: element.text for child in element}
 
-def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]: # parses an xml string into a dict
+def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
-        root = ET.fromstring(xml_string)
+        root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str] | None] = {}
         for element in root:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
-            else:  # if the element is a leaf node
+            else:
                 data[element.tag] = element.text if element.text is not None else ""
         return data
     except ET.ParseError as e:
