@@ -1,11 +1,10 @@
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
-import inspect
-import sys
 from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import litellm
+from importlib import import_module
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
@@ -257,39 +256,6 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 
-def _execute_command(command: str) -> str:
-    """Execute a shell command with basic validation.
-    
-    Args:
-        command: The command to execute
-        
-    Returns:
-        str: Command output
-        
-    Raises:
-        ValueError: If command is invalid
-        RuntimeError: If execution fails
-    """
-    if not isinstance(command, str) or not command.strip():
-        raise ValueError("Command must be a non-empty string")
-        
-    try:
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=10
-        )
-        return result.stdout
-    except subprocess.TimeoutExpired as e:
-        raise TimeoutError("Command timed out") from e
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Command failed: {e.stderr}") from e
-    except Exception as e:
-        raise RuntimeError(f"Error executing command: {e}") from e
-
 
 def python_reflection_test() -> str:
     """Test Python reflection capabilities.
@@ -299,6 +265,28 @@ def python_reflection_test() -> str:
     """
     from importlib import import_module
     
+    current_module = import_module('src')
+    functions = []
+    classes = []
+    
+    for name in dir(current_module):
+        if name.startswith('_'):
+            continue
+        obj = getattr(current_module, name)
+        if inspect.isfunction(obj):
+            functions.append(name)
+        elif inspect.isclass(obj):
+            classes.append(name)
+    
+    return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"
+
+
+def python_reflection_test() -> str:
+    """Test Python reflection capabilities.
+    
+    Returns:
+        str: A string containing reflection test results
+    """
     current_module = import_module('src')
     functions = []
     classes = []
