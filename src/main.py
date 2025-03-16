@@ -79,7 +79,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         )
         if response.choices and response.choices[0].message:
            return response.choices[0].message.content or ""
-            return ""
+        return ""
     except Exception as e:
         print(f"LiteLLMError in litellm_completion: {e}")
  
