@@ -79,7 +79,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 class Tool(Protocol):
-    """Protocol defining interface for command execution tools."""
+    """Abstract base class for command execution tools."""
     
     @abstractmethod
     def run(self, command: str) -> str:
@@ -95,7 +95,9 @@ class Tool(Protocol):
             ValueError: If command is invalid
             RuntimeError: If execution fails
         """
-        ...
+        if not isinstance(command, str) or not command.strip():
+            raise ValueError("Command must be a non-empty string")
+        raise NotImplementedError("Subclasses must implement run()")
         
     @abstractmethod 
     def __call__(self, command: str) -> str:
