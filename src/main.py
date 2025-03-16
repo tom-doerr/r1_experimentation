@@ -4,10 +4,6 @@ import shlex
 from abc import abstractmethod
 import xml.etree.ElementTree as ET
 import litellm
-import subprocess
-import shlex
-import subprocess
-import shlex
 from .config import DEFAULT_MODEL, global_settings
 from .isolation import IsolatedEnvironment, run_container
 
