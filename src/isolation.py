@@ -2,7 +2,7 @@ import subprocess
 import shlex
 
 
-def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
+def run_container(image: str, command: str = '', timeout: int = 10) -> str:
     """Run a command in a container and return the output.
     
     Args:
@@ -17,12 +17,7 @@ def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
         ValueError: If inputs are invalid
         RuntimeError: If execution fails
     """
-    if not isinstance(image, str) or not image.strip():
-        raise ValueError("image must be a non-empty string")
-    if not isinstance(command, str) or not command.strip():
-        raise ValueError("command must be a non-empty string")
-    if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("timeout must be a positive integer")
+    _validate_container_args(image, command, timeout)
         
     try:
         docker_cmd = ["docker", "run", "--rm", image]
@@ -44,6 +39,14 @@ def run_container(image: str, command: str = 'echo', timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
+def _validate_container_args(image: str, command: str, timeout: int) -> None:
+    """Validate container execution arguments."""
+    if not isinstance(image, str) or not image.strip():
+        raise ValueError("image must be a non-empty string")
+    if not isinstance(command, str):
+        raise ValueError("command must be a string")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError("timeout must be a positive integer")
 
 
 class IsolatedEnvironment:
