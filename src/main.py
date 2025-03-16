@@ -75,7 +75,7 @@ def litellm_completion(prompt: str, model: str) -> str:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
     except litellm.LiteLLMError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
-    if response.choices and response.choices[0].message and response.choices[0].message.content:
+    if response and response.choices and response.choices[0].message and response.choices[0].message.content:
         return response.choices[0].message.content
     return "Error: No completion found."
 
