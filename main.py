@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional, Generator, List
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
-litellm.model = FLASH  # Set the default model directly
+litellm.model = FLASH  # Set the default model directly. Ensure this is used as the default.
 litellm.model_list = [{
     "model_name": "default",
     "litellm_params": {
@@ -66,7 +66,7 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
             else:
                 print(f"Unexpected non-streaming response format: {response}")
                 yield ""
-        else:  # Handle streaming response
+        elif hasattr(response, '__iter__'):  # Handle streaming response
             for chunk in response:
                 if (
                     chunk.get('choices')
@@ -79,11 +79,14 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
                 else:
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
+        else:
+            print(f"Unexpected response type: {type(response)}")
+            yield ""
     except Exception as e:
         yield _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
-    return "test_output_var"
+    return python_reflection_testing.__name__
 
 
 def test_env_1(input_str: str) -> int:
