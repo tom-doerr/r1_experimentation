@@ -288,7 +288,20 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 def run_container(image: str, command: str, timeout: int = 30) -> str:
-    """Run a command in a container using Docker."""
+    """Run a command in a container using Docker.
+    
+    Args:
+        image: Docker image name
+        command: Command to run in container 
+        timeout: Maximum execution time in seconds
+        
+    Returns:
+        str: Command output
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If container execution fails
+    """
     if not isinstance(image, str) or not image.strip():
         raise ValueError("Image must be a non-empty string")
     if not isinstance(command, str) or not command.strip():
