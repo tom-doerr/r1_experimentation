@@ -112,7 +112,7 @@ class Agent:
         self.last_completion: str = litellm_completion(prompt=full_prompt, model=self.model)
         return self.last_completion
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
+    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
