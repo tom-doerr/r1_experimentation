@@ -127,7 +127,7 @@ class ShellCodeExecutor(Tool):
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
         if any(char in command for char in ['\n', '\r', '\0', ';', '|', '&', '`', '$', '(', ')', '>', '<']):
-            raise ValueError("Command contains invalid characters")
+            raise ValueError(f"Command contains invalid characters: {command}")
         if len(command) > self.max_command_length:
             raise ValueError(f"Command exceeds maximum length of {self.max_command_length} characters")
             
@@ -316,7 +316,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         )
         content = response.choices[0].message.content
         # Properly escape XML content
-        escaped_content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        escaped_content = _escape_xml(content)
         return f"<response>{escaped_content}</response>"
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
