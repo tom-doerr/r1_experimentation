@@ -140,17 +140,12 @@ class Agent(Tool):
         self.memory = replace
 
 
-class AgentAssert(Tool):
+class AgentAssert(Agent):
     """An agent that asserts statements."""
 
-    agent: Agent
-
     def __init__(self, model: str = FLASH):
-        self.agent = Agent(model=model)
+        super().__init__(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
         return self._parse_xml(reply) # type: ignore
-
-
-# Move standard library import to the top
