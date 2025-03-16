@@ -37,7 +37,7 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
             result[child.tag] = child_data
     return result
 
-def litellm_completion(prompt: str, model: str) -> str:
+def litellm_completion(prompt: str, model: str = FLASH) -> str:
     """Uses the litellm library to get a completion."""
     messages: list[Dict[str, str]] = [{"role": "user", "content": prompt}]
     try:
