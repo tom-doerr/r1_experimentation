@@ -45,8 +45,8 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     pass
-
-
+ 
+ 
 class ShellCodeExecutor(Tool):
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd"]
