@@ -13,10 +13,10 @@ from src.main import (
 
 # Create a class for test_env_1 to match the test_env.py expectations
 class Env1:
-    def __call__(self, input_string: str) -> int:
+    def __call__(self, input_string: str):
         return test_env_1(input_string)
 
 __all__ = [
-    "parse_xml", "python_reflection_testing", "test_env_1", "Tool", "ShellCodeExecutor", 
+    "parse_xml", "python_reflection_testing", "test_env_1", "Tool", "ShellCodeExecutor",
     "litellm_completion", "litellm_streaming", "Agent", "AgentAssert", "DEFAULT_MODEL", "Env1"
 ]

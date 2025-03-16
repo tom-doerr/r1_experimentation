@@ -5,7 +5,7 @@ from typing import Dict, List, Generator
 import litellm
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
-
+"""Default model to use for LiteLLM completion."""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
     return {child.tag: child.text for child in element}
@@ -13,7 +13,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str | None]:
 
 from typing import Optional
 
-def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str | None] | None]:
+def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
     try:
         root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str | None] | None] = {}
@@ -27,6 +27,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str | None] | None]:
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
+
         return {"error": str(e)}
 
 
@@ -48,6 +49,8 @@ class Tool:
 
 
 class ShellCodeExecutor(Tool):
+
+
     """Executes shell commands."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
@@ -127,7 +130,7 @@ class Agent:
         return parsed_reply
 
     def _update_memory(self, search: str, replace: str) -> None:
-        if replace: # if replace is not empty
+        if replace is not None: # if replace is not empty
             self.memory = replace
         else:
             self.memory = ""
