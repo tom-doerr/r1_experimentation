@@ -12,12 +12,13 @@ class Env1:
         self.char_count_penalty_start = char_count_penalty_start
 
     def __call__(self, input_string: str) -> int:
+        """Calculate score based on target character count and length penalty."""
         if not isinstance(input_string, str):
             return 0
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty
+            return max(0, count - penalty)
         return count
 
     def __repr__(self) -> str:
@@ -33,8 +34,9 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
+        """Calculate score based on string length."""
         if not isinstance(input_string, str):
             return 0
-        return 1 if len(input_string) > self.max_char_count else 0
+        return 1 if len(input_string) <= self.max_char_count else 0
 
 

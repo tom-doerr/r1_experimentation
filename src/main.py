@@ -1,23 +1,13 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 import xml.etree.ElementTree as ET
 from .reflection import python_reflection_test
-
 from .agent import Agent, ConcreteAgent, AgentAssert
 from .config import DEFAULT_MODEL, global_settings
-from .envs import Env1, Env2
 from .interface import UserInterface, ConsoleInterface
 from .isolation import IsolatedEnvironment, run_container
 from .llm_utils import litellm_completion, litellm_streaming
-from .reflection import python_reflection_test
 from .tools import Tool, ShellCodeExecutor
-from .utils import normalize_model_name
-from .config import DEFAULT_MODEL, global_settings
 from .envs import Env1, Env2
-from .interface import UserInterface, ConsoleInterface
-from .isolation import IsolatedEnvironment, run_container
-from .llm_utils import litellm_completion, litellm_streaming
-from .reflection import python_reflection_test
-from .tools import Tool, ShellCodeExecutor
 
 
 
