@@ -17,6 +17,7 @@ class Agent:
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory = ''
+        self.interface = interface or ConsoleInterface()
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
