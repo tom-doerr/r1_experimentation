@@ -2,7 +2,6 @@ from typing import Any
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
 from .interface import UserInterface
-from .interface import UserInterface
 
 
 
@@ -22,7 +21,7 @@ from .interface import UserInterface
 
 
 class ConcreteAgent(Agent):
-    """Concrete agent implementation."""
+    """Concrete agent implementation that handles basic conversational patterns."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         super().__init__(interface, model, max_tokens)
@@ -40,5 +39,5 @@ class ConcreteAgent(Agent):
         return "I'm not sure how to respond to that."
 
     def __repr__(self) -> str:
-        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens})"
+        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens}, interface={self.interface!r})"
 
