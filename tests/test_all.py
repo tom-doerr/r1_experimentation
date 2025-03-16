@@ -1,10 +1,10 @@
 import os
-import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.main import Agent, DEFAULT_MODEL, ShellCodeExecutor, litellm_completion, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, AgentAssert
-import pytest
-import litellm
+
+import src
+from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -89,7 +89,7 @@ assert two_plus_two_is_4 == False
 
 
 shell_code_executor = ShellCodeExecutor()
-assert isinstance(shell_code_executor, ShellCodeExecutor)
+assert type(shell_code_executor) == Tool
 
 
 # check if this is a subset of the blacklisted commands
