@@ -101,7 +101,7 @@ class Agent():
     memory: str = ""
     model: str = DEFAULT_MODEL
     last_completion: str = ""
-
+    
     def __init__(self, model: str = DEFAULT_MODEL):
         self.model = model
 
@@ -116,7 +116,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None: self.memory = replace  # update memory
+    def _update_memory(self, search: str, replace: str) -> None: self.memory = replace
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
