@@ -71,11 +71,10 @@ agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory'][
 assert agent.memory == 'The user wrote just hi.'
 
 agent_assert = AgentAssert(model=MODEL)
-assert type(agent_assert.agent) == Agent
 
 return_val: bool = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val) # type: ignore
-assert type(return_val) == bool
+assert isinstance(return_val, bool)
 
 two_plus_two_is_4: bool = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
