@@ -232,38 +232,6 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
-def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods.
-    
-    Args:
-        obj: Any Python object to inspect
-        
-    Returns:
-        Dictionary containing:
-            - type: The object's type
-            - attributes: Dictionary of instance attributes
-            - methods: List of method names
-    """
-    if obj is None:
-        raise ValueError("Object cannot be None")
-        
-    result = {
-        "type": str(type(obj)),
-        "attributes": {},
-        "methods": []
-    }
-    
-    # Get attributes
-    for name, value in vars(obj).items():
-        result["attributes"][name] = str(value)
-        
-    # Get methods
-    for name in dir(obj):
-        if callable(getattr(obj, name)) and not name.startswith('_'):
-            result["methods"].append(name)
-            
-    return result
-
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
     """Generate streaming completion using LiteLLM API.
     
