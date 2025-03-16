@@ -5,11 +5,11 @@ import litellm
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 # Set flash as the default model
 litellm.model_list = [{
-        "model_name": "default",
-        "litellm_params": {
-            "model": FLASH,
-        }
-    }]
+    "model_name": "default",
+    "litellm_params": {
+        "model": FLASH,
+    }
+}]
 litellm.model = "default"
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
@@ -69,14 +69,19 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
                 yield ""
         else:  # Handle streaming response
             for chunk in response:
-                if chunk.get('choices') and len(chunk['choices']) > 0 and chunk['choices'][0].get('delta') and chunk['choices'][0]['delta'].get('content'):
+                if (
+                    chunk.get('choices')
+                    and len(chunk['choices']) > 0
+                    and chunk['choices'][0].get('delta')
+                    and chunk['choices'][0]['delta'].get('content')
+                ):
                     content = chunk['choices'][0]['delta']['content']
                     yield content
                 else:
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
     except litellm.LiteLLMError as e:
-        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
+        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}: {e}")
         yield ""
     except Exception as e:
         print(f"General error during litellm streaming: {type(e).__name__} - {e}")
