@@ -1,9 +1,10 @@
 import os
 import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import src
-import src
-from src.main import Agent, AgentAssert, ShellCodeExecutor, litellm_completion, litellm_streaming, parse_xml, python_reflection_testing, test_env_1, Tool
+from src import *
+from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -57,11 +58,11 @@ print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-parsed_data = agent._parse_xml(xml_data) # type: ignore
+parsed_data = agent._parse_xml(xml_data)
 assert parsed_data['message'] == 'hello'
 
-xml_data_2: str = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
-parsed_data_2 = agent._parse_xml(xml_data_2) # type: ignore
+xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
+parsed_data_2 = agent._parse_xml(xml_data_2)
 assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
@@ -74,11 +75,10 @@ assert agent.memory == 'The user wrote just hi.'
 agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
-bool_val = agent_assert.agent._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>') # type: ignore
+bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
 assert bool_val == False
 
 
-# type: ignore
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
 assert type(return_val) == bool
