@@ -44,12 +44,12 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
-    """Base class for tools."""
+    # Base class for tools.
     pass
 
 
 class ShellCodeExecutor(Tool):
-    """Executes shell commands."""
+    # Executes shell commands.
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
@@ -109,12 +109,12 @@ class Agent(Tool):
             return _handle_litellm_error(e, "Agent.reply")
 
     def _update_memory(self, search: str, replace: str) -> None:
-        """Updates the agent's memory."""
+        # Updates the agent's memory.
         self.memory = replace
 
 
 class Agent(Tool):
-    """An agent that interacts with the user and maintains memory."""
+    # An agent that interacts with the user and maintains memory.
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
@@ -133,7 +133,7 @@ class Agent(Tool):
 
 
 class AgentAssert(Tool):
-    """Asserts agent behavior."""
+    # Asserts agent behavior.
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
