@@ -4,6 +4,7 @@ import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 # Set flash as the default model
+litellm.model = FLASH  # Set the default model directly
 litellm.model_list = [{
     "model_name": "default",
     "litellm_params": {
@@ -129,9 +130,10 @@ class AgentAssert:
             bool_value: str = parsed['bool']
             return bool_value.lower() == 'true'
         return False
+
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
     if isinstance(e, litellm.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
     else:
-        print(f"General error during {function_name}: {type(e).__name__} - {e}")
+        print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)  # Include traceback
     return ""
