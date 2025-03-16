@@ -48,9 +48,9 @@ class ShellCodeExecutor:
         if not command:
             raise ValueError("No command provided")
 
-        command_parts = shlex.split(command)
-        if not command_parts or command_parts[0] not in self.whitelisted_commands:
-            raise ValueError(f"Command {command_parts[0]} is not whitelisted")
+        command_parts: List[str] = shlex.split(command)
+        if not command_parts or command_parts[0] not in self.whitelisted_commands: # type: ignore
+            raise ValueError(f"Command {command_parts[0]} is not whitelisted") # type: ignore
 
         try:
             result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
@@ -68,13 +68,13 @@ def litellm_completion(prompt: str, model: str) -> str:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
 
-def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
+def _extract_content_from_chunks(response: any) -> Generator[str, None, None]: # type: ignore
     for chunk in response:
         if chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]:
             yield chunk["choices"][0]["delta"]["content"]
 
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
     """Streams completion from LiteLLM."""
     try:
         response = litellm.completion(
@@ -107,8 +107,8 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace
+    def _update_memory(self, search: str, replace: str) -> None: # type: ignore
+        self.memory = replace # type: ignore
 
 
 class AgentAssert(Agent):

@@ -5,8 +5,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import src
 from src import *
 from src.main import *
+from src.main import Tool
 
-
+DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
@@ -14,7 +15,7 @@ MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
 parsed_data = parse_xml(xml_data)
-
+assert parsed_data is not None
 message = parsed_data['message']
 print("message:", message)
 
@@ -31,13 +32,13 @@ for reply in reply_generator:
 
 
 
-test_output_var = python_reflection_testing()
-print("test_output_var:", test_output_var)
-assert test_output_var == 'test_output_var'
+TEST_OUTPUT_VAR = python_reflection_testing()
+print("TEST_OUTPUT_VAR:", TEST_OUTPUT_VAR)
+assert TEST_OUTPUT_VAR == 'test_output_var'
 
 
 
-reward = test_env_1('aaa')
+reward: int = test_env_1('aaa')
 assert reward == 3
 
 reward = test_env_1('aabbjadfa')
@@ -61,8 +62,8 @@ print("last_completion:", last_completion)
 parsed_data = agent._parse_xml(xml_data)
 assert parsed_data['message'] == 'hello'
 
-xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
-parsed_data_2 = agent._parse_xml(xml_data_2)
+XML_DATA_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
+parsed_data_2 = agent._parse_xml(XML_DATA_2)
 assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
@@ -75,20 +76,20 @@ assert agent.memory == 'The user wrote just hi.'
 agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
-bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val == False
+BOOL_VAL = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+assert BOOL_VAL is False
 
 
-return_val = agent_assert('twenty two has has the same meaning as 22')
+return_val: bool = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
 assert type(return_val) == bool
 
-two_plus_two_is_4 = agent_assert('two plus two is 5')
+two_plus_two_is_4: bool = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 == False
+assert two_plus_two_is_4 is False
 
 
-shell_code_executor = ShellCodeExecutor()
+shell_code_executor: ShellCodeExecutor = ShellCodeExecutor()
 assert type(shell_code_executor) == Tool
 
 
@@ -97,7 +98,7 @@ assert {'rm', 'cat', 'mv', 'cp'} & set(shell_code_executor.blacklisted_commands)
 assert {'ls', 'date'} & set(shell_code_executor.whitelisted_commands) == {'ls', 'date'}
 
 
-shell_code_executor_ls = shell_code_executor('ls')
+shell_code_executor_ls: str = shell_code_executor('ls')
 print("shell_code_executor_ls:", shell_code_executor_ls)
 assert 'plex.md' in shell_code_executor_ls
 
