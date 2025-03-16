@@ -5,7 +5,7 @@ import subprocess
 import litellm
 
 
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Single definition
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
@@ -64,8 +64,8 @@ class ShellCodeExecutor(Tool):
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command:
-            raise ValueError("No command provided")
+        if not command or not isinstance(command, str):
+            raise ValueError("Command must be a non-empty string")
         
         cmd = command.strip().split()[0]
         if cmd in self.blacklisted_commands:
@@ -83,14 +83,20 @@ class ShellCodeExecutor(Tool):
                 timeout=10
             )
             return result.stdout
+        except subprocess.TimeoutExpired:
+            return "Command timed out"
         except subprocess.CalledProcessError as e:
-            return f"Command failed: {e}"
+            return f"Command failed with code {e.returncode}: {e.stderr}"
         except Exception as e:
             return f"Error: {str(e)}"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    """Completes the prompt using LiteLLM and returns the result."""
+    if not prompt or not isinstance(prompt, str):
+        raise ValueError("Prompt must be a non-empty string")
+    if not model or not isinstance(model, str):
+        raise ValueError("Model must be a non-empty string")
+        
     try:
         response = litellm.completion(
             model=model,
@@ -103,8 +109,10 @@ def litellm_completion(prompt: str, model: str) -> str:
         if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
         raise ValueError("No content in response")
+    except litellm.APIError as e:
+        return f"API Error: {e}"
     except Exception as e:
-        return f"LiteLLMError: {e}"
+        return f"Error: {e}"
 def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]: # extracts content from response chunks.
     """Extracts content from response chunks."""
     try:
