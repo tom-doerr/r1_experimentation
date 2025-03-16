@@ -25,6 +25,9 @@ class ConsoleInterface(UserInterface):
     def display_message(self, message: str) -> None:
         print(message)
         
+    def display_error(self, error: str) -> None:
+        print(f"Error: {error}")
+        
     def get_input(self, prompt: str) -> str:
         return input(prompt)
         
