@@ -19,7 +19,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             # Apply fixed penalty of -2 for strings over threshold
-            return count - 2
+            return count - 1
         return count
 
     def __repr__(self) -> str:
@@ -44,7 +44,7 @@ class Env2:
             
         # Count number of unique characters
         unique_count = len(set(input_string))
-        return unique_count if len(input_string) <= self.max_char_count else 0
+        return (unique_count - 1) if len(input_string) <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
