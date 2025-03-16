@@ -18,9 +18,9 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            # Apply penalty for each character over char_count_penalty_start
-            penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty  # Allow negative scores
+            # Apply penalty of -1 for each character over threshold
+            penalty = max(0, len(input_string) - self.char_count_penalty_start)
+            return count - penalty
         return count
 
     def __repr__(self) -> str:
@@ -44,12 +44,9 @@ class Env2:
         if len(input_string) > self.max_char_count:
             return 0
             
-        # Return 2 if valid alternating pattern, else 1
-        if len(input_string) >= 2:
-            for i in range(len(input_string)-1):
-                if input_string[i] == input_string[i+1]:
-                    return 1
-        return 2
+        # Count unique characters
+        unique_chars = len(set(input_string))
+        return unique_chars
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
