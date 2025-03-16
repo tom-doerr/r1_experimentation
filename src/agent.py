@@ -47,7 +47,7 @@ class ConcreteAgent(Agent):
         return "I'm not sure how to respond to that."
 
     def __repr__(self) -> str:
-        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens}, interface={self.interface!r})"
+        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens})"
 
 
 class AgentAssert(Agent):
