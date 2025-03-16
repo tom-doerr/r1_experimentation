@@ -223,21 +223,11 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
 
 
 
-def python_reflection_test(obj: object) -> str:
-    """Inspect an object and return its type information."""
-    if obj is None:
-        return "None"
-    
-    return f"{type(obj).__name__}: {dir(obj)}"
 
-def _escape_xml(text: str) -> str:
-    """Escape XML special characters."""
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 __all__ = [
-    "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
-    "litellm_streaming", "Agent", "AgentAssert",
-    "DEFAULT_MODEL", "global_settings", "UserInterface",
+    "parse_xml", "Tool", "ShellCodeExecutor",
+    "litellm_streaming", "DEFAULT_MODEL", "global_settings",
     "IsolatedEnvironment", "run_container"
 ]
 
