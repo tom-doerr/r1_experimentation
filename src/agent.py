@@ -34,6 +34,13 @@ class Agent:
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"
 
+    def _validate_net_worth(self) -> None:
+        """Validate net worth against global settings."""
+        if self.net_worth < global_settings['min_net_worth']:
+            self.net_worth = global_settings['min_net_worth']
+        elif self.net_worth > global_settings['max_net_worth']:
+            self.net_worth = global_settings['max_net_worth']
+
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         self.last_completion = litellm_completion(prompt=full_prompt, model=self.model)

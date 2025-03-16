@@ -206,7 +206,9 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
                 continue
             if "content" not in chunk["choices"][0]["delta"]:
                 continue
-            yield chunk["choices"][0]["delta"]["content"]
+            content = chunk["choices"][0]["delta"]["content"]
+            if content:  # Only yield non-empty content
+                yield content
     except Exception as e:
         raise RuntimeError(f"Error extracting content: {e}") from e
 
