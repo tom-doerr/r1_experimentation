@@ -62,8 +62,7 @@ def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
 def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     kwargs: Dict[str, Any] = {"messages": messages, "stream": True}
-    if model:
-        kwargs["model"] = model
+    kwargs["model"] = model if model else litellm.model
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
