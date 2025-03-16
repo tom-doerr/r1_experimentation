@@ -31,7 +31,7 @@ class AgentAssert(Agent):
         super().__init__(interface, model)
         
     def __call__(self, input_text: str) -> str:
-        """Process input using LLM and return response."""
+        """Handle user input and return response."""
         try:
             response = litellm_completion(input_text, self.model)
             return response
