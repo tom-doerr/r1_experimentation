@@ -34,7 +34,6 @@ def test_env_1(input_string: str) -> int:
 
 
 class ShellCodeExecutor:
-    """Executes shell commands in a sandboxed environment."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
 
@@ -45,21 +44,21 @@ class ShellCodeExecutor:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        if not command: # Check for empty command
+        if not command:
             return "Error: No command provided."
 
-        command_parts: List[str] = shlex.split(command) # Split the command into parts
-        if not command_parts: # Check for empty command parts after splitting
+        command_parts: List[str] = shlex.split(command)
+        if not command_parts:
             return "Error: No command provided."
 
-        command_name: str = command_parts[0] # Get the command name
-        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands: # Check if the command is allowed
+        command_name: str = command_parts[0]
+        if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
             return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
         try:
-            result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10) # Execute the command
+            result: subprocess.CompletedProcess = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)
             return result.stdout
-        except subprocess.CalledProcessError as e: # Handle errors during command execution
+        except subprocess.CalledProcessError as e:
             return f"Error: {e.stderr}"
 
 
@@ -69,10 +68,10 @@ def litellm_completion(prompt: str, model: str) -> str:
         prompt = f"Respond with XML. The root tag should be <response>. Include a <bool> tag with value True or False depending on whether the following statement is true: {prompt}"
 
     try:
-        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}]) # type: ignore
+        response: litellm.CompletionResponse = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])  # type: ignore
         return response.choices[0].message.content if response and response.choices[0].message and response.choices[0].message.content else "Error: No completion found."
-    except litellm.LiteLLMError as e: # type: ignore
-        return f"LiteLLMError: {type(e).__name__}: {e}" # type: ignore
+    except litellm.LiteLLMError as e:  # type: ignore
+        return f"LiteLLMError: {type(e).__name__}: {e}"  # type: ignore
 
 
 def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
