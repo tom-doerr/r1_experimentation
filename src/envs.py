@@ -17,9 +17,10 @@ class Env1:
             raise ValueError("input_string must be a non-empty string")
             
         count = input_string.count(self.target_char)
-        penalty = max(0, len(input_string) - self.char_count_penalty_start) * 1  # Reduced penalty multiplier
+        over_limit = max(0, len(input_string) - self.char_count_penalty_start)
+        penalty = over_limit * 2  # Increased penalty multiplier
         score = count - penalty
-        return max(score, -2) if len(input_string) >= self.char_count_penalty_start else count
+        return max(min(score, count), -2)  # Clamp score between -2 and original count
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
@@ -37,14 +38,17 @@ class Env2:
         """Calculate score based on consecutive duplicate characters."""
         if not isinstance(input_string, str):
             raise ValueError("input_string must be a string")
+            
         if len(input_string) > self.max_char_count:
             return 0
-        # Calculate mirror character matches
+            
+        # Count consecutive duplicate characters
         score = 0
-        n = len(input_string)
-        for i in range(n // 2):
-            if input_string[i] == input_string[n - i - 1]:
+        prev_char = None
+        for char in input_string:
+            if char == prev_char:
                 score += 1
+            prev_char = char
         return score
 
     def __repr__(self) -> str:
