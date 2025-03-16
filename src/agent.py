@@ -1,11 +1,17 @@
-from typing import Any, Dict, Protocol
-from abc import abstractmethod, ABC
+from typing import Any
+from abc import ABC
 from .llm_utils import litellm_completion
-from .config import DEFAULT_MODEL, global_settings
-from .interface import UserInterface, ConsoleInterface
-from .utils import normalize_model_name
+from .config import DEFAULT_MODEL
+from .interface import UserInterface
 
 class Agent(ABC):
+    """Abstract base class for agents."""
+    
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        """Initialize agent with interface and model settings."""
+        self.interface = interface
+        self.model = model
+        self.max_tokens = max_tokens
 
 
 
