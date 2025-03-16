@@ -122,7 +122,6 @@ class Agent():
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
-+
 
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
