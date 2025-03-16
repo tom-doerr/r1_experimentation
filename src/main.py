@@ -88,9 +88,10 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
             stream=True,
             max_tokens=max_tokens,
         )
-        yield from _extract_content_from_chunks(response) # type: ignore
-    except litellm.LiteLLMError as e:
-        print(f"LiteLLMError in litellm_streaming: {e}")
+        yield from _extract_content_from_chunks(response)  # type: ignore
++    except litellm.LiteLLMError as e:
++        print(f"LiteLLMError in litellm_streaming: {e}")
++
 
 
 class Agent():
@@ -113,14 +114,16 @@ class Agent():
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
-
-    def _update_memory(self, replace: str) -> None:
-        if replace is not None:
-            self.memory = replace
++
++    def _update_memory(self, replace: str) -> None:
++        if replace is not None:
++            self.memory = replace
++
 
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
++
 
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
