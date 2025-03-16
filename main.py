@@ -46,8 +46,11 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         response = litellm.completion(**kwargs)
         if hasattr(response, 'choices'):
             for choice in response.choices:
-                if choice.delta and choice.delta.content:
+                if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
                     yield choice.delta.content or ""  # Handle None content
+                else:
+                    print("Unexpected response format: ", choice)
+                    yield None
         else:
             print("Unexpected response format: ", response)
             yield None
@@ -76,7 +79,7 @@ class Agent:
     def _parse_xml(self, xml_string: str):
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str):
+    def _update_memory(self, search: str, replace: str):
         if replace is not None:
             self.memory: str = replace
         else:
