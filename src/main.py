@@ -293,12 +293,12 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 
 
-def run_container(image: str, command: str, timeout: int = 30) -> str:
+def run_container(image: str, command: str, timeout: int = 10) -> str:
     """Run a command in a container using Docker.
     
     Args:
         image: Docker image name
-        command: Command to run in container 
+        command: Command to run in container
         timeout: Maximum execution time in seconds
         
     Returns:
@@ -317,7 +317,7 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         
     try:
         result = subprocess.run(
-            ["docker", "run", "--rm", image, "sh", "-c", command],
+            ['docker', 'run', '--rm', image, 'sh', '-c', command],
             capture_output=True,
             text=True,
             check=True,
@@ -328,8 +328,10 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         raise TimeoutError(f"Container timed out after {timeout} seconds") from e
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Container failed: {e.stderr}") from e
+    except FileNotFoundError:
+        raise RuntimeError("docker not found - make sure Docker is installed") from None
     except Exception as e:
-        raise RuntimeError(f"Container error: {e}") from e
+        raise RuntimeError(f"Error running container: {e}") from e
 
 
 
