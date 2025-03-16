@@ -6,9 +6,39 @@ from typing import Any, Dict, Generator, Protocol
 import xml.etree.ElementTree as ET
 import litellm
 
-import litellm
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - type: The object's type
+            - methods: List of method names
+            - attributes: Dict of attribute names and values
+    """
+    if obj is None:
+        raise ValueError("Cannot inspect None")
+        
+    result = {
+        "type": str(type(obj)),
+        "methods": [],
+        "attributes": {}
+    }
+    
+    # Get methods
+    for name, value in inspect.getmembers(obj, inspect.ismethod):
+        result["methods"].append(name)
+        
+    # Get attributes
+    for name, value in inspect.getmembers(obj):
+        if not name.startswith('_') and not inspect.ismethod(value):
+            result["attributes"][name] = str(value)
+            
+    return result
 
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+import litellm
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
