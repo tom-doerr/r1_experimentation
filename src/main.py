@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, List, Generator
+from typing import Dict, Any, List, Generator, Union
 import shlex
 import subprocess
 from xml.etree.ElementTree import ParseError
@@ -58,7 +58,7 @@ class ShellCodeExecutor(Tool):
         command_name: str = command_parts[0]
         if command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is blacklisted."
-        elif command_name in self.whitelisted_commands:
+        if command_name in self.whitelisted_commands:
             return self._execute_command(command_parts)
         return f"Command '{command_name}' is not whitelisted."
 
@@ -103,11 +103,9 @@ def litellm_streaming(
             ):
                 yield chunk["choices"][0]["delta"]["content"]
     except Exception as e:
-        pass
+        print(f"LiteLLMError in litellm_streaming: {e}")
 
 
-def _handle_litellm_error(e: Exception, method_name: str) -> str:
-    return f"An error occurred during {method_name}: {type(e).__name__} - {e}"
 
 
 class Agent(Tool):
