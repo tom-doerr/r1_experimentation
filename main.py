@@ -84,24 +84,24 @@ def test_env_1(input_str: str) -> int:
     return 4
 
 class Agent:
-    def __init__(self, model: str = FLASH):
+    def __init__(self, model: str = FLASH) -> None:
         self.model: str = model
         self.memory: str = ""
         self.last_completion: str = ""
 
     def reply(self, prompt: str) -> str:
-        self.last_completion: str = litellm_completion(prompt, self.model)
+        self.last_completion = litellm_completion(prompt, self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace if replace is not None else ""
+        self.memory = replace if replace else ""
+
 
 class AgentAssert:
-    """Assertion agent for testing."""
-    def __init__(self, model: str):
+    def __init__(self, model: str) -> None:
         self.agent: Agent = Agent(model=model)
 
     def _parse_xml(self, xml_string: str) -> bool:
