@@ -8,7 +8,38 @@ import litellm
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
-def _validate_global_settings(settings: Dict[str, float]) -> None:
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - type: The object's type
+            - attributes: Dictionary of instance attributes
+            - methods: List of method names
+    """
+    if obj is None:
+        raise ValueError("Object cannot be None")
+        
+    result = {
+        "type": str(type(obj)),
+        "attributes": {},
+        "methods": []
+    }
+    
+    # Get attributes
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(value)
+        
+    # Get methods
+    for name in dir(obj):
+        if callable(getattr(obj, name)) and not name.startswith('_'):
+            result["methods"].append(name)
+            
+    return result
+
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
     required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
@@ -505,28 +536,6 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 
 
-def _execute_command(command: str, timeout: int = 10) -> str:
-    """Execute a command with timeout and validation."""
-    if not isinstance(command, str) or not command.strip():
-        raise ValueError("Command must be a non-empty string")
-    if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("Timeout must be a positive integer")
-        
-    try:
-        result = subprocess.run(
-            shlex.split(command),
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=timeout
-        )
-        return result.stdout
-    except subprocess.TimeoutExpired as e:
-        raise TimeoutError(f"Command timed out after {timeout} seconds") from e
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Command failed: {e.stderr}") from e
-    except Exception as e:
-        raise RuntimeError(f"Error executing command: {e}") from e
 
 
 
