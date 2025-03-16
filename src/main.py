@@ -12,9 +12,6 @@ from .reflection import python_reflection_test
 from .envs import Env1, Env2
 
 
-# Third party imports
-import litellm
-
 # Local imports
 from .agent import Agent, AgentAssert
 from .config import DEFAULT_MODEL, global_settings
