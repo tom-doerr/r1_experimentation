@@ -18,7 +18,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty  # Remove max() to allow negative scores
+            return count - penalty  # Allow negative scores as per test requirements
         return count
 
     def __repr__(self) -> str:
