@@ -21,8 +21,7 @@ class Env1:
         Returns:
             int: Score calculated as:
                 - target_char count minus length penalty if any targets found
-                - 0 if no targets and string length >= penalty start
-                - -1 if no targets and string length < penalty start
+                - 0 if no targets found
                 
         Raises:
             ValueError: If input_string is empty
@@ -35,10 +34,7 @@ class Env1:
             penalty = max(0, len(input_string) - self.char_count_penalty_start)
             return count - penalty
             
-        # No targets found
-        if len(input_string) >= self.char_count_penalty_start:
-            return 0
-        return -1
+        return 0  # No targets found
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"
