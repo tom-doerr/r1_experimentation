@@ -2,6 +2,7 @@ from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
 import shlex
 import subprocess
+import shutil
 import xml.etree.ElementTree as ET
 import litellm
 from .isolation import IsolatedEnvironment, run_container
@@ -76,8 +77,6 @@ class Tool(Protocol):
     @abstractmethod
     def run(self, command: str) -> str:
         """Execute a command and return the result."""
-        if not isinstance(command, str) or not command.strip():
-            raise ValueError("Command must be a non-empty string")
         raise NotImplementedError("Subclasses must implement run()")
         
     @abstractmethod 
