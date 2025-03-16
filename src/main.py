@@ -7,6 +7,7 @@ from typing import Any, Dict, Generator, List
 import xml.etree.ElementTree as ET
 import litellm
 from typing import Protocol
+from .isolation import run_container
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
