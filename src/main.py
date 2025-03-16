@@ -283,18 +283,40 @@ def _execute_command(command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error executing command: {e}") from e
 
-def python_reflection_test() -> str:
-    """Test Python reflection capabilities by inspecting the Agent class."""
-    from .agent import Agent
-    return str(inspect.getmembers(Agent))
-
-def python_reflection_test() -> str:
-    """Test Python reflection capabilities by inspecting this function itself.
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
     
+    Args:
+        obj: Any Python object to inspect
+        
     Returns:
-        str: The name of this function
+        Dictionary containing:
+            - type: The object's type
+            - attributes: Dictionary of instance attributes
+            - methods: List of method names
+            
+    Raises:
+        ValueError: If obj is None
     """
-    return inspect.currentframe().f_code.co_name
+    if obj is None:
+        raise ValueError("Cannot inspect None object")
+        
+    result = {
+        'type': str(type(obj)),
+        'attributes': {},
+        'methods': []
+    }
+    
+    # Get instance attributes
+    for name, value in vars(obj).items():
+        result['attributes'][name] = str(value)
+        
+    # Get methods
+    for name in dir(obj):
+        if callable(getattr(obj, name)) and not name.startswith('_'):
+            result['methods'].append(name)
+            
+    return result
 
 def _normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix.
