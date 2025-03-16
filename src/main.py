@@ -40,16 +40,6 @@ def python_reflection_testing() -> str:
     return "test_output_var" # this is the expected return value, do not change
 
 
-class Env1:
-    def __init__(self, target_char: str = "a", char_count_penalty_start: int = 23):
-        self.target_char = target_char
-        self.char_count_penalty_start = char_count_penalty_start
-
-    def __call__(self, input_string: str) -> int:
-        count = input_string.count(self.target_char)
-        if count >= self.char_count_penalty_start:  # Changed to >= to match original condition
-            return self.char_count_penalty_start
-        return count + 1  # Add 1 to match test expectations
 
 
 
@@ -259,8 +249,9 @@ class AgentAssert:
         self.agent = Agent(model)
 
     def _parse_xml(self, xml_string: str) -> bool:
-        parsed = parse_xml(xml_string)
-        return parsed.get('bool', 'False').lower() == 'true'
+        root = ET.fromstring(xml_string)
+        bool_element = root.find('bool')
+        return bool_element.text.strip().lower() == 'true' if bool_element is not None else False
 
     def __call__(self, statement: str) -> bool:
         response = self.agent.reply(statement)
