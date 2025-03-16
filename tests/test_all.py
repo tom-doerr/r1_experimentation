@@ -1,12 +1,12 @@
 import os
 import sys
-+import src
-+from src import *
-+from src.main import *
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import src
+from src import *
+from src.main import *
 
-FLASH = 'openrouter/google/gemini-2.0-flash-001'  
+FLASH = 'openrouter/google/gemini-2.0-flash-001'
 R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH

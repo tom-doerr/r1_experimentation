@@ -44,7 +44,6 @@ class ShellCodeExecutor(object):
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
-        """Runs a shell command."""
         if not command:
             return "Error: No command provided."
         command_parts: List[str] = shlex.split(command)
@@ -52,7 +51,7 @@ class ShellCodeExecutor(object):
         if not command_parts:
             return "Error: No command provided."
 
-        command_name = command_parts[0]
+        command_name: str = command_parts[0]
         if command_name not in self.whitelisted_commands or command_name in self.blacklisted_commands:
             return f"Error: Command '{command_name}' is not whitelisted or is blacklisted."
 
