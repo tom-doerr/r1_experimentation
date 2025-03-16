@@ -3,6 +3,7 @@ from .main import (
     DEFAULT_MODEL,
     ShellCodeExecutor,
     litellm_completion,
+    Tool,
     litellm_streaming,
     parse_xml,
     python_reflection_testing,
