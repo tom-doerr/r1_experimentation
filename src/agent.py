@@ -3,6 +3,15 @@ from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
 from .interface import UserInterface
 
+class Agent(ABC):
+    """Abstract base class for agents."""
+    
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        """Initialize agent with interface and model settings."""
+        self.interface = interface
+        self.model = model
+        self.max_tokens = max_tokens
+
 
 
 
