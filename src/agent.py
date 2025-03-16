@@ -2,7 +2,10 @@ import litellm
 from typing import Dict
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name as _normalize_model_name
-from .llm_utils import litellm_completion
+
+def _escape_xml(text: str) -> str:
+    """Escape XML special characters."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 class Agent:
     """Agent that interacts with users using LLM completions."""
@@ -13,7 +16,7 @@ class Agent:
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
             
-        self.model = normalize_model_name(model)
+        self.model = _normalize_model_name(model)
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory: str = ""
