@@ -125,11 +125,4 @@ class AgentAssert(Tool):
         return "False" not in reply
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
-        try:
-            root = ET.fromstring(xml_string)
-            data: Dict[str, Any] = {}
-            for child in root:# type: ET.Element
-                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} if len(child) else child.text or ""
-        except ET.ParseError as e:
-            print(f"XML ParseError: {e}")
-            return {}
+        return parse_xml(xml_string)
