@@ -9,6 +9,8 @@ import litellm
 import litellm
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
+
+DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 
