@@ -6,6 +6,8 @@ import xml.etree.ElementTree as ET
 import litellm
 import subprocess
 import shlex
+import subprocess
+import shlex
 from .config import DEFAULT_MODEL, global_settings
 from .utils import normalize_model_name as _normalize_model_name
 from .llm_utils import litellm_completion

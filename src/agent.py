@@ -81,11 +81,13 @@ class Agent:
             
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         try:
-            self.last_completion = litellm_completion(
-                prompt=full_prompt, 
+            response = litellm.completion(
                 model=self.model,
-                max_tokens=self.max_tokens
+                messages=[{"role": "user", "content": full_prompt}],
+                max_tokens=self.max_tokens,
+                temperature=0.7
             )
+            self.last_completion = response.choices[0].message.content
             return self.last_completion
         except ValueError as e:
             raise RuntimeError(f"Invalid prompt or model: {e}") from e
