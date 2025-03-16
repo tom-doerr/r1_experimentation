@@ -57,15 +57,14 @@ assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ""
 assert parsed_data_2['memory']['replace'] == 'The user wrote just hi.'
-# the agent returns None sometimes, but the tests expect empty string
+# the agent returns None sometimes, but the tests expect empty string, fixed in code
 agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory']['replace'])
 
 agent_assert = AgentAssert(model=MODEL)
-assert type(agent_assert.agent) == Agent
+assert isinstance(agent_assert.agent, Agent)
 
-bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+bool_val = agent_assert.parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
 assert bool_val is False
-
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val)
