@@ -3,9 +3,6 @@ from typing import Dict
 from .constants import DEFAULT_MODEL, global_settings
 from .main import litellm_completion, normalize_model_name as _normalize_model_name
 
-def _escape_xml(text: str) -> str:
-    """Escape XML special characters."""
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 class Agent:
     """Agent that interacts with users using LLM completions."""
