@@ -1,13 +1,17 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Generator
+from typing import Dict, Any, Iterator
 import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
-    # Simplified XML parser with reduced complexity
+    """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
         for child in element:
-            child_data = parse_element(child) if len(child) else (child.text.strip() if child.text and child.text.strip() else None)
+            # Handle child content
+            if child:
+                child_data = parse_element(child)
+            else:
+                child_data = child.text.strip() if child.text else None
             
             if child.tag in result:
                 existing = result[child.tag]
@@ -27,14 +31,24 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 
 # Simplified LiteLLM implementations
-def litellm_completion(prompt: str, model: str) -> str:
-    """Minimal LiteLLM completion that returns a fixed response"""
-    return f"Response to {prompt} from {model}"
+def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001') -> str:
+    """LiteLLM completion implementation"""
+    response = litellm.completion(
+        model=model,
+        messages=[{"content": prompt, "role": "user"}]
+    )
+    return response.choices[0].message.content
 
-def litellm_streaming(prompt: str) -> Generator[str, None, None]:
-    """Minimal streaming response generator"""
-    for word in f"Streaming response to {prompt}".split():
-        yield word + " "
+def litellm_streaming(prompt: str) -> Iterator[str]:
+    """LiteLLM streaming implementation"""
+    response = litellm.completion(
+        model='openrouter/google/gemini-2.0-flash-001',
+        messages=[{"content": prompt, "role": "user"}],
+        stream=True
+    )
+    for chunk in response:
+        if chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
 
 def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
