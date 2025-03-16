@@ -15,7 +15,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 def _parse_element(element: ET.Element) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
     for child in element:
-        child_data: Any = child.text.strip() if child.text else _parse_element(child)
+        child_data: Any = child.text.strip() if child.text is not None else _parse_element(child)
         result[child.tag] = child_data
     return result
 
@@ -78,11 +78,11 @@ class Agent:
         self.last_completion: str = litellm_completion(prompt, self.model)
         return self.last_completion
 
-    def _parse_xml(self, xml_string: str):
+    def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace if replace is not None else ""
+        self.memory = replace or ""
 
 class AgentAssert:
     """Assertion agent for testing."""
