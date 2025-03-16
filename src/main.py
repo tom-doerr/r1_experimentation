@@ -121,7 +121,7 @@ class Agent():
         return parsed_reply
 
     def _update_memory(self, search: str, replace: str) -> None:
-        if replace:
+        if replace: # if replace is not empty
             self.memory = replace
         else:
             self.memory = ""
