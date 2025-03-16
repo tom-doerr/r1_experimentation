@@ -86,6 +86,16 @@ class Tool(Protocol):
     def __repr__(self) -> str:
         """Return string representation of tool."""
         ...
+        
+    @property
+    @abstractmethod
+    def is_available(self) -> bool:
+        """Check if tool is available for use.
+        
+        Returns:
+            bool: True if tool is available, False otherwise
+        """
+        raise NotImplementedError("Subclasses must implement is_available property")
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
