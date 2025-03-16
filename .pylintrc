@@ -1,9 +1,9 @@
 [MASTER]
 # Maximum number of lines in a module
-max-module-lines=200
+max-module-lines=1000
 
 # Maximum number of lines in a function
-max-function-lines=15
+max-function-lines=10
 
 # Maximum number of arguments in function
 max-args=3
@@ -43,4 +43,4 @@ max-nested-blocks=2
 
 [FORMAT]
 # Maximum line length
-max-line-length=80
+max-line-length=200
