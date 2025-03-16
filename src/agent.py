@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, Optional
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL
-from .interface import UserInterface
+from .interface import UserInterface, ConsoleInterface
 
 class AgentAssert:
     """Utility class for agent assertions and validation."""
