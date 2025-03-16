@@ -2,22 +2,26 @@ import shlex # type: ignore
 from typing import Dict, List, Generator
 import subprocess  # nosec
 import xml.etree.ElementTree as ET
-import litellm # type: ignore
+import litellm  # type: ignore
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'
 
 
+def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
+    """Parses a single XML element and returns a dictionary of its children."""
+    data: Dict[str, str] = {}
+    for child in element:
+        data[child.tag] = child.text or ""
+    return data
+
+
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary."""
-
     try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
-        for child in root:
-            if child:
-                data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
-            else:
-                data[child.tag] = child.text or ""
+        for element in root:
+            data[element.tag] = _parse_xml_element(element) if len(element) else element.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
@@ -51,9 +55,7 @@ class ShellCodeExecutor(Tool):
             return "No command provided."
         command_parts: List[str] = shlex.split(command)
         command_name: str = command_parts[0]
-        if command_name in self.whitelisted_commands:
-            if command_name in self.blacklisted_commands:
-                return f"Command '{command_parts[0]}' is blacklisted."
+        if command_name in self.whitelisted_commands and command_name not in self.blacklisted_commands:
             return self._execute_command(command_parts)
         return f"Command '{command_name}' is not whitelisted."
 
@@ -79,22 +81,25 @@ def litellm_completion(prompt: str, model: str) -> str:
         return f"LiteLLMError in litellm_completion: {e}"
 
 
+def _extract_content_from_chunks(response: any) -> Generator[str, None, None]:
+    """Extracts content from LiteLLM streaming response chunks."""
+    for chunk in response:
+        if (
+            chunk and chunk["choices"] and chunk["choices"][0]["delta"] and "content" in chunk["choices"][0]["delta"]
+        ):
+            yield chunk["choices"][0]["delta"]["content"]
+
+
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
-    try: # type: ignore
+    """Streams responses from LiteLLM."""
+    try:  # type: ignore
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             stream=True,
             max_tokens=max_tokens,
         )
-        for chunk in response:  # type: ignore
-            if (
-                chunk
-                and chunk["choices"]
-                and chunk["choices"][0]["delta"]
-                and "content" in chunk["choices"][0]["delta"]
-            ):
-                yield chunk["choices"][0]["delta"]["content"]
+        yield from _extract_content_from_chunks(response)
     except Exception as e:
         print(f"LiteLLMError in litellm_streaming: {e}")  # or raise, depending on desired behavior
 
@@ -126,12 +131,8 @@ class Agent(Tool):
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        try:
-            self.last_completion = litellm_completion(full_prompt, model=self.model)
-            return self.last_completion
-        except Exception as e:
-            print(f"Exception in Agent.reply: {e}")
-            return ""
+        self.last_completion = litellm_completion(full_prompt, model=self.model)
+        return self.last_completion
 
     def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
@@ -143,6 +144,7 @@ class AgentAssert(Agent):
 
     def __init__(self, model: str = FLASH):
         super().__init__(model=model)
++        self.agent = Agent(model=model)
 
     def __call__(self, statement: str) -> bool:
         reply = self.reply(statement)
