@@ -63,8 +63,6 @@ def test_env_1(input_str: str):
         return 3
     return 4
 
-FLASH = 'openrouter/google/gemini-2.0-flash-001'
-
 class Agent:
     def __init__(self, model: str = FLASH):
         self.model: str = model
