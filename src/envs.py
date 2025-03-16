@@ -18,9 +18,11 @@ class Env1:
             
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
-            # Apply penalty of -1 per character over threshold
-            penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty
+            # Only apply penalty if we have more than 10 characters
+            if len(input_string) > 10:
+                penalty = len(input_string) - 10
+                return count - penalty
+            return count
         return count
 
     def __repr__(self) -> str:

@@ -1,10 +1,9 @@
-from typing import Dict, Any, Generator, Protocol, List
+from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
 import litellm
-from .reflection import python_reflection_test
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
@@ -266,8 +265,9 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             max_tokens=max_tokens,
             temperature=0.7
         )
-        # Return raw response content without XML wrapping
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        # Return content directly without any wrapping
+        return content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
