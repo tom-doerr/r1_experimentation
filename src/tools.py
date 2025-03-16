@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, Generator
 from abc import abstractmethod
 import subprocess
 import shlex
