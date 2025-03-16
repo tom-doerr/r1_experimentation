@@ -1,15 +1,8 @@
 import xml.etree.ElementTree as ET
-import subprocess
-import shlex
-from shutil import which
-from typing import Any, Dict, Generator
-# Local imports
+from typing import Any, Dict
 from .llm_utils import litellm_completion, litellm_streaming
-from .reflection import python_reflection_test
-from .config import DEFAULT_MODEL, global_settings
-from .utils import normalize_model_name
+from .config import DEFAULT_MODEL
 from .agent import Agent, AgentAssert
-from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 from .envs import Env1, Env2
 
