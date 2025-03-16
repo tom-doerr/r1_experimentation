@@ -166,7 +166,6 @@ class ShellCodeExecutor(Tool):
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Generate completion using LiteLLM API with robust error handling."""
-    # Validate inputs
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
@@ -174,7 +173,6 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
         
-    # Normalize model name format
     model = _normalize_model_name(model)
         
     try:
@@ -184,6 +182,8 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             temperature=0.7,
             max_tokens=max_tokens
         )
+        if not response or not response.choices:
+            raise RuntimeError("No response from API")
         return response.choices[0].message.content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
