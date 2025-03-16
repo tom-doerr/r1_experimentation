@@ -23,7 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 
 
-        return result
+        return parsed_xml[root.tag]
 
     try:
         root = ET.fromstring(xml_string)
