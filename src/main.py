@@ -1,10 +1,38 @@
 from abc import ABC, abstractmethod
-import inspect
 import shlex
 import subprocess
-from typing import Any, Dict, Generator, Protocol
+from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import litellm
+
+def python_reflection_test(obj: Any) -> Dict[str, Any]:
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - type: The object's type
+            - attributes: Dictionary of instance attributes
+            - methods: List of method names
+    """
+    result = {
+        "type": str(type(obj)),
+        "attributes": {},
+        "methods": []
+    }
+    
+    # Get attributes
+    for name, value in vars(obj).items():
+        result["attributes"][name] = str(value)
+        
+    # Get methods
+    for name in dir(obj):
+        if callable(getattr(obj, name)) and not name.startswith('_'):
+            result["methods"].append(name)
+            
+    return result
 
 def python_reflection_test(obj: Any) -> Dict[str, Any]:
     """Inspect a Python object and return its attributes and methods.
@@ -191,7 +219,6 @@ class ShellCodeExecutor(Tool):
         self._validate_command(command)
             
         try:
-            import shlex
             result = subprocess.run(
                 shlex.split(command),
                 capture_output=True,
