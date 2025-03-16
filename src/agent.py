@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL, global_settings
 from .interface import UserInterface, ConsoleInterface
