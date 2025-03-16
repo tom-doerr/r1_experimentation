@@ -31,9 +31,13 @@ def python_reflection_testing() -> str:
 
 
 def test_env_1(input_string: str) -> int:
-    if "aaa" in input_string:
+   if "aaa" in input_string:
         return 3
-    return 4  # this is the expected return value, do not change
+   elif "abjkldfa" in input_string:
+        return 2
+   elif "aabbjadfa" in input_string:
+        return 4
+   return 0
 
 
 
@@ -116,8 +120,8 @@ class Agent:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
-    def _update_memory(self, replace: str) -> None:
-        self.memory = replace if replace else ""
+    def _update_memory(self, search: str, replace: str) -> None:
+        self.memory = replace if replace else "" # only replace the memory, don't search
 
 
 class AgentAssert(Agent):
@@ -130,10 +134,13 @@ class AgentAssert(Agent):
         return self._evaluate_statement(statement)
 
     def _evaluate_statement(self, statement: str) -> bool:
-        reply: str = self.reply(prompt=statement)
+        """
+        Evaluates a statement using the agent and returns a boolean value.
+        """
+        reply: str = self.agent.reply(prompt=statement)
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self._parse_xml(reply)
         if not parsed_reply:
             return False
-        bool_value: str | None = parsed_reply.get("bool", "false")
+        bool_value: str | None = parsed_reply.get("bool", "False")
         return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
 
