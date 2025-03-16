@@ -1,4 +1,5 @@
-from src import Env1
+import pytest
+from src.envs import *
 
 
 def test_env_1():
@@ -10,3 +11,8 @@ def test_env_1():
     assert env_1("bjkldfjdfdj") == -1
     assert env_1("bakldfjdfdj") == 0
     assert env_1("bakldfjdfda") == -1
+
+def test_env_1_defaults():
+    env_1 = Env1()
+    assert env_1.target_char == "a"
+    assert env_1.char_count_penalty_start == 23

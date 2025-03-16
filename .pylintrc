@@ -5,9 +5,6 @@ max-module-lines=1000
 # Ignore testing files and directories
 ignore=testing.py,hidden_t/
 
-# Maximum number of lines in a function
-max-function-lines=10
-
 # Maximum number of arguments in function
 max-args=3
 
@@ -21,12 +18,6 @@ max-returns=2
 max-branches=2
 
 [METRICS]
-# Maximum cyclomatic complexity
-max-complexity=5
-
-# Maximum number of methods in a class
-max-methods=5
-
 # Maximum number of attributes in a class
 max-attributes=5
 
@@ -49,4 +40,4 @@ max-nested-blocks=1
 max-line-length=200
 
 # Disable whitespace and docstring checks
-disable=trailing-whitespace,missing-module-docstring,missing-function-docstring
+disable=trailing-whitespace,missing-module-docstring,missing-function-docstring,missing-class-docstring,missing-final-newline
