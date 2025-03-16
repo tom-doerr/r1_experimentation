@@ -12,7 +12,9 @@ from src.main import (
     python_reflection_testing,
     test_env_1,
     AgentAssert,
+    ShellCodeExecutor,
 )
+from src.main import ShellCodeExecutor as Tool
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
