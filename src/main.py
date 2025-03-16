@@ -285,16 +285,16 @@ def _normalize_model_name(model: str) -> str:
         
     return f"openrouter/{model}"
 
-def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
-    """Generate completion using LiteLLM API with robust error handling.
+def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
+    """Generate streaming completion using LiteLLM API.
     
     Args:
         prompt: The input prompt string
         model: The model name to use
         max_tokens: Maximum number of tokens to generate
         
-    Returns:
-        str: The generated completion text
+    Yields:
+        str: Chunks of generated text
         
     Raises:
         ValueError: If inputs are invalid
@@ -314,12 +314,14 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             model=model,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
-            temperature=0.7
+            temperature=0.7,
+            stream=True
         )
-        if not response or not response.choices:
-            raise RuntimeError("No response from API")
         
-        return response.choices[0].message.content
+        for chunk in response:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+                
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
@@ -328,29 +330,23 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
         raise RuntimeError(f"Unexpected error: {e}") from e
-        raise ValueError("max_tokens must be a positive integer")
+
+
+def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
+    """Generate completion using LiteLLM API with robust error handling.
+    
+    Args:
+        prompt: The input prompt string
+        model: The model name to use
+        max_tokens: Maximum number of tokens to generate
         
-    model = _normalize_model_name(model)
+    Returns:
+        str: The generated completion text
         
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7
-        )
-        if not response or not response.choices:
-            raise RuntimeError("No response from API")
-        
-        return response.choices[0].message.content
-    except litellm.exceptions.BadRequestError as e:
-        if "not a valid model ID" in str(e):
-            raise ValueError(f"Invalid model: {model}") from e
-        raise RuntimeError(f"Bad request: {e}") from e
-    except litellm.APIError as e:
-        raise RuntimeError(f"API Error: {e}") from e
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error: {e}") from e
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If completion fails
+    """
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
