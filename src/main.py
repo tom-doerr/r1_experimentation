@@ -166,18 +166,6 @@ def python_reflection_test(obj: object) -> str:
         return "None"
     return f"{type(obj).__name__}: {dir(obj)}"
 
-class AgentAssert(Agent):
-    """Concrete implementation of Agent for assertion testing."""
-    
-    def __init__(self, interface: UserInterface = None, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        super().__init__(interface, model, max_tokens)
-        
-    def __call__(self, input_text: str) -> str:
-        """Handle user input and return response."""
-        return f"Assertion: {input_text}"
-        
-    def __repr__(self) -> str:
-        return f"AgentAssert(model={self.model}, max_tokens={self.max_tokens})"
 
 
 
