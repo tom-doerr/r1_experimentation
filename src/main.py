@@ -114,7 +114,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, replace: str, search: str="") -> None:
         self.memory = replace
 
 
