@@ -6,8 +6,8 @@ from .llm_utils import litellm_completion
 from .utils import normalize_model_name
 
 
-class Agent(ABC):
-    """Abstract base class for agents."""
+class Agent:
+    """Concrete agent implementation."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
         if not isinstance(model, str) or not model.strip():
@@ -17,11 +17,10 @@ class Agent(ABC):
             
         self.model = normalize_model_name(model)
         self.max_tokens = max_tokens
-        self.net_worth = global_settings['initial_net_worth']
+        self.net_worth = global_settings['starting_cash']
         self.memory = ''
         self.interface = interface or ConsoleInterface()
 
-    @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
         if not isinstance(input_text, str) or not input_text.strip():
