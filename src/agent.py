@@ -122,6 +122,9 @@ class AgentAssert(Agent):
         reply = self.reply(prompt=statement)
         try:
             parsed_reply = parse_xml(reply)
-            return parsed_reply.get("bool", "false").lower() == "true"
+            bool_value = parsed_reply.get("bool", False)
+            if isinstance(bool_value, bool):
+                return bool_value
+            return str(bool_value).lower() == "true"
         except ValueError:
             return False
