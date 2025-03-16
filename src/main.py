@@ -117,7 +117,7 @@ class Agent():
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
-        return parse_xml(xml_string) # type: ignore
+        return parse_xml(xml_string)
 
     def _update_memory(self, replace: str) -> None:
         self.memory = replace
