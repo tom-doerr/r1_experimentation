@@ -1,10 +1,6 @@
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, Protocol, Generator
 from abc import abstractmethod
-import subprocess
-import shlex
-from shutil import which
-
 # Local imports
 from .llm_utils import litellm_completion, litellm_streaming
 from .reflection import python_reflection_test
