@@ -39,26 +39,18 @@ def _parse_xml_value(element: ET.Element) -> str | bool:
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, Any]:
     """Parse XML element and its children."""
-    return {
-        child.tag: _parse_xml_element(child) if len(child) > 0 
-        else _parse_xml_value(child)
-        for child in element
-    }
+    result = {}
+    for child in element:
+        if len(child) > 0:
+            result[child.tag] = _parse_xml_element(child)
+        else:
+            result[child.tag] = _parse_xml_value(child)
+    return result
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
-    """Parse XML string into a dictionary with proper error handling.
-    
-    Args:
-        xml_string: The XML string to parse
-        
-    Returns:
-        Dictionary containing parsed XML data
-        
-    Raises:
-        ValueError: If XML string is invalid or empty
-    """
+    """Parse XML string into a dictionary with proper error handling."""
     if not isinstance(xml_string, str) or not xml_string.strip():
-        return {}
+        raise ValueError("XML string must be a non-empty string")
         
     try:
         root = ET.fromstring(xml_string)
