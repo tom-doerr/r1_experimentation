@@ -70,7 +70,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
-def python_reflection_testing() -> str:
+def python_reflection_test() -> str:
     """Return sorted list of public function names in current module."""
     return ", ".join(sorted(
         name for name, obj in globals().items()
@@ -213,7 +213,7 @@ def _normalize_model_name(model: str) -> str:
     if model.startswith('openrouter/'):
         return model
     if '/' in model:
-        return f'openrouter/{model.split("/")[-1]}'
+        return f'openrouter/{model}'
     return f'openrouter/{model}'
 def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
     """Extracts content from response chunks."""

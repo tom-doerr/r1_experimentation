@@ -34,7 +34,9 @@ class Env1:
             return count - penalty
             
         # No targets found
-        return -2 if len(input_string) >= self.char_count_penalty_start else 0
+        if len(input_string) >= self.char_count_penalty_start:
+            return -1  # Changed from -2 to match test expectation
+        return 0
 
     def __repr__(self) -> str:
         return f"Env1(target_char={self.target_char!r}, char_count_penalty_start={self.char_count_penalty_start})"

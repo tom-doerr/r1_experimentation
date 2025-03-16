@@ -14,7 +14,7 @@ from .interface import UserInterface
 from .isolation import IsolatedEnvironment
 
 __all__ = [
-    "parse_xml", "python_reflection_testing", "Tool", "ShellCodeExecutor",
+    "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
     "litellm_completion", "litellm_streaming", "Agent", "AgentAssert",
     "DEFAULT_MODEL", "Env1", "global_settings", "UserInterface", "IsolatedEnvironment"
 ]
