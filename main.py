@@ -1,10 +1,11 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Generator
 import litellm
 
-FLASH = 'openrouter/google/gemini-2.0-flash-001'
+FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parses an XML string and returns a dictionary."""
     try:
         root = ET.fromstring(xml_string)
         return _parse_element(root)
@@ -40,20 +41,28 @@ def litellm_completion(prompt: str, model: str) -> str:
         return ""
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None):
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+    """Uses the litellm library to stream a completion."""
     messages = [{"role": "user", "content": prompt}]
-    kwargs = {"model": model, "messages": messages, "stream": True}
+    kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
         response = litellm.completion(**kwargs)
-        for chunk in response:
-            if 'choices' in chunk and len(chunk['choices']) > 0 and 'delta' in chunk['choices'][0] and 'content' in chunk['choices'][0]['delta']:
-                content = chunk['choices'][0]['delta']['content']
-                yield content
+        if isinstance(response, dict):  # Handle non-streaming response
+            if 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0]:
+                yield response['choices'][0]['message']['content']
             else:
-                print(f"Unexpected chunk format: {chunk}")
+                print(f"Unexpected non-streaming response format: {response}")
                 yield ""
+        else:  # Handle streaming response
+            for chunk in response:
+                if 'choices' in chunk and len(chunk['choices']) > 0 and 'delta' in chunk['choices'][0] and 'content' in chunk['choices'][0]['delta']:
+                    content = chunk['choices'][0]['delta']['content']
+                    yield content
+                else:
+                    print(f"Unexpected chunk format: {chunk}")
+                    yield ""
     except litellm.LiteLLMError as e:
         print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
         yield ""
@@ -62,6 +71,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         yield ""
 
 def python_reflection_testing() -> str:
+    """Returns a test string for reflection testing."""
     return "test_output_var"
 
 def test_env_1(input_str: str) -> int:
