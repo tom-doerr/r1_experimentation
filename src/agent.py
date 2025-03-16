@@ -1,6 +1,6 @@
 import litellm
 from typing import Dict
-from .constants import DEFAULT_MODEL, global_settings, normalize_model_name
+from .config import DEFAULT_MODEL, global_settings, normalize_model_name
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     """Get single completion using LiteLLM API."""
     if not isinstance(prompt, str) or not prompt.strip():

@@ -1,4 +1,4 @@
-from .constants import DEFAULT_MODEL, global_settings
+from .config import DEFAULT_MODEL, global_settings
 from .main import (
     parse_xml,
     Tool,
