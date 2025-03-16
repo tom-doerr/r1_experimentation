@@ -113,8 +113,14 @@ class Agent():
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
-        return parse_xml(xml_string)
+    def _parse_xml(self, xml_string: str) -> bool:
+        parsed_reply = parse_xml(xml_string)
+        if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply:
+            return False
+        bool_value = parsed_reply.get("bool")
+        if not isinstance(bool_value, str):
+            return False
+        return self._parse_bool(bool_value)
 
     def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
