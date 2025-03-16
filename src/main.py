@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, List, Optional, Union
 import xml.etree.ElementTree as ET
 import subprocess
 import litellm
@@ -28,7 +28,11 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = element.text if element.text is not None else ""
+                # Handle empty elements and boolean values
+                if element.tag == 'bool':
+                    data[element.tag] = element.text.lower() == 'true' if element.text else False
+                else:
+                    data[element.tag] = element.text if element.text is not None else ""
         return data
     except ET.ParseError as e:
         return {"error": str(e)}
@@ -77,11 +81,22 @@ class ShellCodeExecutor(Tool):
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
             
-        cmd = command.strip().split()[0]
+        # Split command and validate each part
+        parts = command.strip().split()
+        if not parts:
+            raise ValueError("Empty command")
+            
+        cmd = parts[0]
         if cmd in self.blacklisted_commands:
             raise PermissionError(f"Command {cmd} is blacklisted")
         if cmd not in self.whitelisted_commands:
             raise ValueError(f"Command {cmd} is not whitelisted")
+            
+        # Validate arguments
+        if len(parts) > 1:
+            for arg in parts[1:]:
+                if any(char in arg for char in [';', '|', '&', '`', '$', '(', ')']):
+                    raise ValueError(f"Invalid characters in argument: {arg}")
             
         try:
             result = subprocess.run(
@@ -110,8 +125,15 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
         
-    # Add provider prefix if not already present
-    if not model.startswith('openrouter/'):
+    # Handle model prefix based on provider
+    if model.startswith('openrouter/'):
+        # Already has correct prefix
+        pass
+    elif '/' in model:
+        # Has provider prefix but not openrouter
+        model = f'openrouter/{model.split("/")[-1]}'
+    else:
+        # No prefix at all
         model = f'openrouter/{model}'
         
     try:
@@ -122,6 +144,10 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             max_tokens=max_tokens
         )
         return response.choices[0].message.content
+    except litellm.exceptions.BadRequestError as e:
+        if "not a valid model ID" in str(e):
+            raise ValueError(f"Invalid model: {model}") from e
+        raise
     except litellm.APIError as e:
         raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
