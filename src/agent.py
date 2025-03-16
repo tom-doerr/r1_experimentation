@@ -65,6 +65,13 @@ class Agent:
             raise TypeError("prompt must be a string")
         return self.reply(prompt)
 
+    def _validate_net_worth(self) -> None:
+        """Validate net worth against global settings."""
+        if self.net_worth < global_settings['min_net_worth']:
+            self.net_worth = global_settings['min_net_worth']
+        elif self.net_worth > global_settings['max_net_worth']:
+            self.net_worth = global_settings['max_net_worth']
+
 
 class AgentAssert(Agent):
     """Agent that asserts a statement."""
