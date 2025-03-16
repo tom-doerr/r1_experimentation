@@ -91,6 +91,7 @@ assert two_plus_two_is_4 == False
 shell_code_executor = ShellCodeExecutor()
 assert type(shell_code_executor) == Tool
 
+
 # check if this is a subset of the blacklisted commands
 assert {'rm', 'cat', 'mv', 'cp'} & set(shell_code_executor.blacklisted_commands) == {'rm', 'cat', 'mv', 'cp'}
 assert {'ls', 'date'} & set(shell_code_executor.whitelisted_commands) == {'ls', 'date'}
