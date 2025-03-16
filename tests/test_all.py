@@ -10,10 +10,10 @@ OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH
 
 xml_data = '<response><message>hello</message></response>'
-parsed_data: Dict[str, str | Dict[str, str]] = parse_xml(xml_data)
+parsed_data = parse_xml(xml_data)
 
-message_text = parsed_data['message']
-print("message:", message_text)
+message = parsed_data['message']
+print("message:", message)
 
 # set flash as the default model
 # don't mock
@@ -28,6 +28,7 @@ for reply in reply_generator:
 
 
 
+test_output_var = python_reflection_testing()
 print("test_output_var:", test_output_var)
 assert test_output_var == 'test_output_var'
 
@@ -72,7 +73,7 @@ agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val is False
+assert bool_val == False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
@@ -81,7 +82,7 @@ assert type(return_val) == bool
 
 two_plus_two_is_4 = agent_assert('two plus two is 5')
 print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 is False
+assert two_plus_two_is_4 == False
 
 
 shell_code_executor = ShellCodeExecutor()
