@@ -12,7 +12,7 @@ def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
-    try:
+    try: 
         root: ET.Element = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
 
@@ -22,7 +22,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                 data[element.tag] = _parse_xml_element(element)
             else:
                 data[element.tag] = element.text or ""
-        return data
+        return data 
     except ET.ParseError as e:
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
@@ -66,7 +66,7 @@ class ShellCodeExecutor(Tool):
         if command_parts[0] not in self.whitelisted_commands:
             raise ValueError(f"Command '{command_parts[0]}' is not whitelisted")
 
-        try:
+        try: 
             result = subprocess.run(command_parts, capture_output=True, text=True, check=True, timeout=10)  # run the command
             return result.stdout
         except subprocess.CalledProcessError as e:
@@ -121,7 +121,7 @@ class Agent:
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]: # type: ignore
-        parsed_reply = parse_xml(xml_string)
+        parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
     def _update_memory(self, search: str, replace: str) -> None:
