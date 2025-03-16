@@ -150,6 +150,10 @@ class ShellCodeExecutor(Tool):
                     raise ValueError(f"Invalid characters in argument: {arg}")
                 if '..' in arg:
                     raise ValueError("Path traversal detected in arguments")
+                if arg.startswith('-'):
+                    raise ValueError("Arguments cannot start with hyphens")
+                if len(arg) > 50:
+                    raise ValueError("Argument too long")
 
     def run(self, command: str) -> str:
         """Execute a shell command with strict validation."""
