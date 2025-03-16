@@ -1,3 +1,5 @@
+import src
+from src import *
 from src.main import *
 
 
