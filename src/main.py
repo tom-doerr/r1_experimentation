@@ -1,7 +1,6 @@
 import shlex
-from typing import Dict, Any, List, Generator
+from typing import Dict, List, Generator
 import subprocess # nosec
-from xml.etree.ElementTree import ParseError, ElementTree
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
@@ -10,7 +9,7 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     from xml.etree import ElementTree as ET
-    try:
+    try: # type: ignore
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root: # type: ignore
@@ -21,7 +20,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                     grandchild.tag: grandchild.text or ""
                     for grandchild in child
                 }
-    except ParseError as e:  # type: ignore
+    except ET.ParseError as e:  # type: ignore
         return {"error": f"XML ParseError: {str(e)}"}
 
 
@@ -70,7 +69,7 @@ class ShellCodeExecutor(Tool):
 
 
 def litellm_completion(prompt: str, model: str) -> str:
-    try:
+    try: # type: ignore
         response = litellm.completion(
             model=model, messages=[{"role": "user", "content": prompt}],
         )
@@ -82,7 +81,7 @@ def litellm_completion(prompt: str, model: str) -> str:
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
-    try:
+    try: # type: ignore
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
@@ -113,10 +112,10 @@ class Agent(Tool):
 
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}" # type: ignore
-        try:
+        try: # type: ignore
             self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
-        except Exception as e:
+        except Exception as e: # type: ignore
             print(f"Exception in Agent.reply: {e}")
             return ""
 
