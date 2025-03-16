@@ -31,7 +31,7 @@ def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-f
     )
     return response.choices[0].message.content
 
-def litellm_streaming(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> Iterator[str]:
+def litellm_streaming(prompt: str, model: str = 'openrouter/deepseek-ai/deepseek-r1', max_tokens: int = 20, temperature: float = 0.7) -> Iterator[str]:
     # Valid model check for OpenRouter compatibility
     if 'deepseek-reasoner' in model:
         model = 'deepseek-ai/DeepSeek-R1'  # Official OpenRouter model ID
@@ -63,6 +63,10 @@ class Agent:
 
     def get_model(self) -> str:
         return self.model
+        
+    def complete(self, prompt: str) -> str:
+        """Complete a prompt using the agent's model"""
+        return litellm_completion(prompt, self.model)
 
     def reply(self, prompt: str) -> str:
         """Generate a response to the input prompt"""
