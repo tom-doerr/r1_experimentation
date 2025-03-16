@@ -201,8 +201,7 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         if not response or not response.choices:
             raise RuntimeError("No response from API")
         
-        content = response.choices[0].message.content
-        return f"<response><bool>true</bool><message>{content}</message></response>"
+        return response.choices[0].message.content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
