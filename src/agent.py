@@ -19,8 +19,10 @@ class Agent:
             raise TypeError("model must be a string")
         if not isinstance(max_tokens, int) or max_tokens <= 0:
             raise ValueError("max_tokens must be a positive integer")
-        if not model.startswith('openrouter/'):
-            raise ValueError("model must start with 'openrouter/' prefix")
+            
+        # Allow both openrouter/ prefixed models and specific local models
+        if not (model.startswith('openrouter/') or model in {'deepseek'}):
+            raise ValueError("model must start with 'openrouter/' prefix or be an approved local model")
             
         self.model = model
         self.max_tokens = max_tokens
