@@ -31,6 +31,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 
 def python_reflection_testing() -> str:
+    """Returns a test string."""
     return "test_output_var"
 
 
@@ -56,7 +57,7 @@ class ShellCodeExecutor(Tool):
         if not command_parts:
             return "No command provided."
 
-        command_name = command_parts[0]
+        command_name: str = command_parts[0]
         if command_name in self.blacklisted_commands:
             return f"Command {command_name} is blacklisted."
         if command_name not in self.whitelisted_commands:
@@ -108,6 +109,8 @@ class Agent(Tool):
     def _update_memory(self, search: str, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
+
+    parse_xml = parse_xml
 
 
 
