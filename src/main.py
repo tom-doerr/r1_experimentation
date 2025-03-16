@@ -34,13 +34,6 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         raise ValueError(f"Invalid XML: {e}") from e
 
 
-def parse_xml(xml_string: str) -> Dict[str, str]:
-    """Parse XML string into dictionary."""
-    try:
-        root = ET.fromstring(xml_string)
-        return {elem.tag: elem.text for elem in root}
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {str(e)}")
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
     """Validate global settings values."""
