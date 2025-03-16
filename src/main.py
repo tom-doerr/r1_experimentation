@@ -1,9 +1,8 @@
 import subprocess
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import litellm
 
-from typing import Optional
 
 DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'  # Single definition
 """Default model to use for LiteLLM completion."""
@@ -42,11 +41,6 @@ def python_reflection_testing() -> str:
 
 
 
-class Tool:
-    """Base class for AI tools"""
-    """Base class for tools."""
-    def __init__(self):
-        pass
 
 
 class ShellCodeExecutor(Tool):
@@ -159,30 +153,6 @@ class AgentAssert(Agent):
         reply: str = self.agent.reply(prompt=statement) # fixed indentation error
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
         return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
-
-
-
-def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
-    parsed_data = {}
-    for child in element:
-        if len(child) > 0:
-            parsed_data[child.tag] = _parse_xml_element(child)
-        else:
-            # Convert boolean values
-            if child.tag == 'bool':
-                parsed_data[child.tag] = child.text.lower() == 'true' if child.text else False
-            else:
-                parsed_data[child.tag] = child.text
-    return parsed_data
-
-def python_reflection_testing() -> str:
-    """Test function for reflection testing"""
-    return 'test_output_var'
-
-
-class Tool:
-    """Base class for tools"""
-    pass
 
 
 
