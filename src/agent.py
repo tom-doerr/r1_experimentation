@@ -5,8 +5,7 @@ class Agent:
     """Agent that interacts with users using LLM completions."""
     
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        """Initialize agent with model and token limits."""
-        """Initialize the agent with model and max_tokens configuration.
+        """Initialize agent with model and token limits.
         
         Args:
             model: The model name to use for completions
@@ -27,15 +26,13 @@ class Agent:
         self._validate_net_worth()
 
     def _validate_net_worth(self) -> None:
-        """Validate net worth against global settings.
-        
-        Raises:
-            ValueError: If net worth exceeds limits
-        """
+        """Validate and adjust net worth against global settings with penalty."""
         if self.net_worth < global_settings['min_net_worth']:
-            raise ValueError(f"Net worth cannot be below {global_settings['min_net_worth']}")
-        if self.net_worth > global_settings['max_net_worth']:
-            raise ValueError(f"Net worth cannot exceed {global_settings['max_net_worth']}")
+            self.net_worth = global_settings['min_net_worth']
+            self.net_worth -= self.net_worth * global_settings['cash_penalty']
+        elif self.net_worth > global_settings['max_net_worth']:
+            self.net_worth = global_settings['max_net_worth']
+            self.net_worth -= self.net_worth * global_settings['cash_penalty']
 
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"
