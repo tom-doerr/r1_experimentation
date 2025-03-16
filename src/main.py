@@ -79,7 +79,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         if not hasattr(response, 'choices') or not response.choices:
-            return f"Unexpected response type: {type(response)}"
+            raise ValueError(f"Unexpected response type: {type(response)}")
         if response.choices and response.choices[0].message and response.choices[0].message.content:
             return response.choices[0].message.content
         return "No completion found."
