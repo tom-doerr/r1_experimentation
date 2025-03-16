@@ -40,24 +40,20 @@ def litellm_completion(prompt: str, model: str) -> str:
         return ""
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> str:
+def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None):
     messages = [{"role": "user", "content": prompt}]
     kwargs = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
     try:
         response = litellm.completion(**kwargs)
-        if response and hasattr(response, 'choices'):
-            for choice in response.choices:
-                if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
-                    content = choice.delta.content or ""  # Handle None content
-                    yield content
-                else:
-                    print(f"Unexpected choice format: {choice}")
-                    yield ""
-        else:
-            print(f"Unexpected response format: {response}")
-            yield ""
+        for chunk in response:
+            if 'choices' in chunk and len(chunk['choices']) > 0 and 'delta' in chunk['choices'][0] and 'content' in chunk['choices'][0]['delta']:
+                content = chunk['choices'][0]['delta']['content']
+                yield content
+            else:
+                print(f"Unexpected chunk format: {chunk}")
+                yield ""
     except litellm.LiteLLMError as e:
         print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
         yield ""
@@ -87,7 +83,7 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace or ""
+        self.memory = replace if replace is not None else ""
 
 class AgentAssert:
     """Assertion agent for testing."""
