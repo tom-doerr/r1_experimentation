@@ -1,6 +1,7 @@
 from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
 import shlex
+import subprocess
 import xml.etree.ElementTree as ET
 import litellm
 
