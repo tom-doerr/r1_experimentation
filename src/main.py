@@ -131,12 +131,9 @@ class AgentAssert(Agent):
 
     def _evaluate_statement(self, statement: str) -> bool:
         """
-       Evaluates a statement using the agent and returns a boolean value.
-       """
-       reply: str = self.agent.reply(prompt=statement)
-       parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
-       if not parsed_reply or "bool" not in parsed_reply:
-           return False
-       bool_value: str | None = parsed_reply.get("bool")
-       return bool_value.lower() == "true" if isinstance(bool_value, str) else bool(bool_value)
+        Evaluates a statement using the agent and returns a boolean value.
+        """
+        reply: str = self.agent.reply(prompt=statement)
+        parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
+        return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
 
