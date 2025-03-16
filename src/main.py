@@ -82,9 +82,9 @@ def litellm_completion(prompt: str, model: str) -> str:
         else:
             return ""
     except litellm.LiteLLMError as e:
-        # raise e
-
-
+        pass
+ 
+ 
 def litellm_streaming(
     prompt: str, model: str = FLASH, max_tokens: int = 100
 ) -> Generator[str, None, None]:
