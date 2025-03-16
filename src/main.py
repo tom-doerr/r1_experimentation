@@ -25,6 +25,20 @@ def _validate_global_settings(settings: Dict[str, float]) -> None:
         raise ValueError("starting_cash cannot exceed max_net_worth")
     if not 0 <= settings['cash_penalty'] <= 1:
         raise ValueError("cash_penalty must be between 0 and 1")
+    required_keys = {'starting_cash', 'max_net_worth', 'min_net_worth', 'cash_penalty'}
+    if not required_keys.issubset(settings.keys()):
+        raise ValueError(f"Global settings must contain {required_keys}")
+    
+    if settings['min_net_worth'] < 0:
+        raise ValueError("min_net_worth cannot be negative")
+    if settings['max_net_worth'] <= settings['min_net_worth']:
+        raise ValueError("max_net_worth must be greater than min_net_worth")
+    if settings['starting_cash'] < settings['min_net_worth']:
+        raise ValueError("starting_cash cannot be less than min_net_worth")
+    if settings['starting_cash'] > settings['max_net_worth']:
+        raise ValueError("starting_cash cannot exceed max_net_worth")
+    if not 0 <= settings['cash_penalty'] <= 1:
+        raise ValueError("cash_penalty must be between 0 and 1")
 
 global_settings: Dict[str, float] = {
     'starting_cash': 1000.0,  # Default starting cash value
@@ -343,6 +357,44 @@ def run_container(image: str, command: str, timeout: int = 10) -> str:
     except Exception as e:
         raise RuntimeError(f"Error running container: {e}") from e
 
+def run_container(image: str, command: str, timeout: int = 10) -> str:
+    """Run a command in a container using Docker.
+    
+    Args:
+        image: Docker image to use
+        command: Command to run in container
+        timeout: Timeout in seconds
+        
+    Returns:
+        str: Command output
+        
+    Raises:
+        ValueError: If inputs are invalid
+        RuntimeError: If container execution fails
+    """
+    if not isinstance(image, str) or not image.strip():
+        raise ValueError("Image must be a non-empty string")
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("Command must be a non-empty string")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError("Timeout must be a positive integer")
+        
+    try:
+        result = subprocess.run(
+            ["docker", "run", "--rm", image, "sh", "-c", command],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=timeout
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired as e:
+        raise TimeoutError(f"Container timed out after {timeout} seconds") from e
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Container failed: {e.stderr}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error running container: {e}") from e
+
 def _execute_command(command: str, timeout: int = 10) -> str:
     """Execute a command with timeout and validation."""
     if not isinstance(command, str) or not command.strip():
@@ -409,45 +461,6 @@ def _normalize_model_name(model: str) -> str:
 
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Streaming response chunks
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If streaming fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-    
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
-        )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
-    except Exception as e:
-        raise RuntimeError(f"Streaming failed: {e}") from e
 
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
