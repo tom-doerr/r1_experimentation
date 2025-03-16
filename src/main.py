@@ -9,7 +9,7 @@ FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
     """Parses an XML string and returns a dictionary. Returns an error dictionary on failure."""
     from xml.etree import ElementTree as ET
-    try: # type: ignore
+    try:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for child in root: # type: ignore
@@ -20,7 +20,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
                     grandchild.tag: grandchild.text or ""
                     for grandchild in child
                 }
-    except ET.ParseError as e:  # type: ignore
+    except ET.ParseError as e:
         return {"error": f"XML ParseError: {str(e)}"}
 
 
@@ -111,15 +111,15 @@ class Agent(Tool):
         self.model = model
 
     def reply(self, prompt: str) -> str:
-        full_prompt: str = f"{prompt}. Current memory: {self.memory}" # type: ignore
-        try: # type: ignore
+        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
+        try:
             self.last_completion = litellm_completion(full_prompt, model=self.model)
             return self.last_completion
         except Exception as e: # type: ignore
             print(f"Exception in Agent.reply: {e}")
             return ""
 
-    def update_memory(self, replace: str) -> None:
+    def _update_memory(self, replace: str) -> None:
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
@@ -135,8 +135,3 @@ class AgentAssert(Tool): # type: ignore
     def __call__(self, statement: str) -> bool:
         reply = self.agent.reply(statement)
         return self._parse_xml(reply)
-
-    def _parse_xml(self, reply: str) -> bool: # type: ignore
-        if "false" in reply.lower():
-            return False
-        return True # type: ignore
