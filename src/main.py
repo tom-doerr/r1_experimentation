@@ -225,20 +225,3 @@ __all__ = [
 
 
 
-def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """Parse XML string into a dictionary.
-    
-    Args:
-        xml_string: XML string to parse
-        
-    Returns:
-        Dict: Parsed XML data
-        
-    Raises:
-        ValueError: If XML is invalid
-    """
-    try:
-        root = ET.fromstring(xml_string)
-        return {elem.tag: elem.text for elem in root}
-    except ET.ParseError as e:
-        raise ValueError(f"Invalid XML: {e}") from e
