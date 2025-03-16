@@ -116,7 +116,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, search: str, replace: str) -> None: self.memory = replace # the search term is not used
+    def _update_memory(self, search: str, replace: str) -> None: self.memory = replace
 
 class AgentAssert(Agent):
     """An agent that asserts statements."""
@@ -134,4 +134,4 @@ class AgentAssert(Agent):
         return self._parse_bool(parsed_reply["bool"])
  
     def _parse_bool(self, bool_string: str) -> bool:
-        return bool_string.lower() == "true" # convert to lowercase for comparison
+        return bool_string.lower() == "true"
