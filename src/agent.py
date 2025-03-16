@@ -63,8 +63,8 @@ class AgentAssert:
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
-    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        super().__init__(interface, model, max_tokens)
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        super().__init__(model, max_tokens)
         
     def __call__(self, input_text: str) -> str:
         """Handle input with simple pattern matching."""
