@@ -17,7 +17,7 @@ class Agent:
             
         self.model = normalize_model_name(model)
         self.max_tokens = max_tokens
-        self.net_worth = global_settings['starting_cash']
+        self.net_worth = global_settings['initial_net_worth']
         self.memory = ''
         self.interface = interface or ConsoleInterface()
 
