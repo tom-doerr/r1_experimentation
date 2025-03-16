@@ -185,15 +185,18 @@ def parse_xml(xml_string: str) -> dict:
     root = ET.fromstring(xml_string)
     return _parse_xml_element(root)
 
-def _parse_xml_element(element: ET.Element) -> dict:
-    """Recursively parse XML elements"""
-    result = {}
+def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
+    parsed_data = {}
     for child in element:
         if len(child) > 0:
-            result[child.tag] = _parse_xml_element(child)
+            parsed_data[child.tag] = _parse_xml_element(child)
         else:
-            result[child.tag] = child.text
-    return result
+            # Convert boolean values
+            if child.tag == 'bool':
+                parsed_data[child.tag] = child.text.lower() == 'true' if child.text else False
+            else:
+                parsed_data[child.tag] = child.text
+    return parsed_data
 
 def python_reflection_testing() -> str:
     """Test function for reflection testing"""
@@ -243,54 +246,7 @@ def litellm_completion(prompt: str, model: str) -> str:
     )
     return response.choices[0].message.content
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]: # streams the completion from LiteLLM
-    """Stream LLM response"""
-    response = litellm.completion(
-        model=model,
-        messages=[{"content": prompt, "role": "user"}],
-        temperature=0.7,
-        stream=True,
-        max_tokens=max_tokens
-    )
-    for chunk in response:
-        if chunk.choices[0].delta.content:
-            yield chunk.choices[0].delta.content
 
-class Agent:
-    """Main agent class"""
-    def __init__(self, model: str):
-        self.model = model
-        self.memory = ""
-        self.last_completion = ""
-
-    def reply(self, prompt: str) -> str:
-        self.last_completion = litellm_completion(prompt, self.model)
-        return self.last_completion
-
-    def _parse_xml(self, xml_string: str) -> dict:
-        """Parse XML string into nested dictionary structure"""
-        try:
-            root = ET.fromstring(xml_string)
-            return self._parse_xml_element(root)
-        except ET.ParseError as e:
-            return {"error": str(e)}
-
-    def _parse_xml_element(self, element: ET.Element) -> dict:
-        """Recursively parse XML elements with nested handling"""
-        result = {}
-        for child in element:
-            if len(child) > 0:  # Has nested elements
-                result[child.tag] = self._parse_xml_element(child)
-            else:
-                result[child.tag] = child.text
-        return result
-
-    def _update_memory(self, search: str, replace: str) -> None:
-        """Update memory with replacement, appending if search not found"""
-        if search and search in self.memory:
-            self.memory = self.memory.replace(search, replace)
-        else:
-            self.memory += f"\n{replace}"
 
 class AgentAssert:
     """Agent for boolean assertions"""
@@ -307,10 +263,3 @@ class AgentAssert:
     def __call__(self, statement: str) -> bool:
         response = self.agent.reply(statement)
         return self._parse_xml(response)
-import subprocess
-import xml.etree.ElementTree as ET
-from typing import Dict, Generator, Optional
-
-import litellm
-DEFAULT_MODEL: str = 'openrouter/google/gemini-2.0-flash-001'
-from src.envs import Env1
