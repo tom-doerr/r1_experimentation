@@ -3,7 +3,7 @@ import shlex
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator, Protocol
 from abc import abstractmethod
-import litellm  # LiteLLM import comes after stdlib but before local imports
+import litellm
 
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
