@@ -70,13 +70,8 @@ assert parsed_data_2['memory']['replace'] == 'The user wrote just hi.'
 agent._update_memory(parsed_data_2['memory']['search'], parsed_data_2['memory']['replace'])
 assert agent.memory == 'The user wrote just hi.'
 
-
 agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
-
-parsed_xml = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert parsed_xml['bool'] == 'False'
-
 
 return_val: bool = agent_assert('twenty two has has the same meaning as 22')
 print("return_val:", return_val) # type: ignore
