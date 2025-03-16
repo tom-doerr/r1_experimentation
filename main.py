@@ -23,15 +23,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
     except ET.ParseError as e:
         raise ValueError(f"Invalid XML: {e}") from e
 
-def litellm_completion(prompt: str, model: str = '') -> str:
-    # Actual implementation using the specified model
-    return f"Response from {model}: {prompt}"
 
-def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None]:
-    # Actual streaming implementation with model parameter
-    response = f"Streaming reply from {model}: {prompt}"
-    for word in response.split():
-        yield f"{word} "
 
 class Agent:
     """Main agent for handling AI interactions"""
@@ -42,9 +34,6 @@ class Agent:
         """Set the model to use for processing"""
         self.model = model_name
 
-def python_reflection_testing() -> str:
-    """Test function for Python reflection capabilities"""
-    return 'test_output_var'
 
 def test_env_1(input_data: str) -> int:
     # Simple test environment that returns fixed reward
