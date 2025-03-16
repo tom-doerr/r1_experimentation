@@ -5,13 +5,12 @@ import litellm
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
-        # Parse element and merge child nodes
-        parsed = {}
-        if len(element):  # Has children
-            for child in element:
-                parsed.update(parse_element(child))
-        else:
-            parsed[element.tag] = element.text.strip() if element.text else None
+        # Parse element with nested children
+        parsed = {element.tag: element.text.strip() if element.text else None}
+        for child in element:
+            child_parsed = parse_element(child)
+            # Merge child tags into parent dict
+            parsed.update(child_parsed)
         return parsed
 
     try:
@@ -23,7 +22,7 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
 
 
 # Simplified LiteLLM implementations
-def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> str:
+def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 100) -> str:
     # LiteLLM completion implementation with model parameter
     response = litellm.completion(
         model=model,
@@ -35,7 +34,7 @@ def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-f
 def litellm_streaming(prompt: str, model: str = 'openrouter/google/gemini-2.0-flash-001', max_tokens: int = 20) -> Iterator[str]:
     # Valid model check for OpenRouter compatibility
     if 'deepseek-reasoner' in model:
-        model = 'deepseek-ai/deepseek-r1'  # Correct model ID
+        model = 'deepseek-ai/DeepSeek-R1'  # Official OpenRouter model ID
     # LiteLLM streaming implementation with configurable model and tokens
     response = litellm.completion(
         model=model,
@@ -85,8 +84,8 @@ class Agent:
     @property
     def last_completion(self) -> str:
         # Return last completion from litellm history
-        if litellm._thread_context.completions:
-            return litellm._thread_context.completions[-1].choices[0].message.content
+        if litellm.completion_cache:
+            return litellm.completion_cache[-1].choices[0].message.content
         return ""
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
