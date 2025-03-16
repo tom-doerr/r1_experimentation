@@ -1,23 +1,11 @@
 from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
-import shlex
-import subprocess
 import xml.etree.ElementTree as ET
 import litellm
 from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
-
-DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
-
-global_settings = {
-    'starting_cash': 1000.0,
-    'max_net_worth': 10000.0,
-    'min_net_worth': 0.0,
-    'cash_penalty': 0.1,
-    'initial_net_worth': 1000.0
-}
 
 
 

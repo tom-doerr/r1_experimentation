@@ -1,5 +1,18 @@
 import litellm
-from .constants import DEFAULT_MODEL, global_settings, _normalize_model_name
+from typing import Dict
+from .utils import normalize_model_name as _normalize_model_name
+
+# Constants moved from main.py to avoid circular imports
+DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
+
+global_settings = {
+    'starting_cash': 1000.0,
+    'max_net_worth': 10000.0,
+    'min_net_worth': 0.0,
+    'cash_penalty': 0.1,
+    'initial_net_worth': 1000.0
+}
+
 from .main import litellm_completion
 
 class Agent:
