@@ -2,22 +2,22 @@ import inspect
 from importlib import import_module
 
 def python_reflection_test() -> str:
-    """Test Python reflection capabilities.
+    """Test Python reflection capabilities by inspecting the current module.
     
     Returns:
         str: A string containing reflection test results
     """
-    current_module = import_module(__name__.rsplit('.', 1)[0])  # Get root package name
+    import sys
+    current_module = sys.modules[__name__]
     functions = []
     classes = []
     
-    for name in dir(current_module):
+    for name, obj in vars(current_module).items():
         if name.startswith('_'):
             continue
-        obj = getattr(current_module, name)
-        if inspect.isfunction(obj):
+        if callable(obj):
             functions.append(name)
-        elif inspect.isclass(obj):
+        elif isinstance(obj, type):
             classes.append(name)
     
     return f"Functions: {sorted(functions)}\nClasses: {sorted(classes)}"

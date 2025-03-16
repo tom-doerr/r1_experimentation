@@ -110,8 +110,8 @@ class ShellCodeExecutor(Tool):
         """Validate command before execution."""
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
-        if any(char in command for char in ['\n', '\r', '\0']):
-            raise ValueError("Command contains invalid control characters (newline or null)")
+        if any(char in command for char in ['\n', '\r', '\0', ';', '|', '&', '`', '$', '(', ')', '>', '<']):
+            raise ValueError("Command contains invalid characters")
         if len(command) > self.max_command_length:
             raise ValueError(f"Command exceeds maximum length of {self.max_command_length} characters")
             
@@ -124,17 +124,6 @@ class ShellCodeExecutor(Tool):
             raise PermissionError(f"Command {cmd} is blacklisted")
         if cmd not in self.whitelisted_commands:
             raise ValueError(f"Command {cmd} is not whitelisted")
-            
-        if len(parts) > 1:
-            for arg in parts[1:]:
-                if any(char in arg for char in [';', '|', '&', '`', '$', '(', ')', '>', '<']):
-                    raise ValueError(f"Invalid characters in argument: {arg}")
-                if '..' in arg:
-                    raise ValueError("Path traversal detected in arguments")
-                if arg.startswith('-'):
-                    raise ValueError("Arguments cannot start with hyphens")
-                if len(arg) > 50:
-                    raise ValueError("Argument too long")
 
     def run(self, command: str) -> str:
         """Execute a shell command with strict validation."""
