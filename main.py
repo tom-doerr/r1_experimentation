@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Generator, Optional
 import litellm
+import xml.etree.ElementTree as ET
+from typing import Dict, Any, Generator, Optional
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with nested structure support"""
@@ -39,22 +40,19 @@ import litellm
 
 
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
-    """Uses the litellm library to stream a completion."""
     messages = [{"role": "user", "content": prompt}]
     arguments = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
         arguments["max_tokens"] = max_tokens
-
     try:
         response = litellm.completion(**arguments)
-
         for chunk in response:
             for choice in chunk.choices:
                 if choice.delta and choice.delta.content:
                     yield choice.delta.content
     except Exception as e:
         print(f"Error during litellm streaming: {type(e).__name__} - {e}")
-        yield ""  # Handle the error as appropriate
+        yield ""
 
 def python_reflection_testing() -> str:
     """Placeholder for python reflection testing."""
