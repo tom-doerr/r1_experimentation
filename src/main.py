@@ -8,7 +8,7 @@ DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
-    return {child.tag: child.text or "" for child in element if child.tag is not None}
+    return {child.tag: child.text or "" for child in element}
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
@@ -133,6 +133,6 @@ class AgentAssert(Agent):
         if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
             return False
         return self._parse_bool(parsed_reply["bool"])
-
+ 
     def _parse_bool(self, bool_string: str) -> bool:
-        return bool_string.lower() == "true"
+        return bool_string.lower() == "true" # convert to lowercase for comparison
