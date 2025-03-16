@@ -134,7 +134,7 @@ class Agent:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
-    def _update_memory(self, replace: str) -> None:
+    def _update_memory(self, search: str, replace: str) -> None:  # Add search param
         self.memory = replace or "" # only replace the memory, don't search
 
 
@@ -265,3 +265,8 @@ class AgentAssert:
     def __call__(self, statement: str) -> bool:
         response = self.agent.reply(statement)
         return self._parse_xml(response)
+import subprocess
+import xml.etree.ElementTree as ET
+from typing import Dict, Generator, Optional
+
+import litellm
