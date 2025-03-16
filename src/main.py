@@ -84,7 +84,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
             max_tokens=max_tokens,
         )
         yield from _extract_content_from_chunks(response)  # type: ignore
-    except Exception as e:
+    except litellm.LiteLLMError as e:
         print(f"LiteLLMError in litellm_streaming: {e}")
 
 
