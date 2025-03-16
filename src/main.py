@@ -263,9 +263,6 @@ def python_reflection_test() -> str:
     Returns:
         str: A string containing reflection test results
     """
-    from importlib import import_module
-    
-    current_module = import_module('src')
     functions = []
     classes = []
     
