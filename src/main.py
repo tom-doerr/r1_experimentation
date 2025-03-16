@@ -137,7 +137,7 @@ class AgentAssert(Tool): # type: ignore
         reply = self.agent.reply(statement)
         return self._parse_xml(reply)
 
-    def _parse_xml(self, reply: str) -> bool:
-        if "false" in reply.lower(): # type: ignore
+    def _parse_xml(self, reply: str) -> bool: # type: ignore
+        if "false" in reply.lower():
             return False
         return True # type: ignore
