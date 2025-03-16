@@ -9,7 +9,7 @@ DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
 
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
     """Parses a single XML element and returns a dictionary of its children."""
-    return {child.tag: child.text or "" for child in element if child.tag is not None}
+    return {child.tag: child.text or "" for child in element if child.tag is not None} # type: ignore
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:

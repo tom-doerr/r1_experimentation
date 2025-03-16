@@ -1,10 +1,10 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import src
 from src import *
-from src.main import *
 
 
 FLASH = 'openrouter/google/gemini-2.0-flash-001'  
@@ -12,13 +12,13 @@ R1 = 'deepseek/deepseek-reasoner'
 OR1 = 'openrouter/deepseek/deepseek-r1'
 MODEL = FLASH
 
-xml_data = '<response><message>hello</message></response>'
-parsed_data = parse_xml(xml_data)
+XML_DATA = '<response><message>hello</message></response>'
+parsed_data = parse_xml(XML_DATA)
 
 message = parsed_data['message']
 print("message:", message)
 
-# set flash as the default model
+# Set flash as the default model
 # don't mock
 completion = litellm_completion('hi', model=MODEL)
 print("completion:", completion)
@@ -31,14 +31,14 @@ for reply in reply_generator:
 
 
 
-test_output_var = python_reflection_testing()
-print("test_output_var:", test_output_var)
-assert test_output_var == 'test_output_var'
+TEST_OUTPUT_VAR = python_reflection_testing()
+print("TEST_OUTPUT_VAR:", TEST_OUTPUT_VAR)
+assert TEST_OUTPUT_VAR == 'test_output_var'
 
 
 
-reward = test_env_1('aaa')
-assert reward == 3
+REWARD = test_env_1('aaa')
+assert REWARD == 3
 
 reward = test_env_1('aabbjadfa')
 assert reward == 4
@@ -58,11 +58,11 @@ print("output:", output)
 last_completion = agent.last_completion
 print("last_completion:", last_completion)
 
-parsed_data = agent._parse_xml(xml_data)
+parsed_data = agent._parse_xml(XML_DATA)
 assert parsed_data['message'] == 'hello'
 
-xml_data_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
-parsed_data_2 = agent._parse_xml(xml_data_2)
+XML_DATA_2 = '<response><thinking>test abc def</thinking><message>Hi! How can I help you?</message><memory><search></search><replace>The user wrote just hi.</replace></memory></response>'
+parsed_data_2 = agent._parse_xml(XML_DATA_2)
 assert parsed_data_2['message'] == 'Hi! How can I help you?'
 assert parsed_data_2['thinking'] == 'test abc def'
 assert parsed_data_2['memory']['search'] == ''
@@ -73,23 +73,23 @@ assert agent.memory == 'The user wrote just hi.'
 
 
 agent_assert = AgentAssert(model=MODEL)
-assert type(agent_assert.agent) == Agent
+assert isinstance(agent_assert.agent, Agent)
 
-bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
-assert bool_val == False
+BOOL_VAL = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+assert BOOL_VAL is False
 
 
 return_val = agent_assert('twenty two has has the same meaning as 22')
-print("return_val:", return_val)
-assert type(return_val) == bool
+print("RETURN_VAL:", return_val)
+assert isinstance(return_val, bool)
 
-two_plus_two_is_4 = agent_assert('two plus two is 5')
-print("two_plus_two_is_4:", two_plus_two_is_4)
-assert two_plus_two_is_4 == False
+TWO_PLUS_TWO_IS_4 = agent_assert('two plus two is 5')
+print("TWO_PLUS_TWO_IS_4:", two_plus_two_is_4)
+assert TWO_PLUS_TWO_IS_4 is False
 
 
-shell_code_executor = ShellCodeExecutor()
-assert type(shell_code_executor) == Tool
+shell_code_executor = ShellCodeExecutor() # type: ignore
+assert isinstance(shell_code_executor, ShellCodeExecutor)
 
 
 # check if this is a subset of the blacklisted commands
