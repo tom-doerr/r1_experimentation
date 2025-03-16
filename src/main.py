@@ -43,6 +43,10 @@ def python_reflection_testing() -> str:
 
 
 
+class Tool:
+    """Base class for tools."""
+    pass
+
 class ShellCodeExecutor(Tool):
     """Executes shell commands safely with allow/deny lists."""
     blacklisted_commands = {'rm', 'cat', 'mv', 'cp'}
@@ -111,48 +115,6 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
     yield from _extract_content_from_chunks(response)
 
 
-class Agent:
-    """An agent that interacts with the user and maintains memory."""
-
-    memory: str = ""
-    model: str = DEFAULT_MODEL
-    last_completion: str = ""
-
-    def __init__(self, model: str = DEFAULT_MODEL):
-        self.model = model
-
-    def __repr__(self):
-        return f"Agent(memory='{self.memory}', model='{self.model}')"
-
-    def reply(self, prompt: str) -> str:
-        full_prompt: str = f"{prompt}. Current memory: {self.memory}"
-        self.last_completion: str = litellm_completion(prompt=full_prompt, model=self.model)
-        return self.last_completion
-
-    def parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
-        parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
-        return parsed_reply
-
-    def _update_memory(self, search: str, replace: str) -> None:  # Add search param
-        self.memory = replace or "" # only replace the memory, don't search
-
-
-class AgentAssert(Agent):
-    """Agent that asserts a statement."""
-    def __init__(self, model: str = DEFAULT_MODEL):
-        super().__init__(model=model)
-        self.agent: Agent = Agent(model=model)
-
-    def __call__(self, statement: str) -> bool:
-        return self._evaluate_statement(statement)
-
-    def _evaluate_statement(self, statement: str) -> bool:
-        """
-        Evaluates a statement using the agent and returns a boolean value.
-        """
-        reply: str = self.agent.reply(prompt=statement) # fixed indentation error
-        parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
-        return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
 
 
 

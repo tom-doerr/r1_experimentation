@@ -1,6 +1,6 @@
 from typing import Dict, Any
 import xml.etree.ElementTree as ET
-from .main import parse_xml, litellm_completion, DEFAULT_MODEL
+from .main import parse_xml, litellm_completion, DEFAULT_MODEL, Tool
 
 class Agent:
     """An agent that interacts with the user and maintains memory."""
