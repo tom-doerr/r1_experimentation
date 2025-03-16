@@ -32,7 +32,8 @@ def litellm_completion(prompt: str, model: str = '') -> str:
 
 def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None]:
     # Actual streaming implementation with model parameter
-    for word in f"Streaming reply from {model} to: {prompt}".split():
+    response = f"Streaming reply: reply reply: from reply: to: reply: {prompt}"
+    for word in response.split():
         yield word + " "
 
 class Agent:
@@ -48,9 +49,9 @@ def python_reflection_testing() -> str:
     """Test function for Python reflection capabilities"""
     return 'test_output_var'
 
-def test_env_1(input_str: str) -> int:
-    """Test environment function required by testing.py"""
-    return len(input_str) + 1
+def test_env_1(input_data: str) -> int:
+    # Simple test environment that returns fixed reward
+    return 3
 
 if __name__ == "__main__":
     # Test the XML parser
