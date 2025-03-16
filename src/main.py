@@ -75,10 +75,8 @@ def python_reflection_testing() -> str:
 
 
 class Tool(ABC):
-    """Abstract base class for command execution tools.
+    """Abstract base class for command execution tools."""
     
-    Subclasses must implement the run() method to execute commands.
-    """
     @abstractmethod
     def run(self, command: str) -> str:
         """Execute a command and return the result.
@@ -95,6 +93,16 @@ class Tool(ABC):
             NotImplementedError: If not implemented by subclass
         """
         raise NotImplementedError("Subclasses must implement run()")
+        
+    @abstractmethod 
+    def __call__(self, command: str) -> str:
+        """Make tool callable for convenience."""
+        raise NotImplementedError("Subclasses must implement __call__")
+        
+    @abstractmethod
+    def __repr__(self) -> str:
+        """Return string representation of tool."""
+        raise NotImplementedError("Subclasses must implement __repr__")
 
 class ShellCodeExecutor(Tool):
     """Safely executes whitelisted shell commands with strict validation."""
