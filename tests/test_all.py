@@ -86,6 +86,7 @@ agent_assert = AgentAssert(model=MODEL)
 assert type(agent_assert.agent) == Agent
 
 bool_val = agent_assert._parse_xml('<response><message>The implementation does not match specifications</message><bool>False</bool></response>')
+
 assert bool_val is False
 
 

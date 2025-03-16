@@ -63,11 +63,14 @@ class ShellCodeExecutor:
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Completes the prompt using LiteLLM and returns the result."""    
+
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
         if not hasattr(response, 'choices') or not response.choices:
             return f"Unexpected response type: {type(response)}"
-        return response.choices[0].message.content if response.choices and response.choices[0].message and response.choices[0].message.content else "No completion found."
+        if response.choices and response.choices[0].message and response.choices[0].message.content:
+            return response.choices[0].message.content
+        return "No completion found."
     except litellm.APIError as e:
         return f"LiteLLMError: {type(e).__name__}: {e}"
 
@@ -108,8 +111,7 @@ class Agent():
     def _parse_xml(self, xml_string: str) -> Dict[str, str | Dict[str, str]]:
         return parse_xml(xml_string)
 
-    def _update_memory(self, replace: str) -> None:
-        self.memory = replace # the search argument is not used, but could be used to only replace parts of the memory
+    def _update_memory(self, replace: str) -> None: self.memory = replace
 
 
 class AgentAssert(Agent):
