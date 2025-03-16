@@ -30,10 +30,6 @@ class Agent:
 
 
 
-    @abstractmethod
-    def __call__(self, input_text: str) -> str:
-        """Process input and return response."""
-        pass
 
     @staticmethod
     def assert_equal(actual: Any, expected: Any, message: str = "") -> None:
@@ -48,13 +44,11 @@ class Agent:
             raise AssertionError(f"Condition not true: {message}")
 
 
-class Agent(ABC):
+class ConcreteAgent(Agent):
     """Concrete agent implementation."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL, max_tokens: int = 100):
-        self.interface = interface
-        self.model = model
-        self.max_tokens = max_tokens
+        super().__init__(interface, model, max_tokens)
         
     def __call__(self, input_text: str) -> str:
         """Handle input with simple pattern matching."""
@@ -69,5 +63,5 @@ class Agent(ABC):
         return "I'm not sure how to respond to that."
 
     def __repr__(self) -> str:
-        return f"Agent(model={self.model!r}, max_tokens={self.max_tokens})"
+        return f"ConcreteAgent(model={self.model!r}, max_tokens={self.max_tokens})"
 
