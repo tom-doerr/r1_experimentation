@@ -7,9 +7,19 @@ class Agent:
     memory: str = ""
     model: str = DEFAULT_MODEL
     last_completion: str = ""
+    max_tokens: int = 100  # Default max tokens for completions
 
-    def __init__(self, model: str = DEFAULT_MODEL):
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        """Initialize the agent with model and max_tokens configuration.
+        
+        Args:
+            model: The model name to use for completions
+            max_tokens: Maximum number of tokens to generate (must be positive)
+        """
+        if not isinstance(max_tokens, int) or max_tokens <= 0:
+            raise ValueError("max_tokens must be a positive integer")
         self.model = model
+        self.max_tokens = max_tokens
 
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"
