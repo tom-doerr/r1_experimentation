@@ -1,10 +1,16 @@
-from typing import Protocol
-from .agent import Agent
+from typing import Protocol, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .agent import Agent
 
 class UserInterface(Protocol):
     """Protocol defining the interface for user interaction."""
     
+    @abstractmethod
     def display_message(self, message: str) -> None:
+        """Display a message to the user"""
+        
+    @abstractmethod
+    def display_error(self, error: str) -> None:
         """Display a message to the user."""
         
     def get_input(self, prompt: str) -> str:

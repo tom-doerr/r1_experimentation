@@ -1,9 +1,10 @@
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
-from .isolation import run_container
+import inspect
+import sys
 from typing import Dict, Any, Generator, Protocol
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import litellm
 
 
@@ -76,7 +77,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 
-class Tool(ABC, Protocol):
+class Tool(Protocol):
     """Abstract base class for command execution tools."""
     
     @abstractmethod
@@ -325,8 +326,6 @@ def python_reflection_test() -> str:
     Returns:
         str: A string containing reflection test results
     """
-    import inspect
-    import sys
     
     results = []
     
