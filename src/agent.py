@@ -9,11 +9,19 @@ class Agent:
     """Main agent class that handles interactions and commands."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+        if not isinstance(interface, UserInterface):
+            raise TypeError("interface must implement UserInterface protocol")
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("model must be a non-empty string")
+            
         self.interface = interface
         self.model = normalize_model_name(model)
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("input_text must be a non-empty string")
+            
         try:
             response = litellm_completion(input_text, self.model)
             return response
@@ -22,7 +30,7 @@ class Agent:
             return "Sorry, I encountered an error."
 
     def __repr__(self) -> str:
-        return f"Agent(model={self.model})"
+        return f"Agent(model={self.model!r})"
 
 class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
