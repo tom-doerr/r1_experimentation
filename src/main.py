@@ -270,27 +270,38 @@ def _normalize_model_name(model: str) -> str:
 
 
 def python_reflection_test(obj: Any) -> Dict[str, Any]:
-    """Inspect a Python object and return its attributes and methods."""
+    """Inspect a Python object and return its attributes and methods.
+    
+    Args:
+        obj: Any Python object to inspect
+        
+    Returns:
+        Dictionary containing:
+            - type: The object's type
+            - attributes: Dictionary of instance attributes
+            - methods: List of method names
+            
+    Raises:
+        ValueError: If object is None
+    """
     if obj is None:
         raise ValueError("Object cannot be None")
         
     result = {
         "type": str(type(obj)),
         "attributes": {},
-        "methods": {}
+        "methods": []
     }
     
     # Get attributes
     for name, value in vars(obj).items():
-        result["attributes"][name] = str(type(value))
+        result["attributes"][name] = str(value)
         
     # Get methods
-    for name, method in inspect.getmembers(obj, inspect.ismethod):
-        result["methods"][name] = {
-            "signature": str(inspect.signature(method)),
-            "doc": method.__doc__ or ""
-        }
-        
+    for name, member in inspect.getmembers(obj):
+        if inspect.ismethod(member) or inspect.isfunction(member):
+            result["methods"].append(name)
+            
     return result
 
 
@@ -327,7 +338,20 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
 
 
 def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Stream completion using LiteLLM API."""
+    """Generate streaming completion using LiteLLM API.
+    
+    Args:
+        prompt: The input prompt string
+        model: The model name to use
+        max_tokens: Maximum number of tokens to generate
+        
+    Yields:
+        str: Streaming response chunks
+        
+    Raises:
+        ValueError: If prompt or model are invalid
+        RuntimeError: If streaming fails
+    """
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
@@ -347,11 +371,10 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         )
         
         for chunk in response:
-            if chunk.choices[0].delta.content:
+            if chunk.choices and chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content
-                
     except Exception as e:
-        raise RuntimeError(f"Streaming error: {e}") from e
+        raise RuntimeError(f"Streaming failed: {e}") from e
 
 
 def run_container(image: str, command: str, timeout: int = 30) -> str:
