@@ -36,8 +36,11 @@ def test_env_1(input_string: str) -> int:
 
 
 class Tool:
+    """Base class for tools."""
     pass
+
 class ShellCodeExecutor(Tool):
+    """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
  
@@ -62,20 +65,22 @@ class ShellCodeExecutor(Tool):
 def litellm_completion(prompt: str, model: str) -> str:
     try:
         response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}])
-        return response.choices[0].message.content
+        if response.choices and response.choices[0].message:
+            return response.choices[0].message.content or ""
+        else:
+            return ""
     except Exception as e:
         return _handle_litellm_error(e, "litellm_completion")
 
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) -> Generator[str, None, None]:
-    response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
     try:
+        response = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
         for chunk in response:
-            if 'content' in chunk['choices'][0]['delta']:
+            if chunk and chunk['choices'] and chunk['choices'][0]['delta'] and 'content' in chunk['choices'][0]['delta']:
                 yield chunk['choices'][0]['delta']['content']
     except Exception as e:
         yield _handle_litellm_error(e, "litellm_streaming")
-        return
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
@@ -83,6 +88,7 @@ def _handle_litellm_error(e: Exception, method_name: str) -> str:
 
 
 class Agent(Tool):
+    """An agent that interacts with the user and maintains memory."""
     memory: str = ""
     last_completion: str = ""
     model: str = FLASH
@@ -108,6 +114,7 @@ class Agent(Tool):
 
 
 class AgentAssert(Tool):
+    """An agent that asserts statements."""
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
