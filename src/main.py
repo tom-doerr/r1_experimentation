@@ -131,6 +131,15 @@ class ShellCodeExecutor(Tool):
 
     def __repr__(self) -> str:
         return f"ShellCodeExecutor(whitelist={self.whitelisted_commands})"
+        
+    @property
+    def is_available(self) -> bool:
+        """Check if shell commands can be executed."""
+        try:
+            import shutil
+            return shutil.which('sh') is not None
+        except ImportError:
+            return False
 
     def _validate_command(self, command: str) -> None:
         """Validate command before execution."""
