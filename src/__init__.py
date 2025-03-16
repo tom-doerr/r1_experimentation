@@ -5,10 +5,9 @@ from .main import (
     ShellCodeExecutor,
     litellm_completion,
     litellm_streaming,
-    Agent,
-    AgentAssert,
     DEFAULT_MODEL,
 )
+from .agent import Agent, AgentAssert
 from .envs import Env1
 
 __all__ = [
