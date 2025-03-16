@@ -32,18 +32,6 @@ class Agent(ABC):
 class AgentAssert:
     """Utility class for agent assertions."""
     
-    @staticmethod
-    def assert_equal(actual: Any, expected: Any, message: str = "") -> None:
-        """Assert that two values are equal."""
-        if actual != expected:
-            raise AssertionError(f"{message}\nExpected: {expected}\nActual: {actual}")
-
-    @staticmethod 
-    def assert_true(condition: bool, message: str = "") -> None:
-        """Assert that a condition is true."""
-        if not condition:
-            raise AssertionError(f"Condition not true: {message}")
-
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
