@@ -132,7 +132,7 @@ class AgentAssert(Agent):
         parsed_reply = self._parse_xml(reply)
         if not isinstance(parsed_reply, dict) or "bool" not in parsed_reply or not isinstance(parsed_reply["bool"], str):
             return False # indicate failure if bool is not in parsed_reply
-        return self._parse_bool(parsed_reply["bool"])
+        return self._parse_bool(str(parsed_reply["bool"]))
  
     def _parse_bool(self, bool_string: str) -> bool:
-        return bool_string.lower() == "true" # convert to lowercase and compare
+        return bool_string.lower() == "true"
