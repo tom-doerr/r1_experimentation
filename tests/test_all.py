@@ -1,10 +1,15 @@
 import os
+import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import src
 from src import *
 from src.main import *
+from src.main import Tool
+
+DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
+FLASH = 'openrouter/google/gemini-2.0-flash-001'  
 from src.main import Tool
 
 DEFAULT_MODEL = 'openrouter/google/gemini-2.0-flash-001'
