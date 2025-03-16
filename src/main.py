@@ -111,7 +111,7 @@ class Agent(Tool): # type: ignore
             return ""
 
     def _update_memory(self, search: str, replace: str) -> None:
-        # Updates the agent's memory.
+        # Updates the agent's memory with the replace string.
         self.memory = replace
 
 
