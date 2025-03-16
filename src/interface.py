@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import abstractmethod
 from typing import Protocol, TYPE_CHECKING
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ class UserInterface(Protocol):
     def get_input(self, prompt: str) -> str:
         """Get input from the user."""
         
-    def interact_with_agent(self, agent: Agent) -> None:
+    def interact_with_agent(self, agent: 'Agent') -> None:
         """Interact with an agent instance."""
 
 class ConsoleInterface(UserInterface):
@@ -32,7 +33,7 @@ class ConsoleInterface(UserInterface):
     def get_input(self, prompt: str) -> str:
         return input(prompt)
         
-    def interact_with_agent(self, agent: Agent) -> None:
+    def interact_with_agent(self, agent: 'Agent') -> None:
         while True:
             user_input = self.get_input("You: ")
             if user_input.lower() in ('exit', 'quit'):
