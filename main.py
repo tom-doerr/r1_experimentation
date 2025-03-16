@@ -21,15 +21,15 @@ def parse_xml(xml_string: str) -> Dict[str, Any]:
         return {}
 
 
-def _parse_element(element: ET.Element) -> Dict[str, Any]:
-    result: Dict[str, Any] = {}
+def _parse_element(element: ET.Element) -> Dict[str, Optional[Any]]:
+    result: Dict[str, Optional[Any]] = {}
     for child in element:
-        if len(child) > 0:  # Has nested elements
-            child_data: Any = _parse_element(child)
+        if len(child) > 0:
+            child_data: Optional[Any] = _parse_element(child)
         elif child.text:
-            child_data: str = child.text.strip()
+            child_data: Optional[str] = child.text.strip()
         else:
-            child_data = None
+            child_data: Optional[Any] = None
 
         if child.tag in result:
             if not isinstance(result[child.tag], list):
@@ -39,7 +39,8 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
             result[child.tag] = child_data
     return result
 
-def litellm_completion(prompt: str, model: str = FLASH) -> str:
+def litellm_completion(prompt: str, model: Optional[str] = None) -> str:
+    model = model or litellm.model
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
@@ -54,7 +55,8 @@ def litellm_completion(prompt: str, model: str = FLASH) -> str:
         return ""
 
 
-def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+    model = model or litellm.model
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
