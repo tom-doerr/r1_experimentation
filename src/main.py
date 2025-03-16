@@ -44,6 +44,7 @@ def python_reflection_testing() -> str:
 
 
 class Tool:
+    """Base class for AI tools"""
     """Base class for tools."""
     def __init__(self):
         pass
@@ -150,7 +151,13 @@ import subprocess
 from typing import Generator, Optional
 import litellm
 
-def parse_xml(xml_string: str) -> dict:
+def parse_xml(xml_string: str) -> Dict[str, Any]:
+    """Parse XML string into a dictionary structure"""
+    try:
+        root = ET.fromstring(xml_string)
+        return _parse_xml_element(root)
+    except ET.ParseError:
+        return {}
     """Parse XML string into a dictionary"""
     root = ET.fromstring(xml_string)
     return _parse_xml_element(root)
