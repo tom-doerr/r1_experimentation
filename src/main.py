@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 import subprocess
 import shlex
 import litellm
-from .llm_utils import litellm_completion
+from .llm_utils import litellm_completion, litellm_streaming
 from .config import DEFAULT_MODEL
 from shutil import which  # Move this to top level import
 from .config import DEFAULT_MODEL, global_settings
@@ -213,40 +213,6 @@ class ShellCodeExecutor(Tool):
 
 
 
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Chunks of the generated completion
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-        
-    try:
-        model = normalize_model_name(model)
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            stream=True
-        )
-        
-        for chunk in response:
-            content = chunk.choices[0].delta.content
-            if content:
-                yield content
-                
-    except Exception as e:
-        raise RuntimeError(f"Streaming error: {e}") from e
 
 def python_reflection_test(obj: object) -> str:
     """Inspect an object and return its type information."""
@@ -266,8 +232,8 @@ def python_reflection_test(obj: object) -> str:
 __all__ = [
     "parse_xml", "Tool", "ShellCodeExecutor", "python_reflection_test",
     "litellm_completion", "litellm_streaming", "DEFAULT_MODEL", "global_settings",
-    "IsolatedEnvironment", "run_container", "UserInterface",
-    "Env1", "Env2", "Agent", "AgentAssert"
+    "IsolatedEnvironment", "run_container", "Agent", "AgentAssert", "UserInterface",
+    "Env1", "Env2"
 ]
 
 

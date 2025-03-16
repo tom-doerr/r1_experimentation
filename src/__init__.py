@@ -7,7 +7,7 @@ from .main import (
     ShellCodeExecutor,
     litellm_streaming
 )
-from .llm_utils import litellm_completion
+from .llm_utils import litellm_completion, litellm_streaming
 from .envs import Env1, Env2
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
