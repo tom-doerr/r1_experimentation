@@ -1,7 +1,7 @@
 import shlex
 import subprocess
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Generator, Optional, Any
+from typing import Dict, List, Generator, Any
 import litellm
 
 
@@ -36,6 +36,19 @@ def test_env_1(input_string: str) -> int:
     elif "aabbjadfa" in input_string:
         return 4
     return 0
+
+
+class Env1:
+    def __init__(self, target_char: str, char_count_penalty_start: int):
+        self.target_char = target_char
+        self.char_count_penalty_start = char_count_penalty_start
+
+    def __call__(self, input_string: str) -> int:
+        count = input_string.count(self.target_char)
+        if count >= self.char_count_penalty_start:
+            return count - self.char_count_penalty_start
+        else:
+            return count
 
 
 
@@ -116,7 +129,7 @@ class Agent:
         parsed_reply: Dict[str, str | Dict[str, str]] = parse_xml(xml_string)
         return parsed_reply
 
-    def _update_memory(self, search: str, replace: str) -> None:
+    def _update_memory(self, replace: str) -> None:
         self.memory = replace or "" # only replace the memory, don't search
 
 
