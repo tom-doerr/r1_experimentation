@@ -1,18 +1,23 @@
-from typing import Any, Dict, Generator, Protocol
-import xml.etree.ElementTree as ET
-import subprocess
+# Standard library imports
 import shlex
-from shutil import which
+import subprocess
+import xml.etree.ElementTree as ET
 from abc import abstractmethod
+from shutil import which
+from typing import Any, Dict, Generator, Protocol
+
+# Third party imports
 import litellm
-from .llm_utils import litellm_completion, litellm_streaming
+
+# Local imports
+from .agent import Agent, AgentAssert
 from .config import DEFAULT_MODEL, global_settings
-from .utils import normalize_model_name
-from .agent import Agent
+from .envs import Env1, Env2
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
+from .llm_utils import litellm_completion, litellm_streaming
 from .reflection import python_reflection_test
-from .envs import Env1, Env2
+from .utils import normalize_model_name as _normalize_model_name
 
 
 def _validate_global_settings(settings: Dict[str, float]) -> None:
