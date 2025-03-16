@@ -484,31 +484,12 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise RuntimeError(f"Streaming failed: {e}") from e
 
 
-def run_container(image: str, command: str, timeout: int = 30) -> str:
-    """Run a command in a container using Docker.
-    
-    Args:
-        image: Docker image name
-        command: Command to run in container
-        timeout: Maximum execution time in seconds
-        
-    Returns:
-        str: Command output
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If container execution fails
-    """
-    if not isinstance(image, str) or not image.strip():
-        raise ValueError("Image must be a non-empty string")
-    if not isinstance(command, str) or not command.strip():
-        raise ValueError("Command must be a non-empty string")
-    if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("Timeout must be a positive integer")
-        
+def _execute_command(command: str, timeout: int = 10) -> str:
+    """Helper function to execute a command with error handling."""
     try:
         result = subprocess.run(
-            ['docker', 'run', '--rm', image, 'sh', '-c', command],
+            command,
+            shell=True,
             capture_output=True,
             text=True,
             check=True,
@@ -516,11 +497,11 @@ def run_container(image: str, command: str, timeout: int = 30) -> str:
         )
         return result.stdout
     except subprocess.TimeoutExpired as e:
-        raise TimeoutError(f"Container timed out after {timeout} seconds") from e
+        raise TimeoutError("Command timed out") from e
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Container failed: {e.stderr}") from e
+        raise RuntimeError(f"Command failed: {e.stderr}") from e
     except Exception as e:
-        raise RuntimeError(f"Error running container: {e}") from e
+        raise RuntimeError(f"Error executing command: {e}") from e
 
 
 
