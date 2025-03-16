@@ -50,12 +50,15 @@ def run_container(image: str, command: str = '', timeout: int = 10) -> str:
 
 def _validate_container_args(image: str, command: str, timeout: int) -> None:
     """Validate container execution arguments."""
-    if not isinstance(image, str) or not image.strip():
-        raise ValueError("image must be a non-empty string")
-    if not isinstance(command, str):
-        raise ValueError("command must be a string")
-    if not isinstance(timeout, int) or timeout <= 0:
-        raise ValueError("timeout must be a positive integer")
+    try:
+        if not isinstance(image, str) or not image.strip():
+            raise ValueError("image must be a non-empty string")
+        if not isinstance(command, str):
+            raise ValueError("command must be a string") 
+        if not isinstance(timeout, int) or timeout <= 0:
+            raise ValueError("timeout must be a positive integer")
+    except Exception as e:
+        raise ValueError(f"Invalid container arguments: {e}") from e
 
 
 class IsolatedEnvironment:
