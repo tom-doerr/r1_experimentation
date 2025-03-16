@@ -68,29 +68,66 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 
-class Agent:
-    """Main agent class that handles interactions and commands."""
+class Agent(Protocol):
+    """Protocol defining the interface for an agent."""
+    
+    @abstractmethod
+    def __call__(self, input: str) -> str:
+        """Process input and return response."""
+        raise NotImplementedError("Subclasses must implement __call__")
+        
+    @abstractmethod
+    def __repr__(self) -> str:
+        """Return string representation of agent."""
+        raise NotImplementedError("Subclasses must implement __repr__")
+
+class BasicAgent(Agent):
+    """Concrete implementation of Agent using LLM completions."""
     
     def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("Model must be a non-empty string")
         self.interface = interface
         self.model = model
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
         try:
             response = litellm_completion(input_text, self.model)
             return response
         except Exception as e:
             self.interface.display_error(f"Error: {str(e)}")
             return "Sorry, I encountered an error."
+            
+    def __repr__(self) -> str:
+        return f"BasicAgent(model={self.model!r})"
 
-class AgentAssert:
-    """Helper class for agent assertions and validation."""
+class AgentAssert(Agent):
+    """Concrete implementation of Agent for assertion testing."""
     
-    @staticmethod
-    def validate_response(response: str) -> bool:
-        """Validate that a response is properly formatted."""
-        return isinstance(response, str) and len(response.strip()) > 0
+    def __init__(self, interface: UserInterface, model: str = DEFAULT_MODEL):
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("Model must be a non-empty string")
+        self.interface = interface
+        self.model = model
+        
+    def __call__(self, input_text: str) -> str:
+        """Handle user input and return response."""
+        if not isinstance(input_text, str) or not input_text.strip():
+            raise ValueError("Input must be a non-empty string")
+            
+        try:
+            response = litellm_completion(input_text, self.model)
+            return response
+        except Exception as e:
+            self.interface.display_error(f"Error: {str(e)}")
+            return "Sorry, I encountered an error."
+            
+    def __repr__(self) -> str:
+        return f"AgentAssert(model={self.model!r})"
 
 class Tool(Protocol):
     """Protocol defining interface for command execution tools."""
