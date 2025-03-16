@@ -43,7 +43,7 @@ class ShellCodeExecutor(Tool):
     """Tool for executing shell code."""
     blacklisted_commands: List[str] = ["rm", "cat", "mv", "cp"]
     whitelisted_commands: List[str] = ["ls", "date", "pwd", "echo", "mkdir", "touch", "head"]
- 
+
     def __call__(self, command: str) -> str:
         return self.run(command)
 
