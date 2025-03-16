@@ -346,13 +346,6 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     Raises:
         ValueError: If inputs are invalid
         RuntimeError: If completion fails
-    """
-        str: The generated completion
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If completion fails
-    """
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
     if not isinstance(model, str) or not model.strip():
