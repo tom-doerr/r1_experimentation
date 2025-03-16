@@ -22,6 +22,7 @@ from .agent import Agent
 from .interface import UserInterface
 from .isolation import IsolatedEnvironment, run_container
 from .reflection import python_reflection_test
+from .utils import normalize_model_name
 from .envs import Env1, Env2
 from .llm_utils import litellm_completion
 

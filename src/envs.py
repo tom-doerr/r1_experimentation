@@ -18,7 +18,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty
+            return max(0, count - penalty)  # Ensure non-negative score
         return count
 
     def __repr__(self) -> str:
@@ -37,7 +37,7 @@ class Env2:
         """Calculate score based on string length."""
         if not isinstance(input_string, str):
             return 0
-        return 0 if len(input_string) > self.max_char_count else 1
+        return 1 if len(input_string) <= self.max_char_count else 0
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"

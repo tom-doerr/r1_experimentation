@@ -8,7 +8,6 @@ from .utils import normalize_model_name
 class Agent(ABC):
     """Main agent class that handles interactions and commands."""
     
-    @abstractmethod
     def __init__(self, interface: UserInterface = None, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         if interface is None:
             interface = ConsoleInterface()
@@ -28,9 +27,8 @@ class Agent(ABC):
         """Handle user input and return response."""
         pass
 
-    @abstractmethod
     def __repr__(self) -> str:
-        pass
+        return f"Agent(model={self.model!r}, max_tokens={self.max_tokens})"
 
 class AgentAssert(Agent):
     """Concrete implementation of Agent for assertion testing."""
