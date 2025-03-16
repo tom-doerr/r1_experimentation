@@ -43,8 +43,9 @@ def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None)
     response = litellm.completion(**arguments)
 
     for chunk in response:
-        if chunk and chunk.choices:
-            yield chunk.choices[0].delta.content or ""
+        for choice in chunk.choices:
+            if choice.delta and choice.delta.content:
+                yield choice.delta.content
 
 def python_reflection_testing() -> str:
     """Placeholder for python reflection testing."""
