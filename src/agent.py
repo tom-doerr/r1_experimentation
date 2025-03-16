@@ -15,6 +15,11 @@ class Agent(ABC):
 
 
 
+    @abstractmethod
+    def __call__(self, input_text: str) -> str:
+        """Process input and return response."""
+        pass
+
     @staticmethod
     def assert_equal(actual: Any, expected: Any, message: str = "") -> None:
         """Assert that two values are equal."""
