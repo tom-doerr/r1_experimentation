@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, Generator
 import xml.etree.ElementTree as ET
 import subprocess
@@ -91,18 +90,20 @@ class ShellCodeExecutor(Tool):
             return f"Error: {str(e)}"
 
 
-def litellm_completion(prompt: str, model: str) -> str:
+def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     if not prompt or not isinstance(prompt, str):
         raise ValueError("Prompt must be a non-empty string")
     if not model or not isinstance(model, str):
         raise ValueError("Model must be a non-empty string")
+    if not isinstance(max_tokens, int) or max_tokens <= 0:
+        raise ValueError("max_tokens must be a positive integer")
         
     try:
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=100
+            max_tokens=max_tokens
         )
         if not hasattr(response, 'choices') or not response.choices:
             raise ValueError(f"Unexpected response type: {type(response)}")
@@ -123,9 +124,26 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]: # 
         yield f"LiteLLMError: {e}"
 
 
-def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]: # streams the completion from LiteLLM
-    response: Any = litellm.completion(model=model, messages=[{"role": "user", "content": prompt}], stream=True, max_tokens=max_tokens)
-    yield from _extract_content_from_chunks(response)
+def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, str, None]:
+    if not prompt or not isinstance(prompt, str):
+        raise ValueError("Prompt must be a non-empty string")
+    if not model or not isinstance(model, str):
+        raise ValueError("Model must be a non-empty string")
+    if not isinstance(max_tokens, int) or max_tokens <= 0:
+        raise ValueError("max_tokens must be a positive integer")
+        
+    try:
+        response: Any = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+            max_tokens=max_tokens
+        )
+        yield from _extract_content_from_chunks(response)
+    except litellm.APIError as e:
+        yield f"API Error: {e}"
+    except Exception as e:
+        yield f"Error: {e}"
 
 
 
