@@ -95,7 +95,7 @@ def litellm_streaming(prompt: str, model: Optional[str] = None, max_tokens: Opti
         yield _handle_litellm_error(e, "litellm streaming")
 
 def python_reflection_testing() -> str:
-    return python_reflection_testing.__name__
+    return "test_output_var"
 
 
 def test_env_1(input_str: str) -> int:
