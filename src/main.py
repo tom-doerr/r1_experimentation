@@ -214,16 +214,17 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
     """Extracts content from response chunks."""
     try:
         for chunk in response:
+            if not chunk or not isinstance(chunk, dict):
+                continue
             if "choices" not in chunk or not chunk["choices"]:
-                raise ValueError("Invalid response format from LiteLLM")
+                continue
+            if "delta" not in chunk["choices"][0]:
+                continue
+            if "content" not in chunk["choices"][0]["delta"]:
+                continue
             yield chunk["choices"][0]["delta"]["content"]
-    except KeyError as e:
-        raise ValueError(f"Invalid response format: {e}") from e
-    except litellm.APIError as e:
-        raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
-        raise RuntimeError(f"Error: {e}") from e
-
+        raise RuntimeError(f"Error extracting content: {e}") from e
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
     if not prompt or not isinstance(prompt, str):
@@ -233,13 +234,7 @@ def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int =
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
         
-    # Handle model prefix like litellm_completion
-    if model.startswith('openrouter/'):
-        pass
-    elif '/' in model:
-        model = f'openrouter/{model.split("/")[-1]}'
-    else:
-        model = f'openrouter/{model}'
+    model = _normalize_model_name(model)
         
     try:
         response: Any = litellm.completion(
