@@ -17,8 +17,6 @@ class Agent:
         self.max_tokens = max_tokens
         self.net_worth = global_settings['starting_cash']
         self.memory = ''
-        self.net_worth = global_settings['starting_cash']
-        self.memory = ''
 
     @abstractmethod
     def __call__(self, input_text: str) -> str:
@@ -33,8 +31,8 @@ class Agent:
 class ConcreteAgent(Agent):
     """Concrete agent implementation that handles basic conversational patterns."""
     
-    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100, interface: Optional[UserInterface] = None):
-        super().__init__(model, max_tokens, interface)
+    def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
+        super().__init__(model, max_tokens)
         
     def __call__(self, input_text: str) -> str:
         """Handle input with simple pattern matching."""

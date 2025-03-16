@@ -1,4 +1,4 @@
-from .config import DEFAULT_MODEL
+from .config import DEFAULT_MODEL, global_settings
 
 def normalize_model_name(model: str) -> str:
     """Normalize model name to include proper provider prefix."""
