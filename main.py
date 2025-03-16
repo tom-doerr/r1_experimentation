@@ -26,18 +26,23 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
 
     if element.text and element.text.strip() and not result and 'message' not in result:
         result['message'] = element.text.strip()
+    elif element.text and element.text.strip():
+        return element.text.strip()
 
-    return {element.tag: result} if result else element.text.strip() if element.text else None
+    return {element.tag: result} if result else None
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
     messages = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
-        return response.choices[0].message.content
+        if response.choices and response.choices[0].message:
+            return response.choices[0].message.content
+        else:
+            return ""
     except Exception as e:
         print(f"Error during litellm completion: {e}")
-        return ""  # Or handle the error as appropriate
+        return ""
 
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     """Uses the litellm library to stream a completion."""
@@ -64,9 +69,11 @@ def test_env_1(input_str: str) -> int:
     else:
         return 4
 
+FLASH = 'openrouter/google/gemini-2.0-flash-001'
+
 class Agent:
     """Placeholder for Agent class."""
-    def __init__(self, model: str):
+    def __init__(self, model: str = FLASH):
         self.model = model
         self.memory = ""
         self.last_completion = ""
