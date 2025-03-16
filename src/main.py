@@ -62,6 +62,8 @@ class ShellCodeExecutor():
                 command_parts, capture_output=True, text=True, check=True, timeout=10
             )
             return result.stdout
+        except subprocess.CalledProcessError as e:
+            return f"Error: {e.stderr}"
 
 
 def litellm_completion(prompt: str, model: str) -> str:
