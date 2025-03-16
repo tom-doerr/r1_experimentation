@@ -1,6 +1,7 @@
 import subprocess
 import shlex
 import xml.etree.ElementTree as ET
+from .isolation import run_container
 from typing import Dict, Any, Generator
 from abc import ABC, abstractmethod
 import litellm
@@ -75,7 +76,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 
 
 
-class Tool(ABC):
+class Tool(ABC, Protocol):
     """Abstract base class for command execution tools."""
     
     @abstractmethod
@@ -103,7 +104,7 @@ class ShellCodeExecutor(Tool):
         return self.run(command)
 
     def __repr__(self) -> str:
-        return "<ShellCodeExecutor>"
+        return f"ShellCodeExecutor(whitelist={self.whitelisted_commands})"
 
     def _validate_command(self, command: str) -> None:
         """Validate command before execution."""
