@@ -5,6 +5,7 @@ import subprocess
 from typing import Any, Dict, Generator, List
 import xml.etree.ElementTree as ET
 import litellm
+from typing import Protocol
 
 DEFAULT_MODEL = "openrouter/google/gemini-2.0-flash-001"
 
@@ -248,85 +249,6 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
                 yield chunk.choices[0].delta.content
     except Exception as e:
         raise RuntimeError(f"Streaming error: {e}") from e
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Streaming response chunks
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If streaming fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-    
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
-        )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
-    except Exception as e:
-        raise RuntimeError(f"Streaming failed: {e}") from e
-
-
-def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Generate streaming completion using LiteLLM API.
-    
-    Args:
-        prompt: The input prompt string
-        model: The model name to use
-        max_tokens: Maximum number of tokens to generate
-        
-    Yields:
-        str: Streaming response chunks
-        
-    Raises:
-        ValueError: If inputs are invalid
-        RuntimeError: If streaming fails
-    """
-    if not isinstance(prompt, str) or not prompt.strip():
-        raise ValueError("Prompt must be a non-empty string")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("Model must be a non-empty string")
-    if not isinstance(max_tokens, int) or max_tokens <= 0:
-        raise ValueError("max_tokens must be a positive integer")
-        
-    model = _normalize_model_name(model)
-        
-    try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7,
-            stream=True
-        )
-        
-        for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-                
-    except Exception as e:
-        raise RuntimeError(f"Streaming failed: {e}") from e
 
 
 def python_reflection_test(obj: Any) -> Dict[str, Union[str, Dict[str, str], List[str]]]:
