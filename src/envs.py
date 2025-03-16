@@ -38,8 +38,7 @@ class Env2:
         """Calculate score based on string length."""
         if not isinstance(input_string, str):
             return 0
-        # Return 1 if string is within max length, 0 otherwise
-        return 1 if len(input_string) <= self.max_char_count else 0
+        return 0 if len(input_string) > self.max_char_count else 1
 
     def __repr__(self) -> str:
         return f"Env2(max_char_count={self.max_char_count})"
