@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
-import litellm
-import xml.etree.ElementTree as ET
 from typing import Dict, Any, Generator, Optional
+import litellm
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with nested structure support"""
@@ -39,7 +38,12 @@ from typing import Dict, Any, Generator, Optional
 import litellm
 
 
+from typing import Dict, Any, Generator, Optional
+import litellm
+
+
 def litellm_streaming(prompt: str, model: str, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
+    """Streams responses from a litellm model."""
     messages = [{"role": "user", "content": prompt}]
     arguments = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
@@ -73,16 +77,17 @@ class Agent:
         self.last_completion: str = ""
 
     def reply(self, prompt: str) -> str:
-        self.last_completion = litellm_completion(prompt, self.model)
+        self.last_completion: str = litellm_completion(prompt, self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str) -> None:
-        self.memory = replace
+        self.memory: str = replace
 
 class AgentAssert:
+    """Assertion agent for testing."""
     def __init__(self, model: str):
         self.agent: Agent = Agent(model=model)
 
