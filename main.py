@@ -5,27 +5,23 @@ import litellm
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """XML parser with simplified complexity"""
     def parse_element(element: ET.Element) -> Dict[str, Any]:
-        result: Dict[str, Any] = {}
+        result: Dict[str, Any] = {element.tag: None}
         
-        # Handle text content directly
-        if element.text and element.text.strip():
-            result[element.tag] = element.text.strip()
-            return result
-            
-        # Handle child elements
-        for child in element:
-            child_data = parse_element(child)
-            
-            # Handle multiple elements with same tag
-            if child.tag in result:
-                existing = result[child.tag]
-                if isinstance(existing, list):
-                    existing.append(child_data)
+        children = list(element)
+        if children:
+            result = {}
+            for child in children:
+                child_data = parse_element(child)
+                key = child.tag
+                if key in result:
+                    if not isinstance(result[key], list):
+                        result[key] = [result[key]]
+                    result[key].append(child_data[key])
                 else:
-                    result[child.tag] = [existing, child_data]
-            else:
-                result[child.tag] = child_data
-                
+                    result[key] = child_data[key]
+        elif element.text and element.text.strip():
+            result[element.tag] = element.text.strip()
+        
         return result
 
     try:
@@ -41,7 +37,7 @@ def litellm_completion(prompt: str, model: str = 'openrouter/google/gemini-2.0-f
     """LiteLLM completion implementation"""
     response = litellm.completion(
         model=model,
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"content": prompt, "role": "user"}]
     )
     return response.choices[0].message.content
 
@@ -49,13 +45,12 @@ def litellm_streaming(prompt: str) -> Iterator[str]:
     """LiteLLM streaming implementation"""
     response = litellm.completion(
         model='openrouter/google/gemini-2.0-flash-001',
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"content": prompt, "role": "user"}],
         stream=True
     )
     for chunk in response:
-        content = chunk.choices[0].delta.get('content', '')
-        if content:
-            yield content
+        if chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
 
 def python_reflection_testing() -> str:
     """Simple reflection test that returns its own variable name"""
