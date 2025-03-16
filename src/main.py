@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, List, Generator, Union
 import shlex
+from typing import Dict, Any, List, Generator
 import subprocess
 from xml.etree.ElementTree import ParseError
 
@@ -39,7 +39,6 @@ def test_env_1(input_string: str) -> int:
 
 class Tool:
     """Base class for tools."""
-    pass
 
 
 class ShellCodeExecutor(Tool):
@@ -121,10 +120,9 @@ class Agent(Tool):
     def reply(self, prompt: str) -> str:
         full_prompt: str = f"{prompt}. Current memory: {self.memory}"
         try:
-            completion: str = litellm_completion(full_prompt, model=self.model)
-            self.last_completion = completion
-            return completion
-        except litellm.LiteLLMError as e:
+            self.last_completion: str = litellm_completion(full_prompt, model=self.model)
+            return self.last_completion
+        except Exception as e:
             print(f"Exception in Agent.reply: {e}")
             return ""
 
