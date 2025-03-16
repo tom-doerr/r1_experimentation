@@ -50,16 +50,8 @@ class AgentAssert(Agent):
         
     def __call__(self, input_text: str) -> str:
         """Handle user input and return response."""
-        if not isinstance(input_text, str) or not input_text.strip():
-            raise ValueError("Input must be a non-empty string")
-            
-        try:
-            response = litellm_completion(input_text, self.model)
-            return response
-        except Exception as e:
-            self.interface.display_error(f"Error: {str(e)}")
-            return "Sorry, I encountered an error."
-            
+        return super().__call__(input_text)  # Use parent class implementation
+        
     def __repr__(self) -> str:
         return f"AgentAssert(model={self.model!r})"
 
