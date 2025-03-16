@@ -13,8 +13,6 @@ litellm.model_list = [{
 litellm.model = "default"
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
-    """Parses an XML string and returns a dictionary.
-    """
     try:
         root: ET.Element = ET.fromstring(xml_string)
         return _parse_element(root)
@@ -46,8 +44,6 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
     return result
 
 def litellm_completion(prompt: str, model: str = FLASH) -> str:
-    """Uses the litellm library to get a completion.
-    """
     messages: List[Dict[str, str]] = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
@@ -91,15 +87,13 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
                     print(f"Unexpected chunk format: {chunk}")
                     yield ""
     except litellm.LiteLLMError as e:
-        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}: {e}")
+        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
         yield ""
     except Exception as e:
         print(f"General error during litellm streaming: {type(e).__name__} - {e}")
         yield ""
 
 def python_reflection_testing() -> str:
-    """Returns a test string for reflection testing.
-    """
     return "test_output_var"
 
 
