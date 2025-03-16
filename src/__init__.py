@@ -1,3 +1,4 @@
+from .isolation import run_container
 from .main import (
     DEFAULT_MODEL,
     global_settings,
@@ -10,7 +11,6 @@ from .main import (
     ShellCodeExecutor,
     litellm_completion,
     litellm_streaming,
-    run_container,
     python_reflection_test
 )
 from .agent import Agent, AgentAssert
