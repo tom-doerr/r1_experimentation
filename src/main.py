@@ -10,9 +10,7 @@ FLASH = 'openrouter/google/gemini-2.0-flash-001'
 def _parse_xml_element(element: ET.Element) -> Dict[str, str]:
     """Parses a single XML element and returns a dictionary of its children."""
     data: Dict[str, str] = {}
-    for child in element:
-        data[child.tag] = child.text or ""
-    return data
+    return {child.tag: child.text or "" for child in element}
 
 
 def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
@@ -21,7 +19,7 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
         root = ET.fromstring(xml_string)
         data: Dict[str, str | Dict[str, str]] = {}
         for element in root:
-            data[element.tag] = _parse_xml_element(element) if len(element) else element.text or ""
+            data[element.tag] = _parse_xml_element(element) if list(element) else element.text or ""
         return data
     except ET.ParseError as e:
         print(f"XML ParseError: {str(e)}")
@@ -121,7 +119,7 @@ class Agent(Tool):
                 if not len(child):
                     data[child.tag] = child.text or ""  # type: ignore
                 else:
-                    data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child}
+                    data[child.tag] = {grandchild.tag: grandchild.text or "" for grandchild in child} # type: ignore
             return data
         except ET.ParseError as e:
             print(f"XML ParseError: {str(e)}")
@@ -135,7 +133,7 @@ class Agent(Tool):
         self.last_completion = litellm_completion(full_prompt, model=self.model)
         return self.last_completion
 
-    def _update_memory(self, search: str, replace: str) -> None:  # type: ignore
+    def _update_memory(self, replace: str) -> None:  # type: ignore
         """Updates the agent's memory with the replace string."""
         self.memory = replace
 
@@ -152,6 +150,5 @@ class AgentAssert(Agent):
         if isinstance(parsed_reply, dict) and "bool" in parsed_reply:
             bool_value = parsed_reply["bool"].lower() == "true"
             return bool_value
-        else:
-            # Handle the case where 'bool' is not in the response or the response is not a dict
-            return False
+        # Handle the case where 'bool' is not in the response or the response is not a dict
+        return False
