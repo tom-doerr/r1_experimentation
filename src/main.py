@@ -228,28 +228,50 @@ def _extract_content_from_chunks(response: Any) -> Generator[str, None, None]:
         raise RuntimeError(f"Error extracting content: {e}") from e
 
 def litellm_streaming(prompt: str, model: str = DEFAULT_MODEL, max_tokens: int = 100) -> Generator[str, None, None]:
-    """Stream completion from LiteLLM API."""
-    if not prompt or not isinstance(prompt, str):
+    """Stream completion using LiteLLM API with robust error handling.
+    
+    Args:
+        prompt: Non-empty string prompt to send to the model
+        model: Model identifier string (with or without provider prefix)
+        max_tokens: Positive integer for maximum tokens to generate
+        
+    Yields:
+        Generated text chunks
+        
+    Raises:
+        ValueError: For invalid inputs or model names
+        RuntimeError: For API or execution errors
+    """
+    # Validate inputs
+    if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
-    if not model or not isinstance(model, str):
+    if not isinstance(model, str) or not model.strip():
         raise ValueError("Model must be a non-empty string")
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
+    if max_tokens > 4096:
+        raise ValueError("max_tokens cannot exceed 4096")
         
+    # Normalize model name format
     model = _normalize_model_name(model)
         
     try:
-        response: Any = litellm.completion(
+        response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             stream=True,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            timeout=30  # Add timeout
         )
         yield from _extract_content_from_chunks(response)
+    except litellm.exceptions.BadRequestError as e:
+        if "not a valid model ID" in str(e):
+            raise ValueError(f"Invalid model: {model}") from e
+        raise RuntimeError(f"Bad request: {e}") from e
     except litellm.APIError as e:
         raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
-        raise RuntimeError(f"Error: {e}") from e
+        raise RuntimeError(f"Unexpected error: {e}") from e
 
 
 
