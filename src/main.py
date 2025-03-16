@@ -42,10 +42,11 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str] | None]:
 def python_reflection_testing() -> str:
     """Return sorted list of function names in current module."""
     import inspect
+    import sys
     return ", ".join(sorted(
         name for name, obj in inspect.getmembers(sys.modules[__name__])
         if inspect.isfunction(obj)
-    )
+    ))
 
 
 
