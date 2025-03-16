@@ -39,7 +39,7 @@ max-public-methods=5
 max-statements=10
 
 # Maximum number of nested blocks
-max-nested-blocks=2
+max-nested-blocks=1
 
 [FORMAT]
 # Maximum line length
