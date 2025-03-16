@@ -3,7 +3,7 @@ import inspect
 import shlex
 import subprocess
 import sys
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, Optional
 import xml.etree.ElementTree as ET
 
 import litellm
