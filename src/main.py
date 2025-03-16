@@ -11,6 +11,7 @@ from .llm_utils import _escape_xml, litellm_completion
 from .reflection import python_reflection_test
 from .interface import UserInterface
 from .agent import Agent, AgentAssert
+from .agent import Agent, AgentAssert
 from .envs import Env1, Env2
 
 
@@ -234,7 +235,7 @@ def litellm_streaming(prompt: str, model: str, max_tokens: int = 100) -> Generat
         raise ValueError("Prompt must be a non-empty string")
         
     try:
-        model = normalize_model_name(model)
+        model = _normalize_model_name(model)
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": prompt}],
