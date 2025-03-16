@@ -1,4 +1,4 @@
-from typing import Dict, Any, Generator, Protocol
+from typing import Any, Dict, Generator, Protocol
 from abc import abstractmethod
 import subprocess
 import shlex
