@@ -8,6 +8,7 @@ class Agent:
     model: str = DEFAULT_MODEL
     last_completion: str = ""
     max_tokens: int = 100  # Default max tokens for completions
+    net_worth: float = 0.0  # Add net_worth property
 
     def __init__(self, model: str = DEFAULT_MODEL, max_tokens: int = 100):
         """Initialize the agent with model and max_tokens configuration.
@@ -20,6 +21,7 @@ class Agent:
             raise ValueError("max_tokens must be a positive integer")
         self.model = model
         self.max_tokens = max_tokens
+        self.net_worth = global_settings['starting_cash']  # Initialize net_worth
 
     def __repr__(self) -> str:
         return f"Agent(memory='{self.memory}', model='{self.model}')"

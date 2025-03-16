@@ -8,6 +8,10 @@ import litellm
 DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
+global_settings = {
+    'starting_cash': 1000.0  # Default starting cash value
+}
+
 def _parse_xml_element(element: ET.Element) -> Dict[str, str | Dict[str, str] | None]:
     parsed_data = {}
     for child in element:
