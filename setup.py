@@ -1,7 +1,2 @@
-from setuptools import setup, find_packages
-
-setup(
-    name="r1_experimentation",
-    version="0.1",
-    packages=find_packages(),
-)
+# This file is deprecated in favor of pyproject.toml
+# It can be removed once Poetry is set up
