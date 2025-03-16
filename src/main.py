@@ -101,9 +101,6 @@ class Agent(Tool):
 
 
 class AgentAssert(Tool):
-    """Asserts agent behavior.
-    """
-    """Asserts agent behavior."""
     agent: "Agent"
 
     def __init__(self, model: str = FLASH):
