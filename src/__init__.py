@@ -4,15 +4,13 @@ from .main import (
     Tool,
     ShellCodeExecutor,
     litellm_streaming,
-    UserInterface,
-    Env1,
-    Env2,
-    IsolatedEnvironment,
-    run_container,
     python_reflection_test
 )
 from .agent import Agent, AgentAssert
 from .llm_utils import litellm_completion
+from .envs import Env1, Env2
+from .interface import UserInterface
+from .isolation import IsolatedEnvironment, run_container
 
 __all__ = [
     "parse_xml", "python_reflection_test", "Tool", "ShellCodeExecutor",
