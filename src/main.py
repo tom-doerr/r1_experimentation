@@ -133,7 +133,7 @@ class AgentAssert(Agent):
         """
         Evaluates a statement using the agent and returns a boolean value.
         """
-        reply: str = self.agent.reply(prompt=statement)
+        reply: str = self.agent.reply(prompt=statement) # fixed indentation error
         parsed_reply: Dict[str, str | Dict[str, str | None] | None] = self.parse_xml(reply)
         return parsed_reply.get("bool", "false").lower() == "true" if parsed_reply else False
 
