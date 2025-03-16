@@ -59,38 +59,67 @@ def python_reflection_testing() -> str:
 
 
 class Tool(ABC):
-    """Base class for tools that execute commands."""
+    """Abstract base class for command execution tools.
+    
+    Subclasses must implement the run() method to execute commands.
+    """
     @abstractmethod
     def run(self, command: str) -> str:
         """Execute a command and return the result.
         
         Args:
-            command: The command to execute
+            command: The command string to execute
             
         Returns:
-            str: The result of executing the command
+            Command output as string
             
         Raises:
-            NotImplementedError: Must be implemented by subclasses
+            ValueError: If command is invalid
+            RuntimeError: If execution fails
+            NotImplementedError: If not implemented by subclass
         """
         raise NotImplementedError("Subclasses must implement run()")
 
 class ShellCodeExecutor(Tool):
-    """Executes shell commands safely with allow/deny lists."""
+    """Safely executes whitelisted shell commands with strict validation.
+    
+    Attributes:
+        blacklisted_commands: Set of forbidden commands
+        whitelisted_commands: Set of allowed commands
+        max_command_length: Maximum allowed command length
+    """
     blacklisted_commands = {'rm', 'cat', 'mv', 'cp', 'sudo', 'sh', 'bash'}
     whitelisted_commands = {'ls', 'date', 'pwd', 'echo', 'whoami'}
+    max_command_length = 100
     
     def __call__(self, command: str) -> str:
         return self.run(command)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<ShellCodeExecutor>"
 
     def run(self, command: str) -> str:
+        """Execute a shell command with strict validation.
+        
+        Args:
+            command: Command string to execute
+            
+        Returns:
+            Command output as string
+            
+        Raises:
+            ValueError: For invalid commands or arguments
+            PermissionError: For blacklisted commands
+            RuntimeError: For execution failures
+            TimeoutError: If command times out
+        """
+        # Validate command format
         if not isinstance(command, str) or not command.strip():
             raise ValueError("Command must be a non-empty string")
+        if len(command) > self.max_command_length:
+            raise ValueError(f"Command exceeds maximum length of {self.max_command_length}")
             
-        # Split command and validate each part
+        # Split and validate command parts
         parts = command.strip().split()
         if not parts:
             raise ValueError("Empty command")
@@ -101,11 +130,13 @@ class ShellCodeExecutor(Tool):
         if cmd not in self.whitelisted_commands:
             raise ValueError(f"Command {cmd} is not whitelisted")
             
-        # Validate arguments
+        # Validate arguments for security
         if len(parts) > 1:
             for arg in parts[1:]:
-                if any(char in arg for char in [';', '|', '&', '`', '$', '(', ')']):
+                if any(char in arg for char in [';', '|', '&', '`', '$', '(', ')', '>', '<']):
                     raise ValueError(f"Invalid characters in argument: {arg}")
+                if '..' in arg:  # Prevent path traversal
+                    raise ValueError("Path traversal detected in arguments")
             
         try:
             result = subprocess.run(
@@ -117,8 +148,8 @@ class ShellCodeExecutor(Tool):
                 timeout=10
             )
             return result.stdout
-        except subprocess.TimeoutExpired:
-            raise TimeoutError("Command timed out")
+        except subprocess.TimeoutExpired as e:
+            raise TimeoutError("Command timed out") from e
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Command failed: {e.stderr}") from e
         except Exception as e:
@@ -126,6 +157,20 @@ class ShellCodeExecutor(Tool):
 
 
 def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
+    """Generate completion using LiteLLM API with robust error handling.
+    
+    Args:
+        prompt: Non-empty string prompt to send to the model
+        model: Model identifier string (with or without provider prefix)
+        max_tokens: Positive integer for maximum tokens to generate
+        
+    Returns:
+        Generated text completion
+        
+    Raises:
+        ValueError: For invalid inputs or model names
+        RuntimeError: For API or execution errors
+    """
     # Validate inputs
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Prompt must be a non-empty string")
@@ -134,16 +179,8 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
         
-    # Handle model prefix based on provider
-    if model.startswith('openrouter/'):
-        # Already has correct prefix
-        pass
-    elif '/' in model:
-        # Has provider prefix but not openrouter
-        model = f'openrouter/{model.split("/")[-1]}'
-    else:
-        # No prefix at all
-        model = f'openrouter/{model}'
+    # Normalize model name format
+    model = _normalize_model_name(model)
         
     try:
         response = litellm.completion(
@@ -156,11 +193,26 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
             raise ValueError(f"Invalid model: {model}") from e
-        raise
+        raise RuntimeError(f"Bad request: {e}") from e
     except litellm.APIError as e:
         raise RuntimeError(f"API Error: {e}") from e
     except Exception as e:
-        raise RuntimeError(f"Error: {e}") from e
+        raise RuntimeError(f"Unexpected error: {e}") from e
+
+def _normalize_model_name(model: str) -> str:
+    """Normalize model name to include proper provider prefix.
+    
+    Args:
+        model: Raw model name string
+        
+    Returns:
+        Normalized model name with openrouter/ prefix
+    """
+    if model.startswith('openrouter/'):
+        return model
+    if '/' in model:
+        return f'openrouter/{model.split("/")[-1]}'
+    return f'openrouter/{model}'
 def _extract_content_from_chunks(response: Any) -> Generator[str, str, None]: # extracts content from response chunks.
     """Extracts content from response chunks."""
     try:
