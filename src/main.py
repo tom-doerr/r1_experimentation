@@ -123,6 +123,7 @@ class Agent():
     def _update_memory(self, search: str, replace: str) -> None:
         self.memory = replace
 
+
 # Create a Tool class if it doesn't exist in src.main
 
 class Tool:
