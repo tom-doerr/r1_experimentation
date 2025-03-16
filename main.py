@@ -24,11 +24,14 @@ def litellm_completion(prompt: str, model: str):
     messages = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
-        if response.choices and response.choices[0].message:
+        if response and response.choices and response.choices[0].message:
             return response.choices[0].message.content
         return ""
+    except litellm.LiteLLMError as e:
+        print(f"LiteLLMError during litellm completion: {type(e).__name__} - {e}")
+        return ""
     except Exception as e:
-        print(f"Error during litellm completion: {type(e).__name__} - {e}")
+        print(f"General error during litellm completion: {type(e).__name__} - {e}")
         return ""
 
 
@@ -39,7 +42,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         kwargs["max_tokens"] = max_tokens
     try:
         response = litellm.completion(**kwargs)
-        if hasattr(response, 'choices'):
+        if response and hasattr(response, 'choices'):
             for choice in response.choices:
                 if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
                     content = choice.delta.content or ""  # Handle None content
@@ -50,8 +53,11 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         else:
             print(f"Unexpected response format: {response}")
             yield ""
+    except litellm.LiteLLMError as e:
+        print(f"LiteLLMError during litellm streaming: {type(e).__name__} - {e}")
+        yield ""
     except Exception as e:
-        print(f"Error during litellm streaming: {type(e).__name__} - {e}")
+        print(f"General error during litellm streaming: {type(e).__name__} - {e}")
         yield ""
 
 def python_reflection_testing():
@@ -76,7 +82,13 @@ class Agent:
         return parse_xml(xml_string)
 
     def _update_memory(self, search: str, replace: str):
-        self.memory: str = replace if replace is not None else ""
+        self.memory = replace if replace is not None else ""
+
+    def _parse_xml(self, xml_string: str):
+        parsed = parse_xml(xml_string)
+        if parsed and 'memory' in parsed:
+            return parsed
+        return parsed
 
 class AgentAssert:
     """Assertion agent for testing."""
