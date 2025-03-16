@@ -18,7 +18,7 @@ class Env1:
         count = input_string.count(self.target_char)
         if len(input_string) >= self.char_count_penalty_start:
             penalty = len(input_string) - self.char_count_penalty_start
-            return count - penalty  # Remove max(0, ) to allow negative scores
+            return max(0, count - penalty)
         return count
 
     def __repr__(self) -> str:
@@ -34,9 +34,11 @@ class Env2:
         self.max_char_count = max_char_count
 
     def __call__(self, input_string: str) -> int:
-        """Calculate score based on string length."""
+        """Calculate score based on string length and palindrome check."""
         if not isinstance(input_string, str):
             return 0
-        return 1 if len(input_string) == self.max_char_count else 0  # Change <= to ==
+        if len(input_string) > self.max_char_count:
+            return 1 if input_string != input_string[::-1] else 0
+        return 0
 
 
