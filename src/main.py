@@ -58,7 +58,7 @@ class ShellCodeExecutor(Tool):
         command_name: str = command_parts[0]
         if command_name in self.blacklisted_commands:
             return f"Command '{command_name}' is blacklisted."
-        if command_name in self.whitelisted_commands:
+        elif command_name in self.whitelisted_commands:
             return self._execute_command(command_parts)
         return f"Command '{command_name}' is not whitelisted."
 
@@ -102,7 +102,7 @@ def litellm_streaming(
                 and "content" in chunk["choices"][0]["delta"]
             ):
                 yield chunk["choices"][0]["delta"]["content"]
-    except litellm.LiteLLMError:
+    except Exception as e:
         pass
 
 
