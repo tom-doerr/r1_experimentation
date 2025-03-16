@@ -1,7 +1,7 @@
 import shlex  # type: ignore
 from typing import Dict, List, Generator
 import subprocess
-import xml.etree.ElementTree as ET  # nosec
+import xml.etree.ElementTree as ET
 import litellm
 from . import Tool
 
@@ -20,9 +20,9 @@ def parse_xml(xml_string: str) -> Dict[str, str | Dict[str, str]]:
             if list(element):
                 data[element.tag] = _parse_xml_element(element)
             else:
-                data[element.tag] = element.text or ""
+                data[element.tag] = element.text or "" # type: ignore
         return data
-    except ET.ParseError as e: # type: ignore
+    except ET.ParseError as e:
         print(f"XML ParseError: {e}")
         return {"error": str(e)}
 
