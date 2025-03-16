@@ -95,7 +95,7 @@ class Agent:
         self.last_completion: str = ""
 
     def reply(self, prompt: str) -> str:
-        self.last_completion = litellm_completion(prompt, self.model)
+        self.last_completion: str = litellm_completion(prompt, model=self.model)
         return self.last_completion
 
     def _parse_xml(self, xml_string: str) -> Dict[str, Any]:
@@ -129,7 +129,7 @@ class AgentAssert:
         return False
 
 def _handle_litellm_error(e: Exception, function_name: str) -> str:
-    if isinstance(e, litellm.LiteLLMError):
+    if hasattr(litellm.utils, 'LiteLLMError') and isinstance(e, litellm.utils.LiteLLMError):
         print(f"LiteLLMError during {function_name}: {type(e).__name__} - {e}")
     else:
         print(f"General error during {function_name}: {type(e).__name__} - {e}", exc_info=True)
