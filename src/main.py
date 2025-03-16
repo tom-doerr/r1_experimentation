@@ -89,8 +89,10 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: int = 100) ->
         for chunk in response:
             if chunk and chunk['choices'] and chunk['choices'][0]['delta'] and 'content' in chunk['choices'][0]['delta']:
                 yield chunk['choices'][0]['delta']['content']
-    except Exception as e:
-        yield _handle_litellm_error(e, "litellm_streaming")
++    except Exception as e:
++        if isinstance(e, litellm.LiteLLMError):
++            yield _handle_litellm_error(e, "litellm_streaming")
++        raise e
 
 
 def _handle_litellm_error(e: Exception, method_name: str) -> str:
