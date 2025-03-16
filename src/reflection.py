@@ -1,4 +1,10 @@
 def python_reflection_test() -> str:
+    """Test function for reflection capabilities.
+    
+    Returns:
+        str: A test message
+    """
+    return "Reflection test successful"
     """Test Python reflection capabilities by inspecting the current module.
     
     Returns:
