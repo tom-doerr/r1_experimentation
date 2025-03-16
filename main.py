@@ -3,24 +3,28 @@ from typing import Dict, Any, Generator
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     def parse_element(element: ET.Element) -> Dict[str, Any]:
-        # Handle multiple children with same tag
         result: Dict[str, Any] = {}
         for child in element:
-            child_data = parse_element(child) if len(child) > 0 else (
+            # Determine child data (recursive parse or text content)
+            child_data = parse_element(child) if len(child) else (
                 child.text.strip() if child.text else None
             )
             
-            # Group multiple elements with same tag into lists
-            if child.tag in result:
-                if not isinstance(result[child.tag], list):
-                    result[child.tag] = [result[child.tag]]
+            # Handle existing entries by converting to list if needed
+            existing = result.get(child.tag)
+            if existing is not None:
+                if not isinstance(existing, list):
+                    result[child.tag] = [existing]
                 result[child.tag].append(child_data)
             else:
                 result[child.tag] = child_data
         return result
 
-    root = ET.fromstring(xml_string)
-    return parse_element(root)
+    try:
+        root = ET.fromstring(xml_string)
+        return parse_element(root)
+    except ET.ParseError as e:
+        raise ValueError(f"Invalid XML: {e}") from e
 
 def litellm_completion(prompt: str, model: str = '') -> str:
     # Implementation that uses the model parameter
@@ -34,12 +38,15 @@ def litellm_streaming(prompt: str, model: str = '') -> Generator[str, None, None
 class Agent:
     """Main agent for handling AI interactions"""
     def __init__(self) -> None:
-        # Initialize with default configuration
-        pass
+        self.config: Dict[str, Any] = {}
 
     def update_config(self, config: Dict[str, Any]) -> None:
         """Update agent configuration"""
-        # Placeholder for configuration update logic
+        self.config.update(config)
+
+    def execute(self, input_data: str) -> str:
+        """Process input and return response"""
+        return f"Processed: {input_data}"
 
 def python_reflection_testing() -> str:
     """Test function for Python reflection capabilities"""
