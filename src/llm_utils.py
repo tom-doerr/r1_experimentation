@@ -1,5 +1,5 @@
 import litellm
-from typing import Generator
+from typing import Generator, Dict, Any
 from .utils import normalize_model_name
 
 def _escape_xml(content: str) -> str:

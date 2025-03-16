@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 from abc import ABC, abstractmethod
 from .config import DEFAULT_MODEL, global_settings
 from .interface import UserInterface, ConsoleInterface
@@ -24,12 +24,12 @@ class Agent(ABC):
     @abstractmethod
     def __call__(self, input_text: str) -> str:
         """Process input and return response."""
-        pass
-
+        raise NotImplementedError
+        
     @abstractmethod
     def __repr__(self) -> str:
         """Return string representation of agent."""
-        pass
+        raise NotImplementedError
 
 
 
