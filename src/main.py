@@ -11,7 +11,9 @@ DEFAULT_MODEL: str = 'google/gemini-2.0-flash-001'
 """Default model to use for LiteLLM completion."""
 
 global_settings = {
-    'starting_cash': 1000.0  # Default starting cash value
+    'starting_cash': 1000.0,  # Default starting cash value
+    'max_net_worth': 10000.0,  # Maximum allowed net worth
+    'min_net_worth': 0.0  # Minimum allowed net worth
 }
 
 def _parse_xml_value(element: ET.Element) -> str | bool | None:
@@ -178,6 +180,8 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
         raise ValueError("Model must be a non-empty string")
     if not isinstance(max_tokens, int) or max_tokens <= 0:
         raise ValueError("max_tokens must be a positive integer")
+    if max_tokens > 4096:
+        raise ValueError("max_tokens cannot exceed 4096")
         
     # Normalize model name format
     model = _normalize_model_name(model)
@@ -187,8 +191,11 @@ def litellm_completion(prompt: str, model: str, max_tokens: int = 100) -> str:
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            timeout=30  # Add timeout
         )
+        if not response.choices:
+            raise RuntimeError("No choices returned from API")
         return response.choices[0].message.content
     except litellm.exceptions.BadRequestError as e:
         if "not a valid model ID" in str(e):
