@@ -32,11 +32,11 @@ def _parse_element(element: ET.Element) -> Dict[str, Any]:
 
 def litellm_completion(prompt: str, model: str) -> str:
     """Uses the litellm library to get a completion."""
-    messages = [{"role": "user", "content": prompt}]
+    messages: list[Dict[str, str]] = [{"role": "user", "content": prompt}]
     try:
         response = litellm.completion(model=model, messages=messages)
         if response and response.choices and response.choices[0].message:
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
         return ""
     except litellm.LiteLLMError as e:
         print(f"LiteLLMError during litellm completion: {type(e).__name__} - {e}")
@@ -48,7 +48,7 @@ def litellm_completion(prompt: str, model: str) -> str:
 
 def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int] = None) -> Generator[str, None, None]:
     """Uses the litellm library to stream a completion."""
-    messages = [{"role": "user", "content": prompt}]
+    messages: list[Dict[str, str]] = [{"role": "user", "content": prompt}]
     kwargs: Dict[str, Any] = {"model": model, "messages": messages, "stream": True}
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
@@ -56,7 +56,7 @@ def litellm_streaming(prompt: str, model: str = FLASH, max_tokens: Optional[int]
         response = litellm.completion(**kwargs)
         if isinstance(response, dict):  # Handle non-streaming response
             if 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0]:
-                yield response['choices'][0]['message']['content']
+                yield response['choices'][0]['message']['content'] or ""
             else:
                 print(f"Unexpected non-streaming response format: {response}")
                 yield ""
