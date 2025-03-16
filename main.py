@@ -3,6 +3,7 @@ from typing import Dict, Any, Optional, Generator
 import litellm
 
 FLASH: str = 'openrouter/google/gemini-2.0-flash-001'
+# set flash as the default model
 
 def parse_xml(xml_string: str) -> Dict[str, Any]:
     """Parses an XML string and returns a dictionary."""
@@ -104,9 +105,18 @@ class AgentAssert:
     def __init__(self, model: str) -> None:
         self.agent: Agent = Agent(model=model)
 
+    def __call__(self, prompt: str) -> bool:
+        response: str = self.agent.reply(prompt)
+        parsed: Dict[str, Any] = self.agent._parse_xml(response)
+        if 'message' in parsed:
+            message: str = parsed['message']
+            if "match specifications" in message:
+                return False
+        return True
+
     def _parse_xml(self, xml_string: str) -> bool:
         parsed: Dict[str, Any] = parse_xml(xml_string)
         if 'bool' in parsed:
             bool_value: str = parsed['bool']
             return bool_value.lower() == 'true'
-    return False
+        return False
