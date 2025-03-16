@@ -105,8 +105,8 @@ class AgentAssert:
         self.agent: Agent = Agent(model=model)
 
     def _parse_xml(self, xml_string: str) -> bool:
-        parsed = parse_xml(xml_string)
+        parsed: Dict[str, Any] = parse_xml(xml_string)
         if 'bool' in parsed:
-            bool_value = parsed['bool']
+            bool_value: str = parsed['bool']
             return bool_value.lower() == 'true'
         return False
