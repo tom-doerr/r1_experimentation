@@ -134,4 +134,4 @@ class AgentAssert(Agent):
         return self._parse_bool(parsed_reply["bool"])
  
     def _parse_bool(self, bool_string: str) -> bool:
-        return bool_string.lower() == "true"
+        return bool_string.lower() == "true" # convert to lowercase and compare
